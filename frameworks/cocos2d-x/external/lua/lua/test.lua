@@ -1,0 +1,1 @@
+print(string.pack(">s2","blackfe"))
