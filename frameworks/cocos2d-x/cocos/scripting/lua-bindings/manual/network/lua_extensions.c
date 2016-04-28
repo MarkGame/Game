@@ -10,7 +10,7 @@ extern "C" {
 #include "luasocket/mime.h"
 #include "sproto/lsproto.h"
 #include "lpeg/lptree.h"
-#include "cjson/fpconv.h"
+#include "cjson/lua_cjson.h"
 static luaL_Reg luax_exts[] = {
     {"socket.core", luaopen_socket_core},
 	{ "sproto.core",luaopen_sproto_core },
