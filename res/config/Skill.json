@@ -1,0 +1,40 @@
+{
+	"list":[
+		{ "ID":10001, "Name":"低级探测", "SkillType":2, "StepLevel":1, "Level":1, "SkillRangeType":1, "SkillRange":1, "Desc":"探测技能" },
+		{ "ID":10002, "Name":"中级探测", "SkillType":2, "StepLevel":2, "Level":2, "SkillRangeType":1, "SkillRange":2, "Desc":"探测技能" },
+		{ "ID":10003, "Name":"高级探测", "SkillType":2, "StepLevel":3, "Level":3, "SkillRangeType":1, "SkillRange":3, "Desc":"探测技能" },
+		{ "ID":10004, "Name":"低级吞噬", "SkillType":1, "StepLevel":1, "Level":1, "SkillRangeType":4, "SkillRange":1, "Desc":"吞噬敌方 提升进化度 和 饱食度 " },
+		{ "ID":10005, "Name":"中级吞噬", "SkillType":1, "StepLevel":2, "Level":2, "SkillRangeType":4, "SkillRange":2, "Desc":"吞噬敌方 提升进化度 和 饱食度 " },
+		{ "ID":10006, "Name":"高级吞噬", "SkillType":1, "StepLevel":3, "Level":3, "SkillRangeType":4, "SkillRange":3, "Desc":"吞噬敌方 提升进化度 和 饱食度 " },
+		{ "ID":10007, "Name":"低级减速", "SkillType":1, "StepLevel":1, "Level":1, "SkillRangeType":1, "SkillRange":1, "BuffID":1001, "Desc":"范围内的怪兽减速" },
+		{ "ID":10008, "Name":"中级减速", "SkillType":1, "StepLevel":2, "Level":2, "SkillRangeType":1, "SkillRange":2, "BuffID":1001, "Desc":"范围内的怪兽减速" },
+		{ "ID":10009, "Name":"高级减速", "SkillType":1, "StepLevel":3, "Level":3, "SkillRangeType":1, "SkillRange":3, "BuffID":1001, "Desc":"范围内的怪兽减速" },
+		{ "ID":10010, "Name":"低级加速", "SkillType":1, "StepLevel":1, "Level":1, "SkillRangeType":1, "SkillRange":1, "BuffID":1002, "Desc":"自身加速" },
+		{ "ID":10011, "Name":"中级加速", "SkillType":1, "StepLevel":2, "Level":2, "SkillRangeType":1, "SkillRange":1, "BuffID":1003, "Desc":"自身加速" },
+		{ "ID":10012, "Name":"高级加速", "SkillType":1, "StepLevel":3, "Level":3, "SkillRangeType":1, "SkillRange":1, "BuffID":1004, "Desc":"自身加速" },
+		{ "ID":10013, "Name":"低级禁锢", "SkillType":1, "StepLevel":2, "Level":1, "SkillRangeType":1, "SkillRange":2, "BuffID":1005, "Desc":"将敌方无法移动" },
+		{ "ID":10014, "Name":"中级禁锢", "SkillType":1, "StepLevel":2, "Level":2, "SkillRangeType":1, "SkillRange":2, "BuffID":1006, "Desc":"将敌方无法移动" },
+		{ "ID":10015, "Name":"高级禁锢", "SkillType":1, "StepLevel":3, "Level":3, "SkillRangeType":1, "SkillRange":2, "BuffID":1007, "Desc":"将敌方无法移动" },
+		{ "ID":10016, "Name":"低级传送", "SkillType":1, "StepLevel":2, "Level":1, "SkillRangeType":1, "SkillRange":3, "Desc":"将敌方随机传送" },
+		{ "ID":10017, "Name":"中级传送", "SkillType":1, "StepLevel":2, "Level":2, "SkillRangeType":1, "SkillRange":3, "Desc":"将敌方随机传送" },
+		{ "ID":10018, "Name":"高级传送", "SkillType":1, "StepLevel":3, "Level":3, "SkillRangeType":1, "SkillRange":3, "Desc":"将敌方随机传送" },
+		{ "ID":10019, "Name":"低级隐身", "SkillType":1, "StepLevel":2, "Level":1, "SkillRangeType":1, "SkillRange":1, "BuffID":1008, "Desc":"使自身在一定时间内隐身" },
+		{ "ID":10020, "Name":"中级隐身", "SkillType":1, "StepLevel":2, "Level":2, "SkillRangeType":1, "SkillRange":1, "BuffID":1009, "Desc":"使自身在一定时间内隐身" },
+		{ "ID":10021, "Name":"高级隐身", "SkillType":1, "StepLevel":3, "Level":3, "SkillRangeType":1, "SkillRange":1, "BuffID":1010, "Desc":"使自身在一定时间内隐身" },
+		{ "ID":10022, "Name":"闪耀", "SkillType":2, "StepLevel":1, "Level":3, "SkillRangeType":1, "SkillRange":3, "BuffID":1011, "Desc":"可以让自身金闪闪，破除隐身" },
+		{ "ID":10023, "Name":"低级恐惧", "SkillType":1, "StepLevel":2, "Level":1, "SkillRangeType":1, "SkillRange":1, "BuffID":1012, "Desc":"使敌方恐惧，到处瞎跑" },
+		{ "ID":10024, "Name":"中级恐惧", "SkillType":1, "StepLevel":2, "Level":2, "SkillRangeType":1, "SkillRange":2, "BuffID":1013, "Desc":"使敌方恐惧，到处瞎跑" },
+		{ "ID":10025, "Name":"高级恐惧", "SkillType":1, "StepLevel":3, "Level":3, "SkillRangeType":1, "SkillRange":3, "BuffID":1014, "Desc":"使敌方恐惧，到处瞎跑" },
+		{ "ID":10026, "Name":"影分身", "SkillType":2, "StepLevel":3, "Level":3, "SkillRangeType":1, "SkillRange":1, "Desc":"分身出多个自己，到处乱跑，分身不能吞噬与被吞噬，但可以被控制" },
+		{ "ID":10027, "Name":"诅咒", "SkillType":1, "StepLevel":3, "Level":3, "SkillRangeType":4, "SkillRange":3, "BuffID":1015, "Desc":"使敌方进入禁魔状态，无法释放技能" },
+		{ "ID":10028, "Name":"弹射勾爪", "SkillType":1, "StepLevel":2, "Level":1, "SkillRangeType":6, "Desc":"可以让自身金闪闪，破除隐身" },
+		{ "ID":10029, "Name":"the world", "SkillType":1, "StepLevel":3, "Level":3, "SkillRangeType":1, "BuffID":1016, "Desc":"可以让自身金闪闪，破除隐身" },
+		{ "ID":10030, "Name":"筑墙", "SkillType":2, "StepLevel":2, "Level":1, "SkillRangeType":6, "SkillRange":1, "Desc":"可以让自身金闪闪，破除隐身" }
+	],
+	"defaultKey": {
+		"BuffID" :2,
+		"SkillRange" : 2,
+		"AnimName" : 1,
+		"Icon" : 1
+	}
+}

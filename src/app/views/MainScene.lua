@@ -1,17 +1,17 @@
 
 local MainScene = class("MainScene", cc.load("mvc").ViewBase)
 
-function MainScene:onCreate()
+function MainScene:ctor()
     -- add background image
     display.newSprite("HelloWorld.png")
         :move(display.center)
         :addTo(self)
+end
 
-    -- add HelloWorld label
-    cc.Label:createWithSystemFont("Hello World", "Arial", 40)
-        :move(display.cx, display.cy + 200)
-        :addTo(self)
+function MainScene:onEnter()
+end
 
+function MainScene:onExit()
 end
 
 return MainScene

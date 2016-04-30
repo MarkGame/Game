@@ -1,0 +1,23 @@
+{
+	"list":[
+		{ "ID":1001, "Name":"低级减速", "Type":1, "Time":3, "Desc":"移动速度降低", "Value":0.5 },
+		{ "ID":1002, "Name":"低级加速", "Type":2, "Time":3, "Desc":"移动速度提高", "Value":0.3 },
+		{ "ID":1003, "Name":"中级加速", "Type":2, "Time":3, "Desc":"移动速度提高", "Value":0.5 },
+		{ "ID":1004, "Name":"高级加速", "Type":2, "Time":3, "Desc":"移动速度提高", "Value":0.7 },
+		{ "ID":1005, "Name":"低级禁锢", "Type":1, "Time":1, "Desc":"无法行走" },
+		{ "ID":1006, "Name":"中级禁锢", "Type":1, "Time":1.5, "Desc":"无法行走" },
+		{ "ID":1007, "Name":"高级禁锢", "Type":1, "Time":2, "Desc":"无法行走" },
+		{ "ID":1008, "Name":"低级隐身", "Type":2, "Time":5, "Desc":"隐身" },
+		{ "ID":1009, "Name":"中级隐身", "Type":2, "Time":10, "Desc":"隐身" },
+		{ "ID":1010, "Name":"高级隐身", "Type":2, "Time":15, "Desc":"隐身" },
+		{ "ID":1011, "Name":"闪耀", "Type":3, "Time":10, "Desc":"可以看到隐身单位" },
+		{ "ID":1012, "Name":"低级恐惧", "Type":1, "Time":1, "Desc":"角色随机行走，无法控制" },
+		{ "ID":1013, "Name":"中级恐惧", "Type":1, "Time":1.5, "Desc":"角色随机行走，无法控制" },
+		{ "ID":1014, "Name":"高级恐惧", "Type":1, "Time":2, "Desc":"角色随机行走，无法控制" },
+		{ "ID":1015, "Name":"诅咒", "Type":4, "Time":5, "Desc":"饱食度消耗增加", "Value":1 },
+		{ "ID":1016, "Name":"时停", "Type":1, "Time":1, "Desc":"强制停止一切行动" }
+	],
+	"defaultKey": {
+		"Value" :2
+	}
+}
