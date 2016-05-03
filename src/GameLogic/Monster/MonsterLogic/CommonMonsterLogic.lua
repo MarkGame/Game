@@ -80,7 +80,7 @@ end
 
 --增加饱食度
 function CommonMonsterLogic:addSatiation( value )
-	local nowSatiation = self.monsterData:getMonsterNowSatiation()
+    local nowSatiation = self.monsterData:getMonsterNowSatiation()
 	if nowSatiation + value < 100 then 
 	   nowSatiation = self.nowSatiation + value
 	else

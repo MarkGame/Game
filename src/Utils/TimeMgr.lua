@@ -176,8 +176,7 @@ function TimeMgr:getDiffTime1(last_time)
 end
 
 function TimeMgr:timeNum2Text(time)
-	
-	local hour = math.floor(time / 3600);
+    local hour = math.floor(time / 3600);
     local min  = math.floor(time % 3600 / 60);
     local sec  = math.floor(time % 3600 % 60);
 	return string.format("%d时%d分%d秒",hour,min,sec);
