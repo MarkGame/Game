@@ -5,7 +5,7 @@
 	<projects>
 	</projects>
 	<buildSpec>
-	</buildSpec>
+	</buildSpec>  
 	<natures>
 		<nature>org.ccdt.cocosproject</nature>
 		<nature>org.eclipse.koneki.ldt.nature</nature>
