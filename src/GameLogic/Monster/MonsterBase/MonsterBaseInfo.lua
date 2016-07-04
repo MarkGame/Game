@@ -20,9 +20,46 @@ function MonsterBaseInfo:ctor( data )
     self.exclusiveSkillID = data.ExclusiveSkillID
     self.satiation = data.Satiation
     self.evolution = data.Evolution
-
-    self.nowSatiation = 100
+    self.maxSatiation = data.MaxSatiation
+    self.maxEvolution = data.MaxEvolution
+    self.hungry = data.Hungry
+    self.velocity = data.Velocity
+    --及时属性
+    --当前的 饱食度和进化值
+    self.nowSatiation = data.MaxSatiation
     self.nowEvolution = 0
+    self.nowVelocity = data.Velocity
+    self.nowLevel = data.Level
+
+    --出生时间
+    self.birthTime = 0
+
+    --是否 是主怪 不是则为中立怪
+    self.isMainMonster = false 
+
+end
+
+--从服务器拿去到的信息
+function MonsterBaseInfo:setMonsterBaseInfo(data)
+
+end
+
+
+function MonsterBaseInfo:setIsMainMonster( flag )
+	self.isMainMonster = true
+end
+
+function MonsterBaseInfo:getIsMainMonster(  )
+	return self.isMainMonster
+end
+
+function MonsterBaseInfo:setBirthTime( time )
+	self.birthTime = time
+    print("BirthTime :"..self.birthTime)
+end
+
+function MonsterBaseInfo:getBirthTime(  )
+	return self.birthTime 
 end
 
 function MonsterBaseInfo:getMonsterNowSatiation(  )
@@ -49,8 +86,12 @@ function MonsterBaseInfo:getMonsterName(  )
 	return self.name
 end
 
-function MonsterBaseInfo:getMonsterLevel(  )
+function MonsterBaseInfo:getInitMonsterLevel(  )
 	return self.level
+end
+
+function MonsterBaseInfo:getMonsterLevel(  )
+    return self.nowLevel
 end
 
 function MonsterBaseInfo:getMonsterResName(  )
@@ -88,5 +129,39 @@ end
 function MonsterBaseInfo:getMonsterEvolution(  )
 	return self.evolution
 end
+
+function MonsterBaseInfo:getMonsterMaxSatiation(  )
+	return self.maxSatiation
+end
+
+function MonsterBaseInfo:getMonsterMaxEvolution(  )
+	return self.maxEvolution
+end
+
+function MonsterBaseInfo:getMonsterHungry(  )
+    return self.hungry
+end
+
+--初始化怪兽移速
+function MonsterBaseInfo:initMonsterVelocity(  )
+    self.nowVelocity = self.velocity
+end
+
+function MonsterBaseInfo:setMonsterVelocity(velocity)
+    self.nowVelocity = velocity
+end
+
+function MonsterBaseInfo:getMonsterVelocity( )
+    return self.nowVelocity
+end
+
+function MonsterBaseInfo:getMonsterSatiationPercent(  )
+    return math.min(math.floor(self.nowSatiation/self.maxSatiation*100),100) 
+end
+
+function MonsterBaseInfo:getMonsterEvolutionPercent(  )
+    return math.min(math.floor(self.nowEvolution/self.maxEvolution*100),100)
+end
+
 
 return MonsterBaseInfo

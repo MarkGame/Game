@@ -312,14 +312,6 @@ cc.LabelEffect =
     GLOW    = 3,
 }
 
-cc.LabelOverflow =
-{
-    NONE = 0,
-    CLAMP = 1,
-    SHRINK = 2,
-    RESIZE_HEIGHT = 3
-};
-
 cc.KeyCodeKey =
 {
     "KEY_NONE",
@@ -516,8 +508,6 @@ cc.EventAssetsManagerEx =
         ASSET_UPDATED = 6,
         ERROR_UPDATING = 7,
         UPDATE_FINISHED = 8,
-        UPDATE_FAILED = 9,
-        ERROR_DECOMPRESS = 10
     },
 }
 
@@ -644,4 +634,3 @@ cc.BLUE = cc.c3b(0,0,255)
 cc.BLACK = cc.c3b(0,0,0)
 cc.WHITE = cc.c3b(255,255,255)
 cc.YELLOW = cc.c3b(255,255,0)
-

@@ -47,6 +47,10 @@ function Game:start()
     math.randomseed(os.time())
 
     print("enterLoadingScene")
+    
+    --开始唯一调度器 并开始 每帧调用
+    mtSchedulerMgr()
+
     self:enterLoadingScene()
 
 end

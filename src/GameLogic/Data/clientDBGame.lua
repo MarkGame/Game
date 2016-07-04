@@ -23,3 +23,4 @@ Monster = {
 switch = {id=1,name=2,icon=3,resName=4,animName=5,desc=6},
 [10001] = {10001, "幽灵", "", "Ghost_%s_%d.png", "Ghost_", "我是一只小幽灵"},
 }
+

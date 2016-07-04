@@ -33,13 +33,13 @@ function EventScene:ctor()
 end
 
 function EventScene:dispatchEvent(event,data)
-	g_EventDispatch:dispatchEvent(event,data)
+	mtEventDispatch():dispatchEvent(event,data)
 end
 
 function EventScene:registerEvent( event,callBack,groupID,priority )
 	--将事件加入数组，方便在退出的时候将侦听事件给移除掉
 	self.eventListeners = self.eventListeners or {}
-	self.eventListeners[#self.eventListeners + 1] = g_EventDispatch:registerEvent(event,callBack,groupID,priority)
+	self.eventListeners[#self.eventListeners + 1] = mtEventDispatch():registerEvent(event,callBack,groupID,priority)
 	return self.eventListeners[#self.eventListeners + 1]
 end
 
@@ -49,7 +49,7 @@ function EventScene:onExit( )
 	end
 	--统一对事件数组里面的时间进行释放
 	for i,v in ipairs(self.eventListeners) do
-		g_EventDispatch:removeEvent(v)
+		mtEventDispatch():removeEvent(v)
 	end
 	--self:_removeTimer();
 	
@@ -66,28 +66,4 @@ end
 -- function EventScene:createTMXTM(file)
 -- 	return cc.TMXTiledMap:create(file)
 -- end
-
-
-
--- --开启时间计时？
--- function EventNode:_startTimer( func,dt )
--- 	self:_removeTimer();
--- 	if dt == nil then
--- 		dt = 0;
--- 	end
--- 	self._timerCount = g_scheduler:scheduleScriptFunc(function (  )
--- 		if func then
--- 			func();
--- 		end
--- 	end, dt, false)
--- end
-
--- --移除时间计时
--- function EventNode:_removeTimer(  )
--- 	if self._timerCount then
--- 		g_scheduler:unscheduleScriptEntry(self._timerCount)
--- 		self._timerCount = nil;
--- 	end
--- end
-
 

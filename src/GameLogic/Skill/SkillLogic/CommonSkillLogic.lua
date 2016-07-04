@@ -4,8 +4,9 @@
 -- 技能的通用逻辑
 -- 
 --[[
-    技能类型需要有两种： 【主动技能】 和 【被动技能】 
-    该类只处理   【主动技能】
+    技能类型需要有三种： 【探测技能】 【吞噬技能】 【专属技能】 
+    该类只处理   【探测技能】 【吞噬技能】 以及创建每种专属技能
+                  
     存放的技能分 【固定技能】   一旦创建 就不会删除  目前只有 吞噬devour和 探测 Detect
                  【流动技能】   随着增加，删除
 
@@ -13,11 +14,17 @@
 
 local CommonSkillLogic = class("CommonSkillLogic")
 
-function CommonSkillLogic:ctor(skillID)
-    
-    self.skillID = skillID
+function CommonSkillLogic:ctor()
+  
+end
+
+function CommonSkillLogic:init(data)
+
+    self.skillID = data.skillID
     --技能的范围显示
     self.skillRangeDiagram = nil
+
+    self.buff = nil
 
     self:initSkillData()
 end
@@ -32,7 +39,8 @@ function CommonSkillLogic:initSkillData(  )
 
     self.skillInfo = g_Config:getData(GameConfig.addConfig["Skill"],"ID",self.skillID)[1]
     
-    	
+    self.skillData = mtSkillBaseInfo().new(self.skillInfo)
+
     self.skillRangeInfo = g_Config:getData2(GameConfig.addConfig["SkillRange"],{{key = "SkillRangeType",value = self.skillInfo.SkillRangeType},{key = "SkillRange",value = self.skillInfo.SkillRange}})[1]
     --dump(skillRangeInfo)
 end
@@ -48,6 +56,45 @@ function CommonSkillLogic:getSkillRangeInfo( )
 	return self.skillRangeInfo
 end
 
+function CommonSkillLogic:getSkillData( )
+  return self.skillData
+end
+
+--是否是一次性技能(用完即删)
+function CommonSkillLogic:isDisposableSkill( )
+    local skillType = self.skillData:getSkillType()
+    if skillType == SkillType.disposable then 
+       --判断拥有者是否为玩家，如果是玩家则自动移除，普通怪兽则不移除
+       if self.owner:getLogic():getMonsterData():getIsMainMonster()== true then 
+          return true
+       else
+          return false
+       end
+    else
+       return false
+    end
+end
+
+
+--启动技能 在每个单独技能中重新定义
+--这里的monster是释放技能的怪物本身
+--targetMonster = self:getTargetMonster(monster) 是指释放技能的怪物找到了目标怪兽
+--index 为流动技能的序号
+function CommonSkillLogic:launch(monster,index)
+  
+end
+
+--终止并清除技能
+--适用于强制清除技能
+function CommonSkillLogic:stopAndClearSkill( )
+   
+end
+
+--移除技能
+--一次性使用技能 使用之后，自我删除
+function CommonSkillLogic:removeSkill(index)
+  -- body
+end
 
 --[[
     
@@ -59,9 +106,12 @@ end
 
     skillRangeType  探测类型 技能的探测类型
 
+    monster 是释放者 本身？
+ 
 ]]
 function CommonSkillLogic:getDetectMonsterBySkill(monster)
-	mtBattleMgr():detectMonster(monster:getTiledMapPos(),self:getSkillRangeInfo())
+    if monster == nil then return end 
+	  return mtBattleMgr():detectMonster(monster:getTiledMapPos(),self:getSkillRangeInfo())
 end
 
 --获得技能内 最近的一个/多个目标 
@@ -78,6 +128,22 @@ function CommonSkillLogic:getTargetMonster(monster)
     end
 end
 
+--判断在技能范围内是否存在指定怪兽
+function CommonSkillLogic:isTargetInDetectList(monster,target)
+    local monsterList = self:getDetectMonsterBySkill(monster)
+    local isFind = false
+    if monsterList and #monsterList > 0 then
+       for k,v in ipairs(monsterList) do
+          --找到了 当前目标 
+          if v and v == target then 
+             isFind = true 
+             break
+          end
+       end
+    end
+    return isFind
+end
+
 
 --显示（创建）技能提示范围
 function CommonSkillLogic:showSkillRangeDiagram(monster)
@@ -85,9 +151,12 @@ function CommonSkillLogic:showSkillRangeDiagram(monster)
 
     self.skillRangeDiagram = self:getSkillRangeDiagram()
 
-    self.skillRangeDiagram:setAnchorPoint(cc.p(0.4,1))
-    --local size = self:getContentSize()
-    self.skillRangeDiagram:setPosition(cc.p(0,-50))
+    -- --if monster:getName() ~= "Player" then 
+    --     self.skillRangeDiagram:setAnchorPoint(cc.p(0.4,1))
+    --     --local size = self:getContentSize()
+    --     self.skillRangeDiagram:setPosition(cc.p(0,-50))
+    -- --end
+
     monster:addChild(self.skillRangeDiagram,10)
 end
 
@@ -102,6 +171,33 @@ end
 --获得技能范围的显示框
 function CommonSkillLogic:getSkillRangeDiagram()
     return mtSkillDetect():getSkillRangeDiagram(self.skillRangeInfo)
+end
+
+
+--吞噬目标怪兽 这里怪兽只有一只
+--根据公式 来计算吞噬的几率
+--成功 则执行 目标怪兽的销毁 和 增加对应的饱食度 和 进化值
+--失败 则执行 禁锢BUFF 并给目标怪兽 增加不可吞噬的BUFF
+--【只适用于 吞噬技能 ，其他技能请不要使用】
+function CommonSkillLogic:devourMonster(monster)
+   --应该判断一下 当前技能是否属于吞噬技能，不属于则无效并提示
+   local targetMonster = self:getTargetMonster(monster)
+   --先判断 目标怪兽 是否有 不可吞噬的BUFF
+   if targetMonster then 
+       local satiation = targetMonster:getLogic():getMonsterData():getMonsterSatiation()
+       local evolution = targetMonster:getLogic():getMonsterData():getMonsterEvolution()
+
+       print("satiation  :"..satiation.."evolution :"..evolution)
+   
+       monster:getLogic():addSatiation(satiation)
+       monster:getLogic():addEvolution(evolution)
+       if targetMonster:getLogic():getMonsterData():getIsMainMonster() == false then 
+          targetMonster:removeMonster()
+       end
+   else 
+       print("目标怪兽不存在")
+   end  
+   
 end
 
 

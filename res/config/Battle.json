@@ -1,8 +1,5 @@
 {
 	"list":[
-		{ "BatttleMapID":1, "HatcheryCount":1, "HatcheryPosTable":"0,-1|1,-1|1,0|1,1|0,1|-1,1|-1,0|-1,-1" }
-	],
-	"defaultKey": {
-		"WaitTime" :1
-	}
+		{ "BatttleMapID":1, "HatcheryCount":1, "HatcheryPosTable":"0,-1|1,-1|1,0|1,1|0,1|-1,1|-1,0|-1,-1", "WaitTime":"3", "":3 }
+	]
 }

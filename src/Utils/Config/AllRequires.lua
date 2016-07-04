@@ -106,6 +106,40 @@ function mtSkillDetect()
     return SkillDetect
 end
 
+-----------------------------------BUFF--------------------------------------
+local BuffMgr = nil;
+---BUFF管理器
+-- @function mtBuffMgr
+-- @return GameLogic.Buff.BuffMgr
+function mtBuffMgr()
+    if BuffMgr == nil then
+        BuffMgr = require("GameLogic.Buff.BuffMgr"):getInstance()
+    end
+    return BuffMgr
+end
+
+local CommonBuffLogic = nil;
+---BUFF通用逻辑
+-- @function mtCommonBuffLogic
+-- @return GameLogic.Buff.BuffLogic.CommonBuffLogic
+function mtCommonBuffLogic()
+    if CommonBuffLogic == nil then
+        CommonBuffLogic = require("GameLogic.Buff.BuffLogic.CommonBuffLogic")
+    end
+    return CommonBuffLogic
+end
+
+local BuffBaseInfo = nil;
+---BUFF管理器
+-- @function mtBuffBaseInfo
+-- @return GameLogic.Buff.BuffBase.BuffBaseInfo
+function mtBuffBaseInfo()
+    if BuffBaseInfo == nil then
+        BuffBaseInfo = require("GameLogic.Buff.BuffBase.BuffBaseInfo")
+    end
+    return BuffBaseInfo
+end
+
 -----------------------------------战斗--------------------------------------
 
 local BattleMgr = nil
@@ -144,6 +178,18 @@ function mtCommonHatcheryLogic()
 	end
     return CommonHatcheryLogic
 end
+
+local HatcheryBaseInfo = nil
+--- 孵化器逻辑
+-- @function mtHatcheryBaseInfo
+-- @return GameLogic.HatcheryBase.HatcheryBaseInfo
+function mtHatcheryBaseInfo()
+    if HatcheryBaseInfo == nil then
+        HatcheryBaseInfo = require("GameLogic.Hatchery.HatcheryBase.HatcheryBaseInfo")
+    end
+    return HatcheryBaseInfo
+end
+
 
 local HatcheryView = nil
 --- 孵化器视图
@@ -228,7 +274,7 @@ end
 local Queue = nil
 --- 队列管理
 -- @function mtQueue
--- @return GameLogic.Queue
+-- @return Utils.Queue
 function mtQueue()
     if Queue == nil then
         Queue = require("Utils.Queue")
@@ -239,7 +285,7 @@ end
 local TimeMgr = nil
 --- 时间管理
 -- @function mtTimeMgr
--- @return GameLogic.TimeMgr
+-- @return Utils.TimeMgr
 function mtTimeMgr()
     if TimeMgr == nil then
         TimeMgr = require("Utils.TimeMgr"):getInstance()
@@ -247,6 +293,40 @@ function mtTimeMgr()
     return TimeMgr
 end
 
+
+local SchedulerMgr = nil
+--- 统一调度器管理
+-- @function SchedulerMgr
+-- @return Utils.SchedulerMgr
+function mtSchedulerMgr()
+    if SchedulerMgr == nil then
+        SchedulerMgr = require("Utils.SchedulerMgr"):getInstance()
+    end
+    return SchedulerMgr
+end
+
+local EventDispatch = nil
+--- 事件管理
+-- @function mtEventDispatch
+-- @return Utils.EventDispatch
+function mtEventDispatch()
+    if EventDispatch == nil then
+        EventDispatch = require("Utils.EventDispatch"):getInstance()
+    end
+    return EventDispatch
+end
+
+
+local StateMachine = nil
+--- 状态机
+-- @function mtStateMachine
+-- @return Utils.StateMachine
+function mtStateMachine()
+    if StateMachine == nil then
+        StateMachine = require("Utils.StateMachine")
+    end
+    return StateMachine
+end
 -- local Game = nil
 -- --- 游戏管理
 -- -- @function mtGame

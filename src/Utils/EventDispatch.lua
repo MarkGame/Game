@@ -5,7 +5,7 @@
 -- 是一个单例 用于发送 接收事件 （不同类互相联系的桥梁）
 
 
-EventDispatch = class("EventDispatch",function()
+local EventDispatch = class("EventDispatch",function()
 	return cc.Node:create()
 end)
 
@@ -107,7 +107,7 @@ function EventDispatch:dispatchEvent(event,data,groupID)
     dispatcher:dispatchEvent(event)
 end
 
-
+return EventDispatch
 
 
 

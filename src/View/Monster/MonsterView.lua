@@ -19,63 +19,60 @@ function MonsterView:ctor(monsterLogic)
     
     --为什么怪兽这里会偏移位置显示？？？
     --2016年4月29日16:33:27的我：然而目前还没找到原因
-	self.sprite:setAnchorPoint(cc.p(0.6,1))
-	self.sprite:setPositionY(-32)
+    --2016年5月3日00:26:14的我：在场景直接加是好的，在中间出现了问题
+	-- self.sprite:setAnchorPoint(cc.p(0.6,1))
+	-- self.sprite:setPositionY(-32)
     
     --怪兽逻辑
     self.monsterLogic = monsterLogic
     self.monsterLogic:setMonster(self)
-
-    --父场景 
-    self:setParentScene(monsterLogic:getSceneParent())
 
 	self.monsterID = monsterLogic:getMonsterID()
 
     self:initMonster()
     
 	--现在十秒就杀死怪兽（暂时的）
-	self:killMonster()
+	--self:killMonster()
 
 end
 
 
 function MonsterView:initMonster()
-    
 
     self.monsterInfo = self.monsterLogic:getMonsterInfo()
-    
-
 	--初始化怪兽信息 以后可能是在加载中进行数据加载
 	self:initAnim(self.monsterInfo.ResName,self.monsterInfo.AnimName)--resName,animName)
     
     self:playAnim(AnimationType.walkD)
 	--self:initStateMachine()
+    self:initMonsterInfo()
     
     --test 探测技能
-    self.monsterLogic:getDetectSkill():showSkillRangeDiagram(self)
+    --self.monsterLogic:getDevourSkill():showSkillRangeDiagram(self)
 
 end
 
 function MonsterView:killMonster( )
-	if self.updateRefreshMonster ~= nil  then
-        g_scheduler:unscheduleScriptEntry(self.updateRefreshMonster);
-        self.updateRefreshMonster = nil 
-    end
-   
-    self.updateRefreshMonster = g_scheduler:scheduleScriptFunc(handler(self,self.removeMonster),5,false)
+
+
+    self.updateRefreshMonster = mtSchedulerMgr():removeScheduler(self.updateRefreshMonster)
+
+
+    self.updateRefreshMonster = mtSchedulerMgr():addScheduler(5,-1,handler(self,self.removeMonster))
+
 end
 
 function MonsterView:removeMonster()
 
-    --这里需要做 延迟一帧 remove  今晚太晚了 明天起来加 。2016年4月24日02:38:16
-    --2016年4月27日01:22:39 嗯 加好了
-	-- g_Worker:pushDelayQueue(function()
- --        self:removeFromParent()           
- --    end)
-    self.monsterLogic:devourMonster()
+	g_Worker:pushDelayQueue(function()
+        --从当前场上存活的怪兽移除
+        self.monsterLogic:removeMonster()
+        self:removeFromParent()           
+    end)
+    --self.monsterLogic:devourMonster()
 end
 
-function MonsterView:getMonsterLogic(  )
+function MonsterView:getLogic(  )
     return self.monsterLogic
 end
 
@@ -89,10 +86,12 @@ end
 
 function MonsterView:onExit()
     MonsterView.super.onExit(self)
-    if self.updateRefreshMonster ~= nil  then
-        g_scheduler:unscheduleScriptEntry(self.updateRefreshMonster);
-        self.updateRefreshMonster = nil 
-    end
+
+    self.updateRefreshMonster = mtSchedulerMgr():removeScheduler(self.updateRefreshMonster)
+
+    mtBattleMgr():removeMonsterFromList(self)
+    self:removeMonster()
+    
 end
 
 return MonsterView

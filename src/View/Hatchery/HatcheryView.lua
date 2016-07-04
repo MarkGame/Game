@@ -16,26 +16,31 @@ function HatcheryView:ctor(hatcheryLogic)
 	self:addChild(self.sprite)
 
 	self.sprite:setAnchorPoint(cc.p(0.25,0.2))
-	--self.sprite:setPositionY(-32)
-   
-    --父场景 
-	self:setParentScene(hatcheryLogic:getParentScene())
+    local size = self.sprite:getContentSize()
+	self.sprite:setPositionY(-size.height/2-10)
 
-    --self.parentScene = data.parent
+    self.parentScene = mtBattleMgr():getScene()
 	self.map = self.parentScene:getMap()
 	self.initPos = hatcheryLogic:getInitPos()
+
+    self.hatcheryLogic = hatcheryLogic
     
-    
-    hatcheryLogic:refreshMonster()
+    self.hatcheryLogic:produceMonster()
 end
 
 
 function HatcheryView:initEvent()
-    self:registerEvent(HATCHERY_START_LV1_MONSTER,function(event)
-        --开始刷新怪兽
-    hatcheryLogic:refreshMonster()
+    self:registerEvent(BATTLE_STAGE_REFRESH,function(event)
+        --开始刷新一阶段所属怪兽
+         self.hatcheryLogic:produceMonster()
     end)
 end
+
+
+function HatcheryView:getLogic()
+    return self.hatcheryLogic
+end
+
 
 function HatcheryView:onEnter()
     HatcheryView.super.onEnter(self)
@@ -44,10 +49,6 @@ end
 function HatcheryView:onExit()
     HatcheryView.super.onExit(self)
 
-    if self.updateRefreshMonster ~= nil  then
-       g_scheduler:unscheduleScriptEntry(self.updateRefreshMonster);
-       self.updateRefreshMonster = nil 
-    end
 end
 
 return HatcheryView

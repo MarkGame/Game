@@ -29,6 +29,10 @@ function MonsterMgr:createMonster( data )
     
     local monsterView = mtMonsterView().new(monsterLogic)
     
+    --设置怪兽的出生时间 （其实这些都是需要服务器来发的，目前先本地写）
+    local birthTime = mtTimeMgr():getCurTime()
+    monsterLogic:setMonsterBirthTime(birthTime)
+    
     return monsterView
 end
 

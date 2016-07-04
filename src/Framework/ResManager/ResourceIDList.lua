@@ -17,3 +17,8 @@ res.RES_BACKGROUND_ORIGINAL = "publish/UiBackground_1.json"
 --对话眷属/种族选择UI
 res.RES_DIALOGUE_DEPENDENTS_CHOICE = "publish/UiDialogue_1.json"
 res.RES_DIALOGUE_STIRPS_CHOICE = "publish/UiDialogue_2.json"
+
+--战斗场景主UI
+res.RES_BATTLE_MAIN_UI = "publish/UiBattle_1.json"
+
+

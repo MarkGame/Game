@@ -2,8 +2,6 @@
 -- Author: HLZ
 -- Date: 2016-01-08 10:51:13
 -- 主角节点封装
-require("Utils.StateMachine")
-
 
 PlayerNode = class("PlayerNode",function ()
 	return cc.Node:create()
@@ -57,8 +55,8 @@ function PlayerNode:ctor()
 
   --技能释放指示器
   self.diagram = nil
-    
-  self:setCameraMask(2)
+
+  self.parentScene = mtBattleMgr():getScene()
 
 	self:setName(self.__cname)
 
@@ -68,25 +66,29 @@ function PlayerNode:ctor()
 end
 
 function PlayerNode:dispatchEvent(event,data)
-	g_EventDispatch:dispatchEvent(event,data)
+	mtEventDispatch():dispatchEvent(event,data)
 end
 
 
 function PlayerNode:registerEvent( event,callBack,groupID,priority )
 	--将事件加入数组，方便在退出的时候将侦听事件给移除掉
 	self.eventListeners = self.eventListeners or {}
-	self.eventListeners[#self.eventListeners + 1] = g_EventDispatch:registerEvent(event,callBack,groupID,priority)
+	self.eventListeners[#self.eventListeners + 1] = mtEventDispatch():registerEvent(event,callBack,groupID,priority)
 	return self.eventListeners[#self.eventListeners + 1]
 end
 
 function PlayerNode:onExit( )
+  
+
 	if self.eventListeners == nil then
 		return 
 	end
 	--统一对事件数组里面的时间进行释放
 	for i,v in ipairs(self.eventListeners) do
-		g_EventDispatch:removeEvent(v)
+		mtEventDispatch():removeEvent(v)
 	end	
+
+
 end
 
 function PlayerNode:onEnter( )
@@ -95,20 +97,6 @@ end
 
 function PlayerNode:onHide(  )
 	
-end
-
-
-function PlayerNode:setParentScene(parent)
-	 self.parentScene = parent
-end
-
---设置 技能的释放范围
-function PlayerNode:setSkillRangeDiagram(diagram)
-    self.diagram = diagram
-    -- self.diagram:setAnchorPoint(cc.p(0.4,1))
-    -- --local size = self:getContentSize()
-    -- self.diagram:setPosition(cc.p(0,-50))
-    self:addChild(diagram,10)
 end
 
 --[[
@@ -160,7 +148,7 @@ end
 --用于重复调用的时候使用
 --只循环执行移动方法
 function PlayerNode:_refreshState()
-  
+  self:stopUpdateCamera()
   switch(self.nowState) : caseof
   {
    [MoveDirectionType.left]  = function()   -- 向左移动
@@ -176,6 +164,7 @@ function PlayerNode:_refreshState()
         self:moveToDown()
    end, 
     }
+
 end
 
 --通过传入的方向 去停止移动 并执行等待动作
@@ -239,9 +228,10 @@ end
 function PlayerNode:moveToPos(targetTiledPos)
     if self.parentScene:targetPosIsBarrier(targetTiledPos) then 
        self:stopAllActions()
-
+       self:startUpdateCamera()
        local targetWorldPos = self.parentScene:positionForTileCoord(targetTiledPos)
        local moveTo = cc.MoveTo:create(0.2,targetWorldPos)
+   
        
        local sequence = cc.Sequence:create(moveTo,cc.CallFunc:create(function()
                                                   self:_refreshState() 
@@ -283,6 +273,29 @@ function PlayerNode:moveToDown()
    self:moveToPos(targetTiledPos)
 end
 
+
+function PlayerNode:startUpdateCamera( )
+    self.lastPos = cc.p(self:getPosition())
+
+    self.updateCameraHandler = mtSchedulerMgr():removeScheduler(self.updateCameraHandler)
+
+    self.updateCameraHandler = mtSchedulerMgr():addScheduler(0,-1,handler(self,self.updateCamera))
+
+end
+
+function PlayerNode:stopUpdateCamera( )
+    self.updateCameraHandler = mtSchedulerMgr():removeScheduler(self.updateCameraHandler)
+end
+
+function PlayerNode:updateCamera( )
+    local distanceY = self:getPositionY()-self.lastPos.y 
+    local distanceX = self:getPositionX()-self.lastPos.x
+    self.parentScene:refreshMapPos(distanceX,distanceY)
+    self.lastPos = cc.p(self:getPosition())
+    --dump(self:getPosition())
+    --dump(self:convertToWorldSpace(cc.p(self:getPosition())))
+end
+
 --[[
     动画规格类型  静止图 上下左右各1 行走图 上下左右各2 吞噬图 ？ 释放技能图 ？ 死亡图 ？
     这里需要对所有的 角色进行一个名称规范
@@ -308,6 +321,14 @@ end
 
 function PlayerNode:playAnim( animType )
     AnimationCacheFunc.playAnimationForever(self.sprite, AnimationCacheFunc.getAnimationCache(self.animNameList[animType]))
+end
+
+function PlayerNode:initMonsterInfo(  )
+      --每一次移动的距离
+    self.pix = g_Config:getData(GameConfig.addConfig["Common"])[1].PixelSpec
+    --怪兽的速度 【在程序里是指 移动完一格的时间】
+    self.monsterVelocity = self.pix/self:getLogic():getMonsterData():getMonsterVelocity()
+    
 end
 
 --根据下一个坐标点来判断需要执行什么样的动作动画
@@ -397,7 +418,7 @@ end
 
 ]]
 function PlayerNode:initStateMachine( )
-	self.fsm = StateMachine.new()
+	self.fsm = mtStateMachine().new()
 
 	self.fsm:setupState({
 		initial = "idle",
@@ -405,9 +426,9 @@ function PlayerNode:initStateMachine( )
 		          {name = "stop",     from = {"walk","jump","defend","attack","skill","drop"}, to = "idle"},
 		          {name = "isWalk",   from = {"jump","defend","attack","skill","drop","idle"}, to = "walk"},
 		          {name = "isJump",   from = {"walk","idle","climb"},                          to = "jump" },
-			      {name = "isAttack", from = {"walk","idle","jump","defend","drop"},           to = "attack"},
-			      {name = "isSkill",  from = {"walk","idle","jump","defend"},                  to = "skill"},
-			      {name = "isDrop",   from = {"jump"},                                         to = "drop"},
+			        {name = "isAttack", from = {"walk","idle","jump","defend","drop"},           to = "attack"},
+			        {name = "isSkill",  from = {"walk","idle","jump","defend"},                  to = "skill"},
+			        {name = "isDrop",   from = {"jump"},                                         to = "drop"},
 			    },
         callbacks = {
 				   onbeforestart = function(event) print("[FSM] STARTING UP") end,
@@ -761,9 +782,11 @@ function PlayerNode:popStepAndAnimate()
 
     --需要判断一下 下一步的移动方向 从而改变当前人物的移动状态
     self:decideDirection(cc.p(self.parentScene:positionForTileCoord(cc.p(s:getPosition()))))
-   
+    
+    self.monsterVelocity = self.pix/self.playerLogic:getMonsterData():getMonsterVelocity()
+
     local sequence = cc.Sequence:create(
-     cc.MoveTo:create(0.2, cc.p(self.parentScene:positionForTileCoord(cc.p(s:getPosition())).x,self.parentScene:positionForTileCoord(cc.p(s:getPosition())).y)),
+     cc.MoveTo:create(self.monsterVelocity, cc.p(self.parentScene:positionForTileCoord(cc.p(s:getPosition())).x,self.parentScene:positionForTileCoord(cc.p(s:getPosition())).y)),
     
     cc.CallFunc:create(function()
     self:popStepAndAnimate()

@@ -10,7 +10,7 @@ require "cocos.init"
 LuaFileList = {
   "GameLogic.Game",
   "Framework.ResManager.ResManager",
-  "Utils.EventDispatch",
+  --"Utils.EventDispatch",
   "Utils.Functions",
 
   --"Utils.Log",
@@ -56,14 +56,14 @@ local function startGameWithSplash()
 
     g_game            = Game:getInstance()
     g_ResManager      = ResManager:getInstance()
-    g_EventDispatch   = EventDispatch:getInstance()
-    g_scheduler       = cc.Director:getInstance():getScheduler()
+    --g_EventDispatch   = EventDispatch:getInstance()
+    --g_scheduler       = cc.Director:getInstance():getScheduler()
     g_Config          = ConfigManager:getInstance()
     --g_TimeMgr         = TimeMgr:getInstance()
     g_Worker          = Worker:getInstance()  
 
     --加载资源
-    AnimationCacheFunc.addSpriteFramesWithFile("publish/action/monster.plist")
+    AnimationCacheFunc.addSpriteFramesWithFile("publish/action/monster64.plist")
 
     startGame()
 end

@@ -20,10 +20,12 @@ function PlayerView:ctor(playerLogic)
 	self.sprite:setAnchorPoint(cc.p(0.5,0.5))
 
     self.playerLogic = playerLogic
+    self.playerLogic:setMonster(self)
+
+    --设置名字
+    self:setName("Player")
 
     self:initPlayer()
-    --父场景
-	self:setParentScene(self.playerLogic:getSceneParent())
 
 end
     --self.sprite:setPositionY(32)
@@ -45,30 +47,25 @@ function PlayerView:initPlayer()
 
 	--初始化玩家信息 以后可能是在加载中进行数据加载
 	-- local data = {}
-	self.playerData = self.playerLogic:getPlayerData()
+	self.playerMonsterData = self.playerLogic:getMonsterData()
 
  --    self.powerValue = self.playerInfo:getPlayerPowerValue()
  --    self.speedValue = self.playerInfo:getPlayerSpeedValue()
  --    self.energyValue = self.playerInfo:getPlayerEnergyValue()
 
 	--初始化怪兽信息 以后可能是在加载中进行数据加载
-    self:initAnim(self.playerData:getMonsterResName(), self.playerData:getMonsterAnimName())
+    self:initAnim(self.playerMonsterData:getMonsterResName(), self.playerMonsterData:getMonsterAnimName())
    
     self:playAnim(AnimationType.walkD)
+
+    --初始化 怪物数据
+    self:initMonsterInfo()
 	--self:initStateMachine()
 
     --设置技能 
-    self.skill = mtSkillMgr():createSkill(10001)
+    --self.skill = mtSkillMgr():createSkill(10001)
 
-    self:setSkillRangeDiagram(self.skill:getSkillRangeDiagram())
-
-   
-    if self.updateRefreshMonster ~= nil  then
-        g_scheduler:unscheduleScriptEntry(self.updateRefreshMonster);
-        self.updateRefreshMonster = nil 
-    end
-   
-    self.updateRefreshMonster = g_scheduler:scheduleScriptFunc(handler(self,self.detectMonster),1,false)
+    --self.playerLogic:getDevourSkill():showSkillRangeDiagram(self)
 
 end
 
@@ -80,6 +77,14 @@ function PlayerView:initEvent()
 
 end
 
+function PlayerView:getLogic(  )
+    return self.playerLogic
+end
+
+function PlayerView:getMonsterData(  )
+    return self.playerMonsterData
+end
+
 function PlayerView:onEnter()
     PlayerView.super.onEnter(self)
 end
@@ -87,10 +92,10 @@ end
 function PlayerView:onExit()
     PlayerView.super.onExit(self)
     --self:doEventForce("stop")
-    if self.updateRefreshMonster ~= nil  then
-        g_scheduler:unscheduleScriptEntry(self.updateRefreshMonster);
-        self.updateRefreshMonster = nil 
-    end
+
+
+    --关闭摄像机跟随
+  self:stopUpdateCamera()
 end
 
 return PlayerView

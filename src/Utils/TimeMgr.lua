@@ -5,9 +5,9 @@
 @brief  时间转换类
 --]]
 
-local TimeMgr = class("TimeMgr",function ( )
-	return cc.Node:create();
-end)
+local socket = require("socket")
+
+local TimeMgr = class("TimeMgr")
 
 TimeMgr.countDownTime   = nil;
 
@@ -36,18 +36,22 @@ function TimeMgr:start(lastTime)
 	self.lastTime = lastTime;
 	self.srvTime = lastTime;
 	self.loginSrvTime = lastTime;
-	if self.updateTime then
-		g_scheduler:unscheduleScriptEntry(self.updateTime);
-	end
+	
+	self.updateTime = mtSchedulerMgr():removeScheduler(self.updateTime)
+
 	self._preTick = os.time();--cc.Time:getInterval()--os.time();
-	self.updateTime = g_scheduler:scheduleScriptFunc(function( dt )
-	  self._nowTick = os.time() -- cc.Time:getInterval();--;
-	  local dt = self._nowTick - self._preTick
-	  self.lastTime = self.lastTime + dt;
-	 -- logDebug("now clock:" .. self.lastTime)
-	  self._preTick = self._nowTick
-	  g_RankDataMgr:updateTime(dt)
-	end, 0, false);
+
+	local func = function ( )
+		  self._nowTick = os.time() -- cc.Time:getInterval();--;
+		  local dt = self._nowTick - self._preTick
+		  self.lastTime = self.lastTime + dt;
+		 -- logDebug("now clock:" .. self.lastTime)
+		  self._preTick = self._nowTick
+		  --g_RankDataMgr:updateTime(dt)
+	end
+
+	self.updateTime = mtSchedulerMgr():addScheduler(0,-1,func)
+
 end
 
 
@@ -68,6 +72,11 @@ end
 
 function TimeMgr:getCurTime( )
     return os.time();
+end
+
+--毫秒级时间，用于针对技能的CD，BUFF等
+function TimeMgr:getMSTime(  )
+	return socket.gettime()*1000
 end
 
 --服务器下发的时间戳，服务器时间由于有心跳包，所以一直是服务器时间
@@ -176,7 +185,8 @@ function TimeMgr:getDiffTime1(last_time)
 end
 
 function TimeMgr:timeNum2Text(time)
-    local hour = math.floor(time / 3600);
+	
+	local hour = math.floor(time / 3600);
     local min  = math.floor(time % 3600 / 60);
     local sec  = math.floor(time % 3600 % 60);
 	return string.format("%d时%d分%d秒",hour,min,sec);
@@ -255,12 +265,15 @@ end
 --秒表倒计时
 --second 
 function TimeMgr:countDown(curr_Second)
-	local updateTime = g_scheduler:scheduleScriptFunc(function(  )
-	  curr_Second = curr_Second - 1;
-	end, 1.0, false);
+
+	local func = function ( )
+		curr_Second = curr_Second - 1;
+	end
+
+	local updateTime = mtSchedulerMgr():addScheduler(1.0,-1,func)
 
 	if curr_Second <= 0 then
-		g_scheduler:unscheduleScriptEntry(updateTime);
+	   updateTime = mtSchedulerMgr():removeScheduler(updateTime)
 	end
 
 	return curr_Second;

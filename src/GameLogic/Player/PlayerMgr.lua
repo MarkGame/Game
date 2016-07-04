@@ -23,6 +23,10 @@ function PlayerMgr:createPlayerView(data)
 	local playerLogic = mtPlayerLogic().new(data)
 
 	local playerView = mtPlayerView().new(playerLogic)
+    local birthTime = mtTimeMgr():getCurTime()
+    playerLogic:setMonsterBirthTime(birthTime)
+
+    mtBattleMgr():addMonsterToList(playerView)
     
     return playerView
 end

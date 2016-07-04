@@ -44,8 +44,8 @@ function MonsterNode:ctor()
     self.nowState = MoveDirectionType.idle
 
     self.isMoving = false
-      
-    self:setCameraMask(2)
+    
+    self.parentScene = mtBattleMgr():getScene()
 
   	self:setName(self.__cname)
 
@@ -55,14 +55,14 @@ function MonsterNode:ctor()
 end
 
 function MonsterNode:dispatchEvent(event,data)
-	   g_EventDispatch:dispatchEvent(event,data)
+	   mtEventDispatch():dispatchEvent(event,data)
 end
 
 
 function MonsterNode:registerEvent( event,callBack,groupID,priority )
   	--将事件加入数组，方便在退出的时候将侦听事件给移除掉
   	self.eventListeners = self.eventListeners or {}
-  	self.eventListeners[#self.eventListeners + 1] = g_EventDispatch:registerEvent(event,callBack,groupID,priority)
+  	self.eventListeners[#self.eventListeners + 1] = mtEventDispatch():registerEvent(event,callBack,groupID,priority)
   	return self.eventListeners[#self.eventListeners + 1]
 end
 
@@ -72,7 +72,7 @@ function MonsterNode:onExit( )
   	end
   	--统一对事件数组里面的时间进行释放
   	for i,v in ipairs(self.eventListeners) do
-  		g_EventDispatch:removeEvent(v)
+  		mtEventDispatch():removeEvent(v)
   	end	
 end
 
@@ -82,11 +82,6 @@ end
 
 function MonsterNode:onHide(  )
 	
-end
-
-
-function MonsterNode:setParentScene(parent)
-  	self.parentScene = parent
 end
 
 --设置 技能的释放范围
@@ -184,6 +179,14 @@ function MonsterNode:playAnim( animType )
     AnimationCacheFunc.playAnimationForever(self.sprite, AnimationCacheFunc.getAnimationCache(self.animNameList[animType]))
 end
 
+function MonsterNode:initMonsterInfo(  )
+    --每一次移动的距离 公共配置
+    self.pix = g_Config:getData(GameConfig.addConfig["Common"])[1].PixelSpec
+    --怪兽的速度 【在程序里是指 移动完一格的时间】
+    self.monsterVelocity = self.pix/self.monsterLogic:getMonsterData():getMonsterVelocity()
+    
+end
+
 --根据下一个坐标点来判断需要执行什么样的动作动画
 function MonsterNode:decideDirection(nextPos)
     local nowPos = cc.p(self:getPosition())
@@ -275,7 +278,24 @@ end
 
 --==================================寻路过程开始==========================
 
-function MonsterNode:moveToward(target,callBack)
+--强制停止寻路
+function MonsterNode:stopMoveToward( )
+   self:stopActionByTag(1)
+   
+   --self:stopMoveByState(self.nowState)
+
+   --两个表清空
+   self.spOpenSteps = {}
+   self.spClosedSteps = {}
+
+   self.shortestPath = {}
+
+end
+
+--target 目标点坐标
+--callBack 最终的回调
+--callBackStep 分步回调
+function MonsterNode:moveToward(target,callBack,callBackStep)
 
     self:stopActionByTag(1)
 
@@ -290,8 +310,8 @@ function MonsterNode:moveToward(target,callBack)
 
 
 
-	  -- print("From: "..fromTileCoord.x,fromTileCoord.y)
-  	-- print("To: "..toTileCoord.x,toTileCoord.y)
+	  --print("From: "..fromTileCoord.x,fromTileCoord.y)
+  	--print("To: "..toTileCoord.x,toTileCoord.y)
     
     --两个表清空
     self.spOpenSteps = {}
@@ -335,7 +355,7 @@ function MonsterNode:moveToward(target,callBack)
 
       --print("找到路径")
       if (currentStep:getPosition().x == self._toTileCoord.x and currentStep:getPosition().y == self._toTileCoord.y) then  
-        self:constructPathAndStartAnimationFromStep(currentStep,callBack)
+        self:constructPathAndStartAnimationFromStep(currentStep,callBack,callBackStep)
         self.spOpenSteps = {}
         self.spClosedSteps = {}
         break
@@ -464,7 +484,7 @@ function MonsterNode:getStepIndex(steps,step)
 end
 
 
-function MonsterNode:constructPathAndStartAnimationFromStep(step,callBack)
+function MonsterNode:constructPathAndStartAnimationFromStep(step,callBack,callBackStep)
 
 	self.shortestPath = {}
   
@@ -476,11 +496,11 @@ function MonsterNode:constructPathAndStartAnimationFromStep(step,callBack)
 
     until step == nil 
 
-	self:popStepAndAnimate(callBack)
+	self:popStepAndAnimate(callBack,callBackStep)
 
 end 
 
-function MonsterNode:popStepAndAnimate(callBack)
+function MonsterNode:popStepAndAnimate(callBack,callBackStep)
 
     --当前点的坐标
     local _playerP = self.parentScene:tileCoordForPosition(cc.p(self:getPosition()))
@@ -502,8 +522,10 @@ function MonsterNode:popStepAndAnimate(callBack)
     --判断步骤全部完成
     local shortSize = #self.shortestPath + 1  
     if shortSize == 1 then 
-       self:stopMoveByState(self.nowState)
-       callBack()
+       --self:stopMoveByState(self.nowState)
+       if callBack ~= nil then 
+          callBack()
+       end
        return
     end 
  
@@ -513,12 +535,23 @@ function MonsterNode:popStepAndAnimate(callBack)
 
     --需要判断一下 下一步的移动方向 从而改变当前人物的移动状态
     self:decideDirection(cc.p(self.parentScene:positionForTileCoord(cc.p(s:getPosition()))))
-   
+    
+    --速度可能会随时变化，所以每次都要重新获取新的速度  t = s / v  
+    self.monsterVelocity = self.pix/self.monsterLogic:getMonsterData():getMonsterVelocity()
+
     local sequence = cc.Sequence:create(
-     cc.MoveTo:create(0.2, cc.p(self.parentScene:positionForTileCoord(cc.p(s:getPosition())).x,self.parentScene:positionForTileCoord(cc.p(s:getPosition())).y)),
+     cc.MoveTo:create(self.monsterVelocity, cc.p(self.parentScene:positionForTileCoord(cc.p(s:getPosition())).x,self.parentScene:positionForTileCoord(cc.p(s:getPosition())).y)),
     
     cc.CallFunc:create(function()
-    self:popStepAndAnimate(callBack)
+      --加入每一步执行完后的回调 
+      if callBackStep ~= nil then 
+         if callBackStep() == false then 
+            self:popStepAndAnimate(callBack,callBackStep)
+         end
+      else
+         self:popStepAndAnimate(callBack,callBackStep)
+      end
+      
     end)
     )
     

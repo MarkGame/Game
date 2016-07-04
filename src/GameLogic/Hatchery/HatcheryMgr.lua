@@ -22,11 +22,12 @@ function HatcheryMgr:ctor()
 end
 
 function HatcheryMgr:createHatchery(data)
-	local skillLogic = mtCommonHatcheryLogic().new(data)
+	local hatcheryLogic = mtCommonHatcheryLogic().new(data)
     
-    local hatcheryView = mtHatcheryView().new(skillLogic)
+    local hatcheryView = mtHatcheryView().new(hatcheryLogic)
     
     return hatcheryView
+    
 end
 
 return HatcheryMgr

@@ -71,10 +71,10 @@ function SkillDetect:getSkillRangeDiagram(skillRangeInfo)
 	           local sprite = cc.Sprite:create("publish/resource/Common/skillRange.png")
 	           local width = sprite:getContentSize().width
 	           sprite:setPosition(cc.p(dPosX*(width+2),dPosY*(width+2)))
-	           sprite:setOpacity(0.8)
+	           sprite:setOpacity(255*0.6)
 
-	           local action1 = cc.FadeTo:create(1,255*0.4)
-	           local action2 = cc.FadeTo:create(1,255*0.8)
+	           local action1 = cc.FadeTo:create(0.3,255*0.6)
+	           local action2 = cc.FadeTo:create(0.5,255*0.3)
 	           sprite:runAction(cc.RepeatForever:create(cc.Sequence:create(action1,action2))) 
 
 	           node:addChild(sprite,5)

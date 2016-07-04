@@ -23,14 +23,18 @@ function Worker:pushDelayQueue( task,delay )
 	if delay == nil then
 		delay = 0;
 	end
-	timer = g_scheduler:scheduleScriptFunc(function ( dt )
-		if timer then
-			g_scheduler:unscheduleScriptEntry(timer);
-		end
+
+	local func = function()
+        
+		timer = mtSchedulerMgr():removeScheduler(timer)
+		
 		if task ~= nil then
 			if type(task) == "function" then
 				task();
 			end
 		end
-	end, delay, false);
+    end
+
+	timer = mtSchedulerMgr():addScheduler(delay,-1,func)
+
 end
