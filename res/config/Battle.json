@@ -1,5 +1,5 @@
 {
 	"list":[
-		{ "BatttleMapID":1, "HatcheryCount":1, "HatcheryPosTable":"0,-1|1,-1|1,0|1,1|0,1|-1,1|-1,0|-1,-1", "WaitTime":"3", "":3 }
+		{ "BattleAreaID":1, "HatcheryCount":4, "HatcheryPosTable":"20,6|7,6|7,17|20,17", "InitHatchPosTable":"22,7|6,7|6,18|22,18", "WaitTime":"3", "":3 }
 	]
 }

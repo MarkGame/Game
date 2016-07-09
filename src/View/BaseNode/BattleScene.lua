@@ -209,11 +209,8 @@ function BattleScene:setMapPosY(direction,y)
     self.map:setPositionY(nowPosY)
 end
 
-
-
-
 function BattleScene:targetPosIsBarrier(targetPos)
-
+    --如果传进来的坐标，不在地图上，是否会报错？
     local gid = self.impactLayer:getTileGIDAt(targetPos)
     
     --dump(gid)

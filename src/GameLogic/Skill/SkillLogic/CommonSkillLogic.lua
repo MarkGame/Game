@@ -25,6 +25,12 @@ function CommonSkillLogic:init(data)
     self.skillRangeDiagram = nil
 
     self.buff = nil
+    
+    --技能CD冷却结束的时间
+    self.skillCDCompleteTime = 0
+    
+    --技能CD冷却剩余时间
+    self.residualTime = 0
 
     self:initSkillData()
 end
@@ -75,7 +81,6 @@ function CommonSkillLogic:isDisposableSkill( )
     end
 end
 
-
 --启动技能 在每个单独技能中重新定义
 --这里的monster是释放技能的怪物本身
 --targetMonster = self:getTargetMonster(monster) 是指释放技能的怪物找到了目标怪兽
@@ -95,6 +100,40 @@ end
 function CommonSkillLogic:removeSkill(index)
   -- body
 end
+
+--技能的冷却CD计算
+function CommonSkillLogic:refreshSkillCD(  )
+    local nowTime = mtTimeMgr():getMSTime()
+    
+    if nowTime >= self.skillCDCompleteTime then 
+       
+       self.updateSkillCDHandler = mtSchedulerMgr():removeScheduler(self.updateSkillCDHandler)
+       self.residualTime = 0
+       
+    else
+       self.residualTime = math.max(nowTime-self.skillCDCompleteTime,0) 
+    end
+end
+
+--开始计算技能冷却CD
+function CommonSkillLogic:startSkillCD( )
+    
+    self.residualTime = self.skillData:getSkillCD()
+
+    self.skillCDCompleteTime = mtTimeMgr():getMSTime() + self.skillData:getSkillCD()
+    
+    self.updateSkillCDHandler = mtSchedulerMgr():removeScheduler(self.updateSkillCDHandler)
+
+    self.updateSkillCDHandler = mtSchedulerMgr():addScheduler(0.1,-1,handler(self,self.refreshSkillCD))
+
+end
+
+--活动当前的技能剩余冷却时间
+function CommonSkillLogic:getResidualTime( )
+    return self.residualTime
+end
+
+
 
 --[[
     
@@ -184,15 +223,10 @@ function CommonSkillLogic:devourMonster(monster)
    local targetMonster = self:getTargetMonster(monster)
    --先判断 目标怪兽 是否有 不可吞噬的BUFF
    if targetMonster then 
-       local satiation = targetMonster:getLogic():getMonsterData():getMonsterSatiation()
-       local evolution = targetMonster:getLogic():getMonsterData():getMonsterEvolution()
-
-       print("satiation  :"..satiation.."evolution :"..evolution)
-   
-       monster:getLogic():addSatiation(satiation)
-       monster:getLogic():addEvolution(evolution)
-       if targetMonster:getLogic():getMonsterData():getIsMainMonster() == false then 
-          targetMonster:removeMonster()
+       if self:canIEat(monster,targetMonster) == true then 
+          self:devourMonsterSuccess(monster,targetMonster)
+       else
+          self:devourMonsterFail(monster,targetMonster)
        end
    else 
        print("目标怪兽不存在")
@@ -200,6 +234,33 @@ function CommonSkillLogic:devourMonster(monster)
    
 end
 
+--返回吞噬结果 
+function CommonSkillLogic:canIEat( monster,targetMonster )
+   return true
+end
 
+--吞噬怪兽成功
+function CommonSkillLogic:devourMonsterSuccess( monster,targetMonster )
+     local satiation = targetMonster:getLogic():getMonsterData():getMonsterSatiation()
+     local evolution = targetMonster:getLogic():getMonsterData():getMonsterEvolution()
+
+     print("satiation  :"..satiation.."evolution :"..evolution)
+ 
+     monster:getLogic():addSatiation(satiation)
+     monster:getLogic():addEvolution(evolution)
+     if targetMonster:getLogic():getMonsterData():getIsMainMonster() == false then 
+        targetMonster:removeMonster()
+     end
+     --如果是主角吃的，则添加流动技能
+     if monster:getLogic():getMonsterData():getIsMainMonster() == true then 
+        local newSkillID = targetMonster:getLogic():getMonsterData():getMonsterExclusiveSkillID()
+        monster:getLogic():createFlowSkill(newSkillID)
+     end
+end
+
+--吞噬失败
+function CommonSkillLogic:devourMonsterFail( monster,targetMonster )
+  -- body
+end
 
 return CommonSkillLogic

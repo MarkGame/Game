@@ -14,6 +14,15 @@ function CommonHatcheryLogic:ctor(data)
 
    self.monsterCount = 0
    
+   --当前孵化的怪兽ID
+   self.monsterID = 0 
+   
+   --剩余时间
+   self.residualTime = 0
+   
+   --孵化结束的时间
+   self.hatchCompleteTime = 0
+
    --是否正在孵化
    self.isHatching = false
    
@@ -32,6 +41,10 @@ end
 function CommonHatcheryLogic:getHatcheryData( )
     return self.hatcheryData
 end
+
+function CommonHatcheryLogic:getResidualTime(  )
+    return self.residualTime
+end
 --------------------------------------孵化场心脏------------------------------
 
 --[[
@@ -43,11 +56,10 @@ end
 
 ]]
 function CommonHatcheryLogic:updateHatcheryHeart()
-    
     --此时可以孵化
-    if self.isHatching == false then 
-        local monsterID = self:getSelectedMonsterID()
-        self:addMonster(monsterID)
+    if self.residualTime == 0 and self:isCanHatchery() == true then 
+        self.monsterID = self:getSelectedMonsterID()
+        self:hatchingMonster()
     end
 end
 
@@ -73,10 +85,10 @@ function CommonHatcheryLogic:getSelectedMonsterID( )
         randomNum = math.random(1,totalProb)
 
         for k,v in ipairs(randomMonsterList) do
-           if v and v.minNum <= randomNum and randomNum <= v.maxNum then 
-              tempInfo = v
-              break
-           end
+            if v and v.minNum <= randomNum and randomNum <= v.maxNum then 
+               tempInfo = v
+               break
+            end
         end
         
         --限制了怪兽的孵出总数量
@@ -89,7 +101,7 @@ function CommonHatcheryLogic:getSelectedMonsterID( )
                --继续循环一次，重新随机
             end
         else
-            monsterID = tempInfo.MonsterID
+            monsterID = tempInfo.MonsterID or 0 
             break
         end
     end
@@ -104,29 +116,112 @@ end
 
 --满足条件才增加怪兽
 function CommonHatcheryLogic:addMonster(monsterID)
+    
+    if monsterID == nil then
+       monsterID = self.monsterID 
+    end
 
     local data = {}
     data.monsterID = monsterID
     local monster = mtMonsterMgr():createMonster(data)
-    self.parentScene:getMap():addChild(monster,10) 
+    self.parentScene:getMap():addChild(monster,10)
     --2016年5月3日17:33:31的我：看一看 这里加载进的是不是 self.map
     --2016年5月4日00:04:30的我：是的，这里没问题
     mtBattleMgr():addMonsterToList(monster)
     --初始位置
     --2016年5月3日17:33:55的我：这里要看看 坐标是否正确
-    local initPos = self.parentScene:positionForTileCoord(cc.p(self.initPos.x,self.initPos.y))
+    --2016年7月5日14:43:53的我：这里怪兽生成的坐标 还是可以做点随机性的 后面写一个方法来实现
+    --2016年7月5日17:32:09的我：已经写好了，getMonsterRandomPos
+    local initPos = self:getMonsterRandomPos()
     monster:setPosition(initPos)
+    
+end
 
-    self.isHatching = true 
+--随机孵化初始点附近的坐标作为怪兽的孵化点
+function CommonHatcheryLogic:getMonsterRandomPos( )
+
+    --最多执行五次,否则就使用默认坐标
+    local count = 1
+    local searchPos = function ( )
+        if count <= 5 then 
+            local randomX = math.random(-5,5)
+            randomX = math.random(-5,5)
+            randomX = math.random(-5,5)
+            randomX = math.random(-5,5)
+            randomX = math.random(-5,5)
+
+            local randomY = math.random(-5,5)
+            randomY = math.random(-5,5)
+            randomY = math.random(-5,5)
+            randomY = math.random(-5,5)
+            randomY = math.random(-5,5)
+
+            local target = cc.p(randomX+self.initPos.x,randomY+self.initPos.y)
+            --判断新的坐标是否是可行点，不行则继续searchPos
+            if self.parentScene:targetPosIsBarrier(target) == true then 
+               return self.parentScene:positionForTileCoord(target)
+            else
+               count = count + 1
+               searchPos()
+            end
+        else
+            return self.parentScene:positionForTileCoord(cc.p(self.initPos.x,self.initPos.y))
+        end   
+    end 
+
+    --延迟一帧 执行搜索坐标
+    g_Worker:pushDelayQueue(function()
+      searchPos()
+    end)
 
 end
 
-function CommonHatcheryLogic:stopRefreshMonster( )
+--刷新孵化CD
+function CommonHatcheryLogic:refreshHatchCD( )
+
+    local nowTime = mtTimeMgr():getMSTime()
+    --已经完成孵化CD
+    if nowTime >= self.hatchCompleteTime then 
+       self:addMonster()
+       self.updateHatchCDHandler = mtSchedulerMgr():removeScheduler(self.updateHatchCDHandler)
+       self.residualTime = 0
+    else
+       self.residualTime = math.max(nowTime-self.hatchCompleteTime,0) 
+    end
 
 end
 
+--孵化怪兽
+function CommonHatcheryLogic:hatchingMonster(  )
+    local monsterInfo = g_Config:getData(GameConfig.addConfig["Monster"],"ID",self.monsterID)[1]
+    self.residualTime = monsterInfo.HatchTime
+    self.hatchCompleteTime = mtTimeMgr():getMSTime() + monsterInfo.HatchTime
+    self.updateHatchCDHandler = mtSchedulerMgr():removeScheduler(self.updateHatchCDHandler)
+    self.updateHatchCDHandler = mtSchedulerMgr():addScheduler(0.1,-1,handler(self,self.refreshHatchCD))
+end
 
+--清理
 function CommonHatcheryLogic:clean( )
  
 end
+
+--判断当前符合孵化条件
+function CommonHatcheryLogic:isCanHatchery( )
+    local nowStage = mtBattleMgr():getBattleStage()
+    --初始阶段 和 结束阶段是不需要 孵化怪兽的
+    if nowStage == BattleStage.init or nowStage == BattleStage.ended then 
+       return false
+    end 
+
+    --控制当前怪兽 当前阶段怪兽的总数
+    local hatcheryInfo = self.hatcheryData:getNowHatcheryInfo(mtBattleMgr():getBattleStage())
+    local monstersByLevelList,totalMonstersCounts = mtBattleMgr():getMonsterListByLevel()
+    if monstersByLevelList[nowStage] ~= nil and monstersByLevelList[nowStage].count >= hatcheryInfo.MonsterTotal then 
+       return false
+    else
+       return true
+    end
+
+end
+
 return CommonHatcheryLogic

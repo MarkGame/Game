@@ -86,8 +86,7 @@ function PlayerLogic:decSatiation( value )
 	end
 	--刷新怪兽的饱食度
 	self.playerMonsterData:setMonsterNowSatiation(nowSatiation)
-	
-	mtEventDispatch():dispatchEvent(REFRESH_PLAYER_INFO)
+
 end
 
 --增加进化值
@@ -147,6 +146,10 @@ function PlayerLogic:deleSkillFromFlowSkillsList(index)
 			end
 		end
     end
+end
+--刷新自身的怪兽的 心脏跳动
+function PlayerLogic:updateMonsterHeart( )
+	-- body
 end
 
 function PlayerLogic:getDevourSkill(  )

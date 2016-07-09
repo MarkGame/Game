@@ -1,0 +1,9 @@
+{
+	"list":[
+		{ "ID":1001, "Name":"胆小", "Type":1, "ActionID":1001, "ActionIncrease":50, "Desc":"影响怪兽行为，后面需要加入 各种行为的基础权值" },
+		{ "ID":1002, "Name":"勇敢", "Type":2, "ActionID":1002, "ActionIncrease":50, "Desc":"影响怪兽行为，后面需要加入 各种行为的基础权值" },
+		{ "ID":1003, "Name":"机智", "Type":2, "ActionID":1003, "ActionIncrease":50, "Desc":"影响怪兽行为，后面需要加入 各种行为的基础权值" },
+		{ "ID":1004, "Name":"灵活", "Type":2, "ActionID":1004, "ActionIncrease":50, "Desc":"影响怪兽行为，后面需要加入 各种行为的基础权值" },
+		{ "ID":1005, "Name":"狡诈", "Type":1, "ActionID":1001, "ActionIncrease":50, "Desc":"影响怪兽行为，后面需要加入 各种行为的基础权值" }
+	]
+}

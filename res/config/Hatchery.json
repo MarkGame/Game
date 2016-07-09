@@ -1,0 +1,34 @@
+{
+	"list":[
+		{ "Name":"第一战场第一阶段", "PoolID":1001, "BattleAreaID":101, "MonsterID":1002, "Prob":6000, "MaxCount":-1 },
+		{ "Name":"第一战场第一阶段", "PoolID":1001, "BattleAreaID":101, "MonsterID":1003, "Prob":2500, "MaxCount":-1 },
+		{ "Name":"第一战场第一阶段", "PoolID":1001, "BattleAreaID":101, "MonsterID":1004, "Prob":1000, "MaxCount":10 },
+		{ "Name":"第一战场第一阶段", "PoolID":1001, "BattleAreaID":101, "MonsterID":1005, "Prob":100, "MaxCount":3 },
+		{ "Name":"第一战场第一阶段", "PoolID":1001, "BattleAreaID":101, "MonsterID":1006, "Prob":400, "MaxCount":5 },
+		{ "Name":"第一战场第一阶段", "PoolID":1001, "BattleAreaID":101, "MonsterID":1007, "Prob":5000, "MaxCount":-1 },
+		{ "Name":"第一战场第一阶段", "PoolID":1001, "BattleAreaID":101, "MonsterID":1008, "Prob":2000, "MaxCount":-1 },
+		{ "Name":"第一战场第一阶段", "PoolID":1001, "BattleAreaID":101, "MonsterID":1009, "Prob":1000, "MaxCount":10 },
+		{ "Name":"第一战场第一阶段", "PoolID":1001, "BattleAreaID":101, "MonsterID":1010, "Prob":1500, "MaxCount":5 },
+		{ "Name":"第一战场第一阶段", "PoolID":1001, "BattleAreaID":101, "MonsterID":1011, "Prob":500, "MaxCount":10 },
+		{ "Name":"第一战场第二阶段", "PoolID":1002, "BattleAreaID":101, "MonsterID":1001, "Prob":4000, "MaxCount":-1 },
+		{ "Name":"第一战场第二阶段", "PoolID":1002, "BattleAreaID":101, "MonsterID":1002, "Prob":2500, "MaxCount":-1 },
+		{ "Name":"第一战场第二阶段", "PoolID":1002, "BattleAreaID":101, "MonsterID":1003, "Prob":1000, "MaxCount":100 },
+		{ "Name":"第一战场第二阶段", "PoolID":1002, "BattleAreaID":101, "MonsterID":1004, "Prob":1500, "MaxCount":20 },
+		{ "Name":"第一战场第二阶段", "PoolID":1002, "BattleAreaID":101, "MonsterID":1005, "Prob":500, "MaxCount":5 },
+		{ "Name":"第一战场第二阶段", "PoolID":1002, "BattleAreaID":101, "MonsterID":1006, "Prob":500, "MaxCount":20 },
+		{ "Name":"第一战场第二阶段", "PoolID":1002, "BattleAreaID":101, "MonsterID":1007, "Prob":4000, "MaxCount":-1 },
+		{ "Name":"第一战场第二阶段", "PoolID":1002, "BattleAreaID":101, "MonsterID":1008, "Prob":2000, "MaxCount":-1 },
+		{ "Name":"第一战场第二阶段", "PoolID":1002, "BattleAreaID":101, "MonsterID":1009, "Prob":1000, "MaxCount":5 },
+		{ "Name":"第一战场第三阶段", "PoolID":1003, "BattleAreaID":101, "MonsterID":1010, "Prob":2000, "MaxCount":10 },
+		{ "Name":"第一战场第三阶段", "PoolID":1003, "BattleAreaID":101, "MonsterID":1011, "Prob":250, "MaxCount":5 },
+		{ "Name":"第一战场第三阶段", "PoolID":1003, "BattleAreaID":101, "MonsterID":1012, "Prob":250, "MaxCount":100 },
+		{ "Name":"第一战场第三阶段", "PoolID":1003, "BattleAreaID":101, "MonsterID":1013, "Prob":500, "MaxCount":2 },
+		{ "Name":"第一战场第三阶段", "PoolID":1003, "BattleAreaID":101, "MonsterID":1014, "Prob":10000, "MaxCount":-1 },
+		{ "Name":"第二战场第一阶段", "PoolID":2001, "BattleAreaID":102, "MonsterID":1016, "Prob":10000, "MaxCount":-1 },
+		{ "Name":"第二战场第二阶段", "PoolID":2002, "BattleAreaID":102, "MonsterID":1017, "Prob":10000, "MaxCount":-1 },
+		{ "Name":"第二战场第三阶段", "PoolID":2003, "BattleAreaID":102, "MonsterID":1018, "Prob":10000, "MaxCount":-1 }
+	],
+	"defaultKey": {
+		"怪兽描述" :2
+	}
+}

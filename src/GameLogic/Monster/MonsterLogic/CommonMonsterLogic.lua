@@ -119,11 +119,25 @@ end
     由BattleMgr() 的 updateAllMonstersHeart()统一调度
 ]]
 function CommonMonsterLogic:updateMonsterHeart( )
-   --遍历自身BUFF并检查执行
-   self:refreshOwnedBuff()
+    --检查自身的属性值
+    self:checkMonsterData()
+    --遍历自身BUFF并检查执行
+    self:refreshOwnedBuff()
     
 end
-----------------------------------------------怪兽心跳 END-------------------------------------------------
+----------------------------------------------怪兽心跳 END--------------------------------------------------
+
+----------------------------------------------怪兽自身属性检查 START----------------------------------------
+function CommonMonsterLogic:checkMonsterData( )
+    local nowSatiation = self.monsterData:getMonsterNowSatiation()
+    if nowSatiation <= 0 then 
+       --删除怪兽
+       self.monster:removeMonster()
+    end
+
+end
+----------------------------------------------怪兽自身属性检查 END------------------------------------------
+
 
 ----------------------------------------------携带BUFF模块 模块 START---------------------------------------
 
@@ -283,12 +297,10 @@ function CommonMonsterLogic:initMonsterBrain( )
    
    --初始技能
    self:initMonsterSkill()
-
-   --开启怪物心跳
-   self:startUpdateMonster()
    
-   --执行第一步操作
-   self:doEvent("toSearch")
+   --启动大脑
+   self:runningBrain()
+   
 end
 
 --[[
@@ -307,8 +319,9 @@ end
     这里应该要废弃，使用 状态机来做这些事情
 ]]
 
-function CommonMonsterLogic:runningBrain(logicType,target)
-
+function CommonMonsterLogic:runningBrain()
+    --执行第一步操作
+   self:doEvent("toSearch")
 end
 
 ----------------------------------------------怪兽大脑 模块 END---------------------------------------------
@@ -368,10 +381,10 @@ function CommonMonsterLogic:autoRandomMovement( )
             randomX = math.random(-5,5)
 
             local randomY = math.random(-5,5)
-            randomX = math.random(-5,5)
-            randomX = math.random(-5,5)
-            randomX = math.random(-5,5)
-            randomX = math.random(-5,5)
+            randomY = math.random(-5,5)
+            randomY = math.random(-5,5)
+            randomY = math.random(-5,5)
+            randomY = math.random(-5,5)
 
             local target = cc.p(randomX+initX,randomY+initY)
             --判断新的坐标是否是可行点，不行则继续searchPos
@@ -436,7 +449,7 @@ function CommonMonsterLogic:decSatiation( value )
   else 
        nowSatiation = 0
        --饱食度为0 怪兽死亡
-       --
+       --在checkMonsterData统一去判断
   end
   --刷新怪兽的饱食度
   self.monsterData:setMonsterNowSatiation(nowSatiation)
@@ -509,31 +522,31 @@ function CommonMonsterLogic:chaseToTarget(target)
     local function funcStep( )
        if target ~= nil then --目标没有被销毁
 
-              local isFindBySkill = self.exclusiveSkill:isTargetInDetectList(self.monster,target)
-              local isFindByDevourSkill = self.devourSkill:isTargetInDetectList(self.monster,target)
-              --成功靠近了目标，并回调值为true
-              if isFindByDevourSkill == true then 
-                 --吞噬技能范围内，可以吞噬，发出吞噬指令
-                 self:doEvent("toDevour")
-                 self.monster:stopMoveToward()
-              else
-                  --在可以释放skill技能范围内时，回调，并继续执行追捕过程
-                  if isFindBySkill == true then   
-                     --skill释放指令 释放不释放不影响
-                     self:doEvent("toUseExclusive")
-                  end
-
-                  local nowTargetPos = self.parentScene:tileCoordForPosition(cc.p(target:getPosition()))
-                  if targetPos.x == nowTargetPos.x and targetPos.y == nowTargetPos.y then  --如果目标没有发生移动,不执行
-                     --print("不执行") 
-                     return false
-                  else  --目标发生移动 开始新的寻路
-                     --print("开始新的寻路")
-                     targetPos = self.parentScene:tileCoordForPosition(cc.p(target:getPosition()))
-                     self.monster:stopMoveToward()
-                     self.monster:moveToward(targetPos,nil,funcStep)
-                  end
+          local isFindBySkill = self.exclusiveSkill:isTargetInDetectList(self.monster,target)
+          local isFindByDevourSkill = self.devourSkill:isTargetInDetectList(self.monster,target)
+          --成功靠近了目标，并回调值为true
+          if isFindByDevourSkill == true then 
+             --吞噬技能范围内，可以吞噬，发出吞噬指令
+             self:doEvent("toDevour")
+             self.monster:stopMoveToward()
+          else
+              --在可以释放skill技能范围内时，回调，并继续执行追捕过程
+              if isFindBySkill == true then   
+                 --skill释放指令 释放不释放不影响
+                 self:doEvent("toUseExclusive")
               end
+
+              local nowTargetPos = self.parentScene:tileCoordForPosition(cc.p(target:getPosition()))
+              if targetPos.x == nowTargetPos.x and targetPos.y == nowTargetPos.y then  --如果目标没有发生移动,不执行
+                 --print("不执行") 
+                 return false
+              else  --目标发生移动 开始新的寻路
+                 --print("开始新的寻路")
+                 targetPos = self.parentScene:tileCoordForPosition(cc.p(target:getPosition()))
+                 self.monster:stopMoveToward()
+                 self.monster:moveToward(targetPos,nil,funcStep)
+              end
+          end
       else
           self:doEvent("toAutoMove")
           self.monster:stopMoveToward()  

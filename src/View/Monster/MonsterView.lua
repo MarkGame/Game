@@ -54,12 +54,9 @@ end
 
 function MonsterView:killMonster( )
 
-
     self.updateRefreshMonster = mtSchedulerMgr():removeScheduler(self.updateRefreshMonster)
-
-
+    
     self.updateRefreshMonster = mtSchedulerMgr():addScheduler(5,-1,handler(self,self.removeMonster))
-
 end
 
 function MonsterView:removeMonster()

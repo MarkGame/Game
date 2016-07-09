@@ -32,29 +32,34 @@ function BattleMgr:initData(data)
   	--当前的阶段  0 init 1 level1 2 :level2 3 :level3 4 :end
  
   	self.nowStage = BattleStage.init
-
     self.startTime = mtTimeMgr():getCurTime()
     
-    --当前战场ID
-    self.battleAreaID = 1
-
+  
     --当前存活的怪兽表
     --包含 主怪 中立怪 敌方怪
     self.monsterList = {}
-
     --孵化出的怪兽（保护已经死亡，消失的）
     --根据怪兽的ID 来存放
     self.allMonsterList = {}
-
     --当前激活的孵化场
     self.hatcheryList = {}
-
     --开始计时器
     self:startUpdateBattle()
+    self.battleScene = data.scene
 
-    self.scene = data.scene
+    --当前战场ID
+    self.battleAreaID = 101 --data.battleAreaID
+
+    self:initBattleInfo()
 
 end
+
+function BattleMgr:initBattleInfo( )
+    local battleInfo = g_Config:getData(GameConfig.addConfig["Battle"],"BattleAreaID",self.battleAreaID)[1]
+    self.battleData = mtBattleBaseInfo().new(battleInfo)
+end
+
+
 --设置我的怪兽
 --玩家自身
 function BattleMgr:setMyMonster(player)
@@ -64,16 +69,19 @@ end
 function BattleMgr:getMyMonster( )
     return self.player
 end
---设置当前的 战斗场景
+--设置当前的 战斗场景(暂时没用到的)
 function BattleMgr:setScene(scene)
-    self.scene = scene
+    self.battleScene = scene
 end
 
 -- 获得当前的战斗场景
 function BattleMgr:getScene(  )
-    return self.scene
+    return self.battleScene
 end
 
+function BattleMgr:getBattleData( )
+    return self.battleData
+end
 
 function BattleMgr:setBattleStage( stage )
    self.battleStage = stage
@@ -85,6 +93,16 @@ end
 
 function BattleMgr:getBattleAreaID( )
    return self.battleAreaID
+end
+
+--获取当前存货的怪兽
+function BattleMgr:getMonsterList( )
+   return self.monsterList
+end
+
+--获取 生成过的怪兽（包含当前存活和已经死亡的）
+function BattleMgr:getAllMonsterList(  )
+   return self.allMonsterList
 end
 
 ----------------------------------------------------怪兽----------------------------------------
@@ -113,12 +131,12 @@ end
 ]]
 function BattleMgr:removeMonsterFromList(monster)
   	if monster then 
-         for k,v in ipairs(self.monsterList) do
-         	   if v and v == monster then 
-                table.remove(self.monsterList,k)
-                break
-         	   end
-         end
+       for k,v in ipairs(self.monsterList) do
+       	   if v and v == monster then 
+              table.remove(self.monsterList,k)
+              break
+       	   end
+       end
   	end
 end
 
@@ -173,13 +191,11 @@ function BattleMgr:detectMonster(initPos,skillRangeInfo)
         for k,v in ipairs(self.monsterList) do
            if v then 
               local monsterPos = v:getTiledMapPos()
-              
               for kk,vv in ipairs(targetPosList) do
                   --当前坐标 和 存活的怪物有相同的 则 存放在 范围内怪兽数组里
                   if vv and vv.x == monsterPos.x and vv.y == monsterPos.y then 
                      table.insert(targetMonsterList,v)
                   end
-
               end
            end
         end
@@ -192,7 +208,7 @@ end
 
 --添加孵化场进入列表
 --[[
-    
+     
 ]]
 function BattleMgr:addHatcheryToList(hatchery)
     if hatchery then 
@@ -219,10 +235,8 @@ end
 function BattleMgr:startUpdateBattle( )
     --要想开始，先要结束
     self:stopUpdateBattle( )
-  
     --更新战斗信息 每帧调度一次
     self.updateBattleHandler = mtSchedulerMgr():addScheduler(0,-1,handler(self,self.updateBattle))
-    
     --扣除  耐饿值 每秒调度一次
     self.updateMonsterSatiationHandler = mtSchedulerMgr():addScheduler(1,-1,handler(self,self.updateMonsterSatiation))
 
@@ -241,27 +255,28 @@ end
 --这里应该是地图内的所有玩家 ，取最高值 进行判断
 
 function BattleMgr:updateBattle( )
+    --检查战场状态
+    self:checkBattleStage()
+    --这里去遍历每个怪兽对象的心脏跳动 节省mtSchedulerMgr() 的数组数量
+    self:updateAllMonstersHeart()
+    --遍历每个孵化场的心脏跳动
+    self:updateAllHatcheriesHeart()
+end
+
+--检查当前的战斗状态
+--这里还需要改一下
+function BattleMgr:checkBattleStage(  )
 
     --当前玩家的 饱食度 和 进化值
     local playerSatiation = self.player:getMonsterData():getMonsterNowSatiation()
     local playerEvolution = self.player:getMonsterData():getMonsterNowEvolution()
     --敌方玩家的 饱食度 和 进化值
-    --等
-    --print("playerSatiation : " .. playerSatiation)
-    --print("playerEvolution : " .. playerEvolution)
+    --
 
     if playerSatiation <= 0 then 
        mtEventDispatch():dispatchEvent(BATTLE_STATE_END,{winer = PlayerType.player})
     end
-    
-    self:checkBattleStage(playerEvolution)
 
-    --这里去遍历每个怪兽对象的心脏跳动 节省mtSchedulerMgr() 的数组数量
-    self:updateAllMonstersHeart()
-end
-
---检查当前的战斗状态
-function BattleMgr:checkBattleStage( playerEvolution )
     --阶段是不能跳跃的，只能一步一步的来，相同的阶段就不会持续发消息
     --第一阶段
     if playerEvolution < 20 then 
@@ -293,6 +308,7 @@ end
 
 --每秒扣除  耐饿值
 function BattleMgr:updateMonsterSatiation( )
+    --每只怪兽都扣除一下
     if self.monsterList and #self.monsterList > 0 then 
         for k,v in ipairs(self.monsterList) do
            if v then 
@@ -300,10 +316,16 @@ function BattleMgr:updateMonsterSatiation( )
            end
         end
     end
+    --刷新主界面 玩家信息
+    self.battleScene:refreshPlayerInfo()
 end
 
 --更新存活怪兽的心脏跳动
 function BattleMgr:updateAllMonstersHeart( )
+    --刷新玩家自身的
+    if self.player then 
+       self.player:getLogic():updateMonsterHeart()
+    end
     if self.monsterList and #self.monsterList > 0 then 
         for k,v in ipairs(self.monsterList) do
            if v then 

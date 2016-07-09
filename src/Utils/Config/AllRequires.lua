@@ -153,6 +153,19 @@ function mtBattleMgr()
     return BattleMgr
 end
 
+
+local BattleBaseInfo = nil
+--- 战场基本结构体
+-- @function mtBattleBaseInfo
+-- @return GameLogic.Battle.BattleBase.BattleBaseInfo
+function mtBattleBaseInfo()
+    if BattleBaseInfo == nil then
+        BattleBaseInfo = require("GameLogic.Battle.BattleBase.BattleBaseInfo")
+    end
+    return BattleBaseInfo
+end
+
+
 -------------------------------------孵化器---------------------------------
 
 local HatcheryMgr = nil

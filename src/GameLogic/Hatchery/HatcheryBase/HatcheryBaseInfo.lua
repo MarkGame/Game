@@ -19,8 +19,8 @@ function HatcheryBaseInfo:ctor( data )
 
 	self.battleAreaID = mtBattleMgr():getBattleAreaID()
     --获得表格里面的当前战场的 孵化池信息
-    self.hatcheryInfoList = g_Config:getData(GameConfig.addConfig["Hatchery"],"BattleAreaID",self.battleAreaID)
-
+    self.hatcheryList = g_Config:getData(GameConfig.addConfig["Hatchery"],"BattleAreaID",self.battleAreaID)
+    
     self.hatcheryPoolList = {}
     
     self:initHatcheryList()
@@ -29,7 +29,7 @@ end
 --初始化 孵化场列表
 --并根据poolID 来区分数组
 function HatcheryBaseInfo:initHatcheryList( )
-	for k,v in ipairs(self.hatcheryInfoList) do
+	for k,v in ipairs(self.hatcheryList) do
 		if v then 
            if self.hatcheryPoolList[v.PoolID] == nil then 
            	  self.hatcheryPoolList[v.PoolID] =  {}
@@ -48,7 +48,7 @@ end
 
 --通过当前阶段 获得孵化场信息
 function HatcheryBaseInfo:getHatcheryListByStage( stage )
-	local poolID = self.battleAreaID*100 + stage
+	local poolID = self:getPoolIDByStage(stage)
 	if self.hatcheryPoolList[poolID] and #self.hatcheryPoolList[poolID] > 0 then 
 	   return self.hatcheryPoolList[poolID]
 	else
@@ -75,6 +75,12 @@ function HatcheryBaseInfo:getRandomMonsterListByStage(stage)
         end
 	end
 	return randomMonsterList,totalProb
+end
+
+function HatcheryBaseInfo:getNowHatcheryInfo( stage )
+	local poolID = self:getPoolIDByStage(stage)
+	local hatcheryInfoList = g_Config:getData(GameConfig.addConfig["HatcheryInfo"],"PoolID",poolID)[1]
+    return hatcheryInfoList
 end
 
 return HatcheryBaseInfo

@@ -63,24 +63,14 @@ function BattleSceneView:initTileMap()
     local data = {}
     self.player =  mtPlayerMgr():createPlayerView(data)
     self.map:addChild(self.player,10) 
-    
-    --
     --self:setPlayer(self.player)
-
     --self.player:openOrColseGravity(true)
- 
     --主角初始位置
     self.initPlayerPos = self:positionForTileCoord(cc.p(14,8))
     --self.player:moveToward(cc.p(18,7))
-
     self.player:setPosition(self.initPlayerPos)
-
-    
-
     mtBattleMgr():setMyMonster(self.player)
     
-
-
     -- print("---convertToNodeSpace player:getPosition()--")
     -- dump(self.map:convertToNodeSpace(cc.p(self.player:getPosition())))
     -- print("---player:getPosition()--")
@@ -222,29 +212,25 @@ end
 --初始化 孵化场
 function BattleSceneView:initHatchery( )
     --这里去读表吧。。
-    local initPosList = {
-    {cc.p(22,7),cc.p(20,6)},
-    {cc.p(6,7),cc.p(7,6)},
-    {cc.p(6,18),cc.p(7,17)},
-    {cc.p(22,18),cc.p(20,17)}
-    }
+    --已经读表
+    local hatcheryCount = mtBattleMgr():getBattleData():getHatcheryCount()
+    local hatcheryPosList = mtBattleMgr():getBattleData():getHatcheryPosList()
+    local initHatchPosList = mtBattleMgr():getBattleData():getInitHatchPosList()
 
-    for i =1 ,4 do 
+    for i =1 ,hatcheryCount do 
         local data = {}
-        data.initPos = initPosList[i][1]
+        data.initPos = hatcheryPosList[i]
 
         local hatchery = mtHatcheryMgr():createHatchery(data)
         self.map:addChild(hatchery,10) 
 
         mtBattleMgr():addHatcheryToList(hatchery)
      
-        local hatcheryPos = self:positionForTileCoord(initPosList[i][2])
+        local hatcheryPos = self:positionForTileCoord(initHatchPosList[i])
         --self.player:moveToward(cc.p(18,7))
-
         hatchery:setPosition(hatcheryPos)
     end
-
-
+    
 end
 
 --获得 当前地图
@@ -252,6 +238,7 @@ function BattleSceneView:getMap( )
     return self.map
 end
 
+--获得当前玩家
 function BattleSceneView:getPlayer( )
     return self.player
 end
