@@ -211,15 +211,20 @@ end
 
 function BattleScene:targetPosIsBarrier(targetPos)
     --如果传进来的坐标，不在地图上，是否会报错？
-    local gid = self.impactLayer:getTileGIDAt(targetPos)
-    
-    --dump(gid)
-    
-    if gid == 0 then 
-       return true
-    else             --现在其他的都先默认是墙，以后可以扩展
+    local maxWidth = self.tiledMap:getMapSize().width-1
+    local maxHeight = self.tiledMap:getMapSize().height-1
+    if targetPos.x < 0 or targetPos.x > maxWidth or targetPos.y < 0 or targetPos.y > maxHeight then 
        return false
+    else
+        local gid = self.impactLayer:getTileGIDAt(targetPos)
+	    if gid == 0 then 
+	       return true
+	    else             --现在其他的都先默认是墙，以后可以扩展
+	       return false
+	    end
     end
+
+
 end
 
 

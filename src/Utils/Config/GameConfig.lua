@@ -11,7 +11,7 @@ GameConfig.addConfig["SkillRange"] = "config/SkillRange.json"
 GameConfig.addConfig["Battle"] = "config/Battle.json"
 GameConfig.addConfig["Hatchery"] = "config/Hatchery.json"
 GameConfig.addConfig["HatcheryInfo"] = "config/HatcheryInfo.json"
-GameConfig.addConfig["Common"] = "config/Common.json"
+--GameConfig.addConfig["Common"] = "config/Common.json"
 
 GameConfig.indexConfig = 
 {
@@ -20,7 +20,7 @@ GameConfig.indexConfig =
   {file = GameConfig.addConfig["Buff"],key = "ID"},
   {file = GameConfig.addConfig["SkillRange"],key = "SkillRangeType"},
   {file = GameConfig.addConfig["SkillRange"],key = "SkillRange"},
-  {file = GameConfig.addConfig["Common"]},
+  --{file = GameConfig.addConfig["Common"]},
   {file = GameConfig.addConfig["Hatchery"],key = "BattleAreaID"},
   {file = GameConfig.addConfig["HatcheryInfo"],key = "PoolID"},
   {file = GameConfig.addConfig["Battle"],key = "BattleAreaID"},

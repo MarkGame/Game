@@ -25,6 +25,8 @@ function CommonHatcheryLogic:ctor(data)
 
    --是否正在孵化
    self.isHatching = false
+
+   self:initHatcheryInfo()
    
 end
 
@@ -57,9 +59,12 @@ end
 ]]
 function CommonHatcheryLogic:updateHatcheryHeart()
     --此时可以孵化
-    if self.residualTime == 0 and self:isCanHatchery() == true then 
+
+    if self:isCanHatchery() == true and self.isHatching == false then 
+        print(" self.residualTime : "..self.residualTime)
+        self.isHatching = true
         self.monsterID = self:getSelectedMonsterID()
-        self:hatchingMonster()
+        self.residualTime = self:hatchingMonster()
     end
 end
 
@@ -92,16 +97,16 @@ function CommonHatcheryLogic:getSelectedMonsterID( )
         end
         
         --限制了怪兽的孵出总数量
-        if tempInfo.MaxCount > 0 then 
-           --在 BattleMgr 中查找 该怪兽生成的数量，如果大于等于 tempInfo.MaxCount，则继续循环，查找
-            if mtBattleMgr():getMonsterMaxCountByID(tempInfo.MonsterID) < tempInfo.MaxCount then 
-               monsterID = tempInfo.MonsterID
+        if tempInfo.maxCount > 0 then 
+           --在 BattleMgr 中查找 该怪兽生成的数量，如果大于等于 tempInfo.maxCount，则继续循环，查找
+            if mtBattleMgr():getMonsterMaxCountByID(tempInfo.monsterID) < tempInfo.maxCount then 
+               monsterID = tempInfo.monsterID
                break
             else
                --继续循环一次，重新随机
             end
         else
-            monsterID = tempInfo.MonsterID or 0 
+            monsterID = tempInfo.monsterID or 0 
             break
         end
     end
@@ -133,7 +138,10 @@ function CommonHatcheryLogic:addMonster(monsterID)
     --2016年7月5日14:43:53的我：这里怪兽生成的坐标 还是可以做点随机性的 后面写一个方法来实现
     --2016年7月5日17:32:09的我：已经写好了，getMonsterRandomPos
     local initPos = self:getMonsterRandomPos()
+    
     monster:setPosition(initPos)
+
+    self.isHatching = false
     
 end
 
@@ -141,45 +149,41 @@ end
 function CommonHatcheryLogic:getMonsterRandomPos( )
 
     --最多执行五次,否则就使用默认坐标
-    local count = 1
-    local searchPos = function ( )
-        if count <= 5 then 
-            local randomX = math.random(-5,5)
-            randomX = math.random(-5,5)
-            randomX = math.random(-5,5)
-            randomX = math.random(-5,5)
-            randomX = math.random(-5,5)
+    local pos = cc.p(0,0)
+  
+    for i = 1 , 5 do 
+        local randomX = math.random(-5,5)
+        randomX = math.random(-5,5)
+        randomX = math.random(-5,5)
+        randomX = math.random(-5,5)
+        randomX = math.random(-5,5)
 
-            local randomY = math.random(-5,5)
-            randomY = math.random(-5,5)
-            randomY = math.random(-5,5)
-            randomY = math.random(-5,5)
-            randomY = math.random(-5,5)
+        local randomY = math.random(-5,5)
+        randomY = math.random(-5,5)
+        randomY = math.random(-5,5)
+        randomY = math.random(-5,5)
+        randomY = math.random(-5,5)
 
-            local target = cc.p(randomX+self.initPos.x,randomY+self.initPos.y)
-            --判断新的坐标是否是可行点，不行则继续searchPos
-            if self.parentScene:targetPosIsBarrier(target) == true then 
-               return self.parentScene:positionForTileCoord(target)
-            else
-               count = count + 1
-               searchPos()
-            end
-        else
-            return self.parentScene:positionForTileCoord(cc.p(self.initPos.x,self.initPos.y))
-        end   
-    end 
+        local target = cc.p(randomX+self.initPos.x,randomY+self.initPos.y)
+        --判断新的坐标是否是可行点，不行则继续searchPos
+        if self.parentScene:targetPosIsBarrier(target) == true then 
+           pos = self.parentScene:positionForTileCoord(target)
+           break
+        end
+    end
 
-    --延迟一帧 执行搜索坐标
-    g_Worker:pushDelayQueue(function()
-      searchPos()
-    end)
+    if pos == cc.p(0,0) then 
+       pos = self.parentScene:positionForTileCoord(cc.p(self.initPos.x,self.initPos.y))
+    end
 
+    return pos
 end
 
 --刷新孵化CD
 function CommonHatcheryLogic:refreshHatchCD( )
 
     local nowTime = mtTimeMgr():getMSTime()
+    --print(mtTimeMgr():getMSTime())
     --已经完成孵化CD
     if nowTime >= self.hatchCompleteTime then 
        self:addMonster()
@@ -198,6 +202,8 @@ function CommonHatcheryLogic:hatchingMonster(  )
     self.hatchCompleteTime = mtTimeMgr():getMSTime() + monsterInfo.HatchTime
     self.updateHatchCDHandler = mtSchedulerMgr():removeScheduler(self.updateHatchCDHandler)
     self.updateHatchCDHandler = mtSchedulerMgr():addScheduler(0.1,-1,handler(self,self.refreshHatchCD))
+
+    return self.residualTime
 end
 
 --清理

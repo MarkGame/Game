@@ -25,11 +25,14 @@ function MonsterView:ctor(monsterLogic)
     
     --怪兽逻辑
     self.monsterLogic = monsterLogic
-    self.monsterLogic:setMonster(self)
+
+    self:initMonster()
+    
+    self.monsterLogic:initMonsterBrain(self)
 
 	self.monsterID = monsterLogic:getMonsterID()
 
-    self:initMonster()
+    
     
 	--现在十秒就杀死怪兽（暂时的）
 	--self:killMonster()
@@ -63,8 +66,10 @@ function MonsterView:removeMonster()
 
 	g_Worker:pushDelayQueue(function()
         --从当前场上存活的怪兽移除
-        self.monsterLogic:removeMonster()
-        self:removeFromParent()           
+        if self.monsterLogic ~= nil then 
+           self.monsterLogic:removeMonster()
+           self:removeFromParent()    
+        end       
     end)
     --self.monsterLogic:devourMonster()
 end

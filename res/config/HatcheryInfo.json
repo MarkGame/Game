@@ -1,9 +1,9 @@
 {
 	"list":[
 		{ "PoolID":1000, "Name":"第一战场初始阶段", "BattleAreaID":101 },
-		{ "PoolID":1001, "Name":"第一战场第一阶段", "BattleAreaID":101, "MonsterTotal":30 },
-		{ "PoolID":1002, "Name":"第一战场第二阶段", "BattleAreaID":101, "MonsterTotal":50 },
-		{ "PoolID":1003, "Name":"第一战场第三阶段", "BattleAreaID":101, "MonsterTotal":50 },
+		{ "PoolID":1001, "Name":"第一战场第一阶段", "BattleAreaID":101, "MonsterTotal":10 },
+		{ "PoolID":1002, "Name":"第一战场第二阶段", "BattleAreaID":101, "MonsterTotal":10 },
+		{ "PoolID":1003, "Name":"第一战场第三阶段", "BattleAreaID":101, "MonsterTotal":10 },
 		{ "PoolID":2000, "Name":"第二战场初始阶段", "BattleAreaID":102 },
 		{ "PoolID":2001, "Name":"第二战场第一阶段", "BattleAreaID":102, "MonsterTotal":30 },
 		{ "PoolID":2002, "Name":"第二战场第二阶段", "BattleAreaID":102, "MonsterTotal":50 },

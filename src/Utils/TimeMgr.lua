@@ -15,9 +15,9 @@ function TimeMgr:ctor( )
 	self.lastTime = os.time(); 
 	self.srvTime = 0;
 	self.loginSrvTime = 0;
-	self:retain();
+	--self:retain();
 	
-	self:setName(self.__cname)
+	--self:setName(self.__cname)
 end
 
 function TimeMgr:getInstance( )
@@ -76,7 +76,7 @@ end
 
 --毫秒级时间，用于针对技能的CD，BUFF等
 function TimeMgr:getMSTime(  )
-	return socket.gettime()*1000
+	return socket.gettime()--*1000
 end
 
 --服务器下发的时间戳，服务器时间由于有心跳包，所以一直是服务器时间

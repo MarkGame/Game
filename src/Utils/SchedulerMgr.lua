@@ -41,6 +41,7 @@ end
 function SchedulerMgr:updateGame( )
 
     --获取上一帧开始 到这一帧 开始 的间隔时间
+    --local t = mtTimeMgr():getCurTime()
     local eachFrameTime = mtTimeMgr():getMSTime() - self.lastFrameTime
     self.lastFrameTime =  mtTimeMgr():getMSTime()
 

@@ -176,12 +176,18 @@ function MonsterNode:initAnim(resName,animName)
 end
 
 function MonsterNode:playAnim( animType )
-    AnimationCacheFunc.playAnimationForever(self.sprite, AnimationCacheFunc.getAnimationCache(self.animNameList[animType]))
+    --素材有问题？ argument Animation must be non-nullptr
+    print(" animType : ".. animType)
+    if self.animNameList and #self.animNameList > 0 then 
+       AnimationCacheFunc.playAnimationForever(self.sprite, AnimationCacheFunc.getAnimationCache(self.animNameList[animType]))
+    else
+       print( " self.animNameList is nil ")
+    end
 end
 
 function MonsterNode:initMonsterInfo(  )
     --每一次移动的距离 公共配置
-    self.pix = g_Config:getData(GameConfig.addConfig["Common"])[1].PixelSpec
+    self.pix = 60--g_Config:getData(GameConfig.addConfig["Common"])[1].PixelSpec
     --怪兽的速度 【在程序里是指 移动完一格的时间】
     self.monsterVelocity = self.pix/self.monsterLogic:getMonsterData():getMonsterVelocity()
     

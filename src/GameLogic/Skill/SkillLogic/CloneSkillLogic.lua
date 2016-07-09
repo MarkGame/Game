@@ -24,7 +24,5 @@ function CloneSkillLogic:launch(monster)
       print("目标怪兽不存在")
    end
 end
-end
-
 
 return CloneSkillLogic

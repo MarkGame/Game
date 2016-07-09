@@ -325,7 +325,7 @@ end
 
 function PlayerNode:initMonsterInfo(  )
       --每一次移动的距离
-    self.pix = g_Config:getData(GameConfig.addConfig["Common"])[1].PixelSpec
+    self.pix = 60--g_Config:getData(GameConfig.addConfig["Common"])[1].PixelSpec
     --怪兽的速度 【在程序里是指 移动完一格的时间】
     self.monsterVelocity = self.pix/self:getLogic():getMonsterData():getMonsterVelocity()
     

@@ -25,14 +25,14 @@ function HatcheryView:ctor(hatcheryLogic)
 
     self.hatcheryLogic = hatcheryLogic
     
-    self.hatcheryLogic:produceMonster()
+    --self.hatcheryLogic:updateHatcheryHeart()
 end
 
 
 function HatcheryView:initEvent()
     self:registerEvent(BATTLE_STAGE_REFRESH,function(event)
         --开始刷新一阶段所属怪兽
-         self.hatcheryLogic:produceMonster()
+         --self.hatcheryLogic:updateHatcheryHeart()
     end)
 end
 

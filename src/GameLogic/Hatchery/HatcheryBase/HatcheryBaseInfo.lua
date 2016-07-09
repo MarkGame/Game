@@ -42,7 +42,7 @@ end
 
 --获得孵化池ID
 function HatcheryBaseInfo:getPoolIDByStage( stage )
-	local poolID = self.battleAreaID*100 + stage
+	local poolID = (self.battleAreaID%100)*1000 + stage
 	return poolID
 end
 

@@ -59,11 +59,6 @@ function CommonMonsterLogic:setMonsterBirthTime(time)
   self.monsterData:setBirthTime(time)
 end
 
---反向获得 怪兽本身的实例
-function CommonMonsterLogic:setMonster(monster)
-  self.monster = monster
-end
-
 --获得 吞噬技能
 function CommonMonsterLogic:getDevourSkill( )
   return self.devourSkill
@@ -132,7 +127,7 @@ function CommonMonsterLogic:checkMonsterData( )
     local nowSatiation = self.monsterData:getMonsterNowSatiation()
     if nowSatiation <= 0 then 
        --删除怪兽
-       self.monster:removeMonster()
+       --self.monster:removeMonster()
     end
 
 end
@@ -288,13 +283,14 @@ end
 ]]
 
 --初始化 怪兽大脑
-function CommonMonsterLogic:initMonsterBrain( )
+function CommonMonsterLogic:initMonsterBrain( monster )
    
    --初始化 基础框架
    --加入个性信息
    --检查是否有记忆传承
    --第一步是搜寻目标？？还是做个随机决策
-   
+   --反向获得 怪兽本身的实例
+   self.monster = monster
    --初始技能
    self:initMonsterSkill()
    
@@ -321,6 +317,7 @@ end
 
 function CommonMonsterLogic:runningBrain()
     --执行第一步操作
+
    self:doEvent("toSearch")
 end
 
@@ -336,10 +333,12 @@ function CommonMonsterLogic:autoSearchTarget( )
     
     --self.detectSkill:showSkillRangeDiagram(self.monster)
     local targets = self.detectSkill:getDetectMonsterBySkill(self.monster)
-    if targets then --找到目标后，告诉大脑 下一步要做什么
+    if targets and #targets > 0 then --找到目标后，告诉大脑 下一步要做什么
        self:setTargetMonster(targets)
+        print("toSelect")
        self:doEvent("toSelect")
     else           --没有找到目标，也要回调给大脑信息
+       print("toAutoMove")
        self:doEvent("toAutoMove")
     end
 
@@ -353,10 +352,12 @@ function CommonMonsterLogic:autoSelectTarget()
 
   if self.targetMonster and #self.targetMonster > 0 then 
      --这里先优先选择 最近的 一个目标
+     print("autoSelectTarget ")
      local target = self.targetMonster[1]
      self:setTargetMonster(target)
      self:doEvent("toChase")
   else
+     print(" autoSelectTarget  toAutoMove")
      self:doEvent("toAutoMove")
   end
 
@@ -369,43 +370,45 @@ end
 ]]
 --自动随机移动 
 function CommonMonsterLogic:autoRandomMovement( )
+    print("1")
     local initX,initY = self:getMonsterTileCoordPos()
+    print( " initX : "..initX .. " initY : "..initY)
     --最多执行五次，否则保持执行搜寻目标
-    local count = 1
-    local searchPos = function ( )
-        if count <= 5 then 
-            local randomX = math.random(-5,5)
-            randomX = math.random(-5,5)
-            randomX = math.random(-5,5)
-            randomX = math.random(-5,5)
-            randomX = math.random(-5,5)
+    for i = 1 , 5 do 
+        local randomX = math.random(-3,3)
+        randomX = math.random(-3,3)
+        randomX = math.random(-3,3)
+        randomX = math.random(-3,3)
+        randomX = math.random(-3,3)
 
-            local randomY = math.random(-5,5)
-            randomY = math.random(-5,5)
-            randomY = math.random(-5,5)
-            randomY = math.random(-5,5)
-            randomY = math.random(-5,5)
+        local randomY = math.random(-3,3)
+        randomY = math.random(-3,3)
+        randomY = math.random(-3,3)
+        randomY = math.random(-3,3)
+        randomY = math.random(-3,3)
 
-            local target = cc.p(randomX+initX,randomY+initY)
-            --判断新的坐标是否是可行点，不行则继续searchPos
-            if self.parentScene:targetPosIsBarrier(target) == true then 
-               local func = function ( )
-                  self:doEvent("toSearch")
-               end
-               self.monster:moveToward(target,func)
-            else
-                count = count + 1
-                searchPos()
-            end
+        local target = cc.p(randomX+initX,randomY+initY)
+        --判断新的坐标是否是可行点，不行则继续searchPos
+        if self.parentScene:targetPosIsBarrier(target) == true then 
+           local func = function ( )
+              self:doEvent("toSearch")
+           end
+           self.monster:moveToward(target,func)
+           break
         else
-            self:doEvent("toSearch")
-        end    
+           if i == 5 then 
+              local callBack = function()
+                 print(" autoRandomMovement toSearch ")
+                 self:doEvent("toSearch")
+                 self.updateHatchCDHandler = mtSchedulerMgr():removeScheduler(self.updateHatchCDHandler)
+              end
+              self.updateHatchCDHandler = mtSchedulerMgr():removeScheduler(self.updateHatchCDHandler)
+              self.updateHatchCDHandler = mtSchedulerMgr():addScheduler(1,-1,callBack)
+              
+           end
+        end
     end
 
-    --延迟 执行搜索坐标
-    g_Worker:pushDelayQueue(function()
-      searchPos()
-    end,0.5)
 end
 
 ----------------------------------------------智能搜寻目标 模块 END-----------------------------------------
@@ -622,6 +625,8 @@ end
 
 ]]
 function CommonMonsterLogic:initStateMachine( )
+
+  print(" initStateMachine ")
   self.fsm = mtStateMachine().new()
 
   self.fsm:setupState({
@@ -630,6 +635,7 @@ function CommonMonsterLogic:initStateMachine( )
     --正在配置表，等待test
     initial = "idle",
     events = {
+              {name = "toNothing", from = {"search","autoMove","chase","escape","devour","useExclusive"}, to = "idle"},    --执行搜寻
               {name = "toSearch", from = {"idle","autoMove","chase","escape","devour","useExclusive"}, to = "search"},    --执行搜寻
               {name = "toSelect", from = {"idle","autoMove","chase","escape","devour","useExclusive"}, to = "select"},    --去选择目标
               {name = "toAutoMove", from = {"idle","search","chase","escape","devour","useExclusive"}, to = "autoMove"},  --随机移动
@@ -639,50 +645,50 @@ function CommonMonsterLogic:initStateMachine( )
               {name = "toUseExclusive", from = {"idle","search","chase","escape","devour","devour"}, to = "useExclusive"},  --使用专属技能
           },
         callbacks = {
-           onbeforestart = function(event) print("[FSM] STARTING UP") end,
-           onstart = function(event) self:initMonsterBrain() end,
+           onbeforeidle = function(event) print("onbeforestart ") end,
+           onenteridle= function(event)  end,
           
            -- toSearch
-           onbeforetoSearch = function(event) end, 
-           onentertoSearch = function(event) self:autoSearchTarget() end,
-           onaftertoSearch  = function(event)  end,
-           onleavetoSearch = function(event)  end,
+           onbeforesearch = function(event) end, 
+           onentersearch = function(event) self:autoSearchTarget() end,
+           onaftersearch  = function(event)  end,
+           onleavesearch = function(event)  end,
 
            -- toSelect
-           onbeforetoSelect = function(event) end, 
-           onentertoSelect = function(event) self:autoSelectTarget() end,
-           onaftertoSelect  = function(event)  end,
-           onleavetoSelect = function(event)  end,
+           onbeforeselect = function(event) end, 
+           onenterselect = function(event) self:autoSelectTarget() end,
+           onafterselect  = function(event)  end,
+           onleaveselect = function(event)  end,
                      
            -- toAutoMove
-           onbeforetoAutoMove = function(event) end, 
-           onentertoAutoMove = function(event) self:autoRandomMovement() end,
-           onaftertoAutoMove = function(event)  end,
-           onleavetoAutoMove = function(event)  end,
+           onbeforeautoMove = function(event) end, 
+           onenterautoMove = function(event) self:autoRandomMovement() end,
+           onafterautoMove = function(event)  end,
+           onleaveautoMove = function(event)  end,
 
            -- toChase
-           onbeforetoChase = function(event) end, 
-           onentertoChase = function(event) self:chaseToTarget() end,
-           onaftertoChase  = function(event)  end,
-           onleavetoChase = function(event)  end,
+           onbeforechase = function(event) end, 
+           onenterchase = function(event) self:chaseToTarget() end,
+           onafterchase  = function(event)  end,
+           onleavechase = function(event)  end,
 
            -- toEscape
-           onbeforetoEscape = function(event) end, 
-           onentertoEscape = function(event) self:escapeFromTarget() end,
-           onaftertoEscape  = function(event)  end,
-           onleavetoEscape = function(event)  end,
+           onbeforeescape = function(event) end, 
+           onenterescape = function(event) self:escapeFromTarget() end,
+           onafterescape  = function(event)  end,
+           onleaveescape = function(event)  end,
 
            -- toDevour
-           onbeforetoDevour = function(event) end, 
-           onentertoDevour = function(event) self:devourMonster() end,
-           onaftertoDevour  = function(event)  end,
-           onleavetoDevour = function(event)  end,
+           onbeforedevour = function(event) end, 
+           onenterdevour = function(event) self:devourMonster() end,
+           onafterdevour  = function(event)  end,
+           onleavedevour = function(event)  end,
 
            -- toUseExclusive
-           onbeforetoUseExclusive = function(event) end, 
-           onentertoUseExclusive = function(event) self:useExclusiveSkill() end,
-           onaftertoUseExclusive  = function(event)  end,
-           onleavetoUseExclusive = function(event)  end,
+           onbeforeuseExclusive = function(event) end, 
+           onenteruseExclusive = function(event) self:useExclusiveSkill() end,
+           onafteruseExclusive  = function(event)  end,
+           onleaveuseExclusive = function(event)  end,
 
           },
   })

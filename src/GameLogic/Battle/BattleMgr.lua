@@ -31,7 +31,7 @@ end
 function BattleMgr:initData(data)
   	--当前的阶段  0 init 1 level1 2 :level2 3 :level3 4 :end
  
-  	self.nowStage = BattleStage.init
+  	self.battleStage = BattleStage.level1
     self.startTime = mtTimeMgr():getCurTime()
     
   
@@ -43,14 +43,17 @@ function BattleMgr:initData(data)
     self.allMonsterList = {}
     --当前激活的孵化场
     self.hatcheryList = {}
-    --开始计时器
-    self:startUpdateBattle()
+    
     self.battleScene = data.scene
 
     --当前战场ID
     self.battleAreaID = 101 --data.battleAreaID
 
     self:initBattleInfo()
+
+
+    --开始计时器
+    self:startUpdateBattle()
 
 end
 
@@ -172,7 +175,7 @@ function BattleMgr:getMonsterMaxCountByID( monsterID )
    if self.allMonsterList[monsterID] == nil then 
       return 0
    else 
-      return self.allMonsterList
+        return self.allMonsterList[monsterID]
    end
 end
 
@@ -266,7 +269,7 @@ end
 --检查当前的战斗状态
 --这里还需要改一下
 function BattleMgr:checkBattleStage(  )
-
+    
     --当前玩家的 饱食度 和 进化值
     local playerSatiation = self.player:getMonsterData():getMonsterNowSatiation()
     local playerEvolution = self.player:getMonsterData():getMonsterNowEvolution()
@@ -280,25 +283,25 @@ function BattleMgr:checkBattleStage(  )
     --阶段是不能跳跃的，只能一步一步的来，相同的阶段就不会持续发消息
     --第一阶段
     if playerEvolution < 20 then 
-       if self.nowStage == BattleStage.init then 
+       if self.battleStage == BattleStage.init then 
           self:setBattleStage(BattleStage.level1)
           mtEventDispatch():dispatchEvent(BATTLE_STAGE_REFRESH)
        end
     --第二阶段
     elseif playerEvolution >= 20 and playerEvolution < 80 then 
-       if self.nowStage == BattleStage.level1 then
+       if self.battleStage == BattleStage.level1 then
           self:setBattleStage(BattleStage.level2)
           mtEventDispatch():dispatchEvent(BATTLE_STAGE_REFRESH)  
        end
     --第三阶段
     elseif playerEvolution >= 80 and playerEvolution < 100 then 
-       if self.nowStage == BattleStage.level2 then
+       if self.battleStage == BattleStage.level2 then
           self:setBattleStage(BattleStage.level3)
           mtEventDispatch():dispatchEvent(BATTLE_STAGE_REFRESH)
        end
     --进化完成 游戏结束
     elseif playerEvolution == 100 then 
-       if self.nowStage == BattleStage.level3 then
+       if self.battleStage == BattleStage.level3 then
           self:setBattleStage(BattleStage.ended)
           mtEventDispatch():dispatchEvent(BATTLE_STATE_END) 
        end
