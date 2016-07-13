@@ -57,6 +57,16 @@ LOCAL_SRC_FILES := ../manual/CCLuaBridge.cpp \
           ../../../../external/lua/tolua/tolua_map.c \
           ../../../../external/lua/tolua/tolua_push.c \
           ../../../../external/lua/tolua/tolua_to.c \
+		  ../../../../external/lua/sproto/lsproto.c \
+		  ../../../../external/lua/sproto/sproto.c \
+		  ../../../../external/lua/cjson/fpconv.c \
+		  ../../../../external/lua/cjson/lua_cjson.c \
+		  ../../../../external/lua/cjson/strbuf.c \
+		  ../../../../external/lua/lpeg/lpcap.c \
+		  ../../../../external/lua/lpeg/lpcode.c \
+		  ../../../../external/lua/lpeg/lpprint.c \
+		  ../../../../external/lua/lpeg/lptree.c \
+		  ../../../../external/lua/lpeg/lpvm.c \
           ../../../../external/xxtea/xxtea.cpp \
           ../auto/lua_cocos2dx_audioengine_auto.cpp \
           ../manual/audioengine/lua_cocos2dx_audioengine_manual.cpp
