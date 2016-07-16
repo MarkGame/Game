@@ -3,11 +3,9 @@
 -- Date: 2016-01-08 10:51:13
 -- 主角节点封装
 
-PlayerNode = class("PlayerNode",function ()
+local PlayerNode = class("PlayerNode",function ()
 	return cc.Node:create()
 end)
-
-PlayerNode.__index = PlayerNode
 
 --[[
     继承于 PlayerNode的类，需要在ctor() onEnter() onExit() 加上 .super.ctor(self)类似的方法 
@@ -802,3 +800,5 @@ end
 --==================================寻路过程结束==========================
 
 --************************************************自动寻路模块 结束*************************************************--
+
+return PlayerNode

@@ -3,10 +3,9 @@
 -- Date: 2016-01-06 16:47:59
 -- 封装一个事件场景
 
-EventScene = class("EventScene", function (  )
+local EventScene = class("EventScene", function (  )
 	return cc.Scene:create()
 end)
-EventScene.__index = EventScene
 
 --[[
     继承于 EventScene的类，需要在ctor() onEnter() onExit() 加上 .super.ctor(self)类似的方法 
@@ -26,8 +25,6 @@ function EventScene:ctor()
 			self:onExit()
 		end
 	end)
-
-	self:setName(self.__cname)
 	--poi?
 	--self.hasPoped = false
 end
@@ -67,3 +64,4 @@ end
 -- 	return cc.TMXTiledMap:create(file)
 -- end
 
+return EventScene

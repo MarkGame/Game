@@ -8,7 +8,7 @@
      
 --]]
 
-BattleSceneView = class("BattleSceneView",BattleScene)
+local BattleSceneView = class("BattleSceneView",mtBattleScene())
 
 function BattleSceneView:ctor()
 	BattleSceneView.super.ctor(self)
@@ -93,6 +93,11 @@ function BattleSceneView:initTileMap()
     if g_game:getTargetPlatform() == cc.PLATFORM_OS_WINDOWS then 
        self:initKeyBoardListener()
     end
+
+
+    self.rocker = mtHRocker():createHRocker("publish/resource/close.png", "publish/resource/bg13.png", cc.p(100, 100))
+    self:addChild(self.rocker,10)
+    self.rocker:startRocker(true)
 
     -- local info = g_Config:getData2(GameConfig.addConfig["SkillRange"],{{key = "SkillRangeType",value = 1},{key = "SkillRange",value = 2}})
     -- dump(info)
@@ -260,3 +265,4 @@ function BattleSceneView.open()
 	--这里以后肯定要进行特殊处理
 end
 
+return BattleSceneView

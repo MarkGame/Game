@@ -10,16 +10,10 @@
     游戏的各类分支场景的管理
 ]]
 
-require("View.BaseNode.EventNode")
-require("View.BaseNode.PlayerNode")
-require("View.BaseNode.MonsterNode")
-require("View.BaseNode.HatcheryNode")
-require("View.BaseNode.BattleScene")
-require("View.BaseNode.EventScene")
 
-require("View.SceneView.LoadingSceneView")
-require("View.SceneView.StartSceneView")
-require("View.SceneView.BattleSceneView")
+local LoadingSceneView = require("View.SceneView.LoadingSceneView")
+local StartSceneView = require("View.SceneView.StartSceneView")
+local BattleSceneView = require("View.SceneView.BattleSceneView")
 
 
 

@@ -4,10 +4,10 @@
 -- 封装一个含有TiledMap场景
 -- 封装含有物理引擎的场景
 
-BattleScene = class("BattleScene", function (  )
+local BattleScene = class("BattleScene", function (  )
 	return cc.Scene:create() --cc.Scene:createWithPhysics()
 end)
-BattleScene.__index = BattleScene
+
 
 
 
@@ -427,6 +427,8 @@ function BattleScene:releasedSkillCBtnListener(isUseSkill)
         end
     end
 end
+
+return BattleScene
 --[[
 
     用的到的一些TiledMap地图的方法 

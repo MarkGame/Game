@@ -9,7 +9,7 @@
     
 --]]
 
-local PlayerView = class("PlayerView",PlayerNode)
+local PlayerView = class("PlayerView",mtPlayerNode())
 
 function PlayerView:ctor(playerLogic)
 	PlayerView.super.ctor(self)
