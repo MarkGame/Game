@@ -4,7 +4,7 @@
 -- 孵化场视图节点
 --
 
-local HatcheryView = class("HatcheryView",HatcheryNode)
+local HatcheryView = class("HatcheryView",mtHatcheryNode())
 
 function HatcheryView:ctor(hatcheryLogic)
 	HatcheryView.super.ctor(self)

@@ -8,7 +8,7 @@
     
 --]]
 
-local MonsterView = class("MonsterView",MonsterNode)
+local MonsterView = class("MonsterView",mtMonsterNode())
 
 function MonsterView:ctor(monsterLogic)
 	MonsterView.super.ctor(self)

@@ -340,6 +340,18 @@ function mtStateMachine()
     end
     return StateMachine
 end
+
+local HRocker = nil
+--- 虚拟摇杆
+-- @function mtHRocker
+-- @return Utils.HRocker
+function mtHRocker()
+    if HRocker == nil then
+        HRocker = require("Utils.HRocker")
+    end
+    return HRocker
+end
+
 -- local Game = nil
 -- --- 游戏管理
 -- -- @function mtGame
@@ -364,13 +376,81 @@ end
 
 ---------------------------------------封装节点------------------------------------
 
--- local BattleScene = nil 
--- --- 战斗场景节点
--- -- @function mtBattleScene
--- -- @return GameLogic.BattleScene
--- function mtBattleScene()
---     if BattleScene == nil then
---         BattleScene = require("View.BaseNode.BattleScene")
---     end
---     return BattleScene
--- end
+local EventNode = nil 
+--- 事件节点
+-- @function mtEventNode
+-- @return GameLogic.EventNode
+function mtEventNode()
+    if EventNode == nil then
+        EventNode = require("View.BaseNode.EventNode")
+    end
+    return EventNode
+end
+
+local PlayerNode = nil 
+--- 战斗场景节点
+-- @function mtPlayerNode
+-- @return GameLogic.BattleScene
+function mtPlayerNode()
+    if PlayerNode == nil then
+        PlayerNode = require("View.BaseNode.PlayerNode")
+    end
+    return PlayerNode
+end
+
+local MonsterNode = nil 
+--- 战斗场景节点
+-- @function mtMonsterNode
+-- @return GameLogic.MonsterNode
+function mtMonsterNode()
+    if MonsterNode == nil then
+        MonsterNode = require("View.BaseNode.MonsterNode")
+    end
+    return MonsterNode
+end
+
+local HatcheryNode = nil 
+--- 战斗场景节点
+-- @function mtHatcheryNode
+-- @return GameLogic.HatcheryNode
+function mtHatcheryNode()
+    if HatcheryNode == nil then
+        HatcheryNode = require("View.BaseNode.HatcheryNode")
+    end
+    return HatcheryNode
+end
+
+local BattleScene = nil 
+--- 战斗场景节点
+-- @function mtBattleScene
+-- @return GameLogic.BattleScene
+function mtBattleScene()
+    if BattleScene == nil then
+        BattleScene = require("View.BaseNode.BattleScene")
+    end
+    return BattleScene
+end
+
+local EventScene = nil 
+--- 事件场景节点
+-- @function mtEventScene
+-- @return GameLogic.EventScene
+function mtEventScene()
+    if EventScene == nil then
+        EventScene = require("View.BaseNode.EventScene")
+    end
+    return EventScene
+end
+
+local TouchLayer = nil 
+--- 点击场景节点
+-- @function mtTouchLayer
+-- @return GameLogic.TouchLayer
+function mtTouchLayer()
+    if TouchLayer == nil then
+        TouchLayer = require("View.BaseNode.TouchLayer")
+    end
+    return TouchLayer
+end
+
+

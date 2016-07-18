@@ -3,12 +3,9 @@
 -- Date: 2016-04-22 16:24:13
 -- 怪兽节点封装
 
-MonsterNode = class("MonsterNode",function ()
+local MonsterNode = class("MonsterNode",function ()
 	return cc.Node:create()
 end)
-
-MonsterNode.__index = MonsterNode
-
 
 --[[
     怪兽的通用的继承节点
@@ -570,3 +567,5 @@ end
 --==================================寻路过程结束==========================
 
 --************************************************自动寻路模块 结束*************************************************--
+
+return MonsterNode

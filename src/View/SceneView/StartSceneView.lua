@@ -3,7 +3,7 @@
 -- Date: 2015-12-29 14:56:16
 -- 开始菜单场景
 
-StartSceneView = class("StartSceneView",EventScene)
+local StartSceneView = class("StartSceneView",mtEventScene())
 
 
 function StartSceneView:ctor()
@@ -66,3 +66,4 @@ function StartSceneView.open()
 	--这里以后肯定要进行特殊处理
 end
 
+return StartSceneView

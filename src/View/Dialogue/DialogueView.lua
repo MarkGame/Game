@@ -3,7 +3,7 @@
 -- Date: 2016-01-28 15:27:58
 -- 对话框
 
-DialogueView = class("DialogueView",EventNode)
+DialogueView = class("DialogueView",mtEventNode())
 
 function DialogueView:ctor()
 	DialogueView.super.ctor(self)

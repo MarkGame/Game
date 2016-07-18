@@ -7,7 +7,7 @@
     切换场景 不对必要的资源进行释放
 ]]
 
-LoadingSceneView = class("LoadingSceneView",EventScene)
+local LoadingSceneView = class("LoadingSceneView",mtEventScene())
 
 function LoadingSceneView:ctor()
 	LoadingSceneView.super.ctor(self)
@@ -57,4 +57,6 @@ function LoadingSceneView.open()
 	view:createScene()
 	--这里以后肯定要进行特殊处理
 end
+
+return LoadingSceneView
 

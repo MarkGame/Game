@@ -3,11 +3,10 @@
 -- Date: 2015-12-29 12:30:49
 -- 节点类的封装
 
-EventNode = class("EventNode",function ()
+local EventNode = class("EventNode",function ()
 	return cc.Node:create()
 end)
 
-EventNode.__index = EventNode
 
 --[[
     继承于 EventNode的类，需要在ctor() onEnter() onExit() 加上 .super.ctor(self)类似的方法 
@@ -60,3 +59,5 @@ end
 function EventNode:onHide(  )
 	
 end
+
+return EventNode

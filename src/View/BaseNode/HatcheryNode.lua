@@ -3,11 +3,10 @@
 -- Date: 2016-04-24 00:51:13
 -- 孵化场节点封装
 
-HatcheryNode = class("HatcheryNode",function ()
+local HatcheryNode = class("HatcheryNode",function ()
 	return cc.Node:create()
 end)
 
-HatcheryNode.__index = HatcheryNode
 
 
 --[[
@@ -98,6 +97,6 @@ function HatcheryNode:playAnim( animType )
     AnimationCacheFunc.playAnimationForever(self.sprite, AnimationCacheFunc.getAnimationCache(self.animNameList[animType]))
 end
 
-
+return HatcheryNode
 
 	
