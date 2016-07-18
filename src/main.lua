@@ -8,6 +8,7 @@ require "cocos.init"
 
 --在这个里面加，通过数组来逐个require
 LuaFileList = {
+  "Utils.Config.AllRequires",
   "GameLogic.Game",
   "Framework.ResManager.ResManager",
   --"Utils.EventDispatch",
@@ -23,7 +24,7 @@ LuaFileList = {
   "Utils.Config.ConfigManager",
   --"Utils.TimeMgr",
   "Utils.Worker",
-  "Utils.Config.AllRequires",
+  
   --"GameLogic.Data.clientDBGame"
 }
 

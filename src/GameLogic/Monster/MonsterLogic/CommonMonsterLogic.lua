@@ -323,6 +323,24 @@ end
 
 ----------------------------------------------怪兽大脑 模块 END---------------------------------------------
 
+-----------------------------------------------休息 模块 START----------------------------------------------
+--冷静一下
+function CommonMonsterLogic:calm(  )
+
+   local func = function ( )
+       
+       self:doEvent("toSearch")
+
+       self.updateDelayHandler = mtSchedulerMgr():removeScheduler(self.updateDelayHandler)
+   end
+
+   self.updateDelayHandler = mtSchedulerMgr():removeScheduler(self.updateDelayHandler)
+
+   self.updateDelayHandler = mtSchedulerMgr():addScheduler(1,-1,func)
+
+end
+
+-----------------------------------------------休息 模块 END------------------------------------------------
 
 
 ----------------------------------------------智能搜寻目标 模块 START---------------------------------------
@@ -350,16 +368,16 @@ end
 ]]
 function CommonMonsterLogic:autoSelectTarget()
 
-  if self.targetMonster and #self.targetMonster > 0 then 
-     --这里先优先选择 最近的 一个目标
-     print("autoSelectTarget ")
-     local target = self.targetMonster[1]
-     self:setTargetMonster(target)
-     self:doEvent("toChase")
-  else
-     print(" autoSelectTarget  toAutoMove")
-     self:doEvent("toAutoMove")
-  end
+    if self.targetMonster and #self.targetMonster > 0 then 
+       --这里先优先选择 最近的 一个目标
+       print("autoSelectTarget ")
+       local target = self.targetMonster[1]
+       self:setTargetMonster(target)
+       self:doEvent("toChase")
+    else
+       print(" autoSelectTarget  toAutoMove")
+       self:doEvent("toAutoMove")
+    end
 
 end
 
@@ -370,9 +388,9 @@ end
 ]]
 --自动随机移动 
 function CommonMonsterLogic:autoRandomMovement( )
-    print("1")
+ 
     local initX,initY = self:getMonsterTileCoordPos()
-    print( " initX : "..initX .. " initY : "..initY)
+  
     --最多执行五次，否则保持执行搜寻目标
     for i = 1 , 5 do 
         local randomX = math.random(-3,3)
@@ -421,7 +439,10 @@ end
 --成功 则执行 目标怪兽的销毁 和 增加对应的饱食度 和 进化值 
 --失败 则执行 禁锢BUFF 并给目标怪兽 增加不可吞噬的BUFF
 function CommonMonsterLogic:devourMonster( )
-   self.devourSkill:devourMonster(self.monster)
+   local callBack = function (  )
+       self:doEvent("toIdle")
+   end
+   self.devourSkill:devourMonster(self.monster,callBack)
 end
 
 --增加饱食度
@@ -635,7 +656,7 @@ function CommonMonsterLogic:initStateMachine( )
     --正在配置表，等待test
     initial = "idle",
     events = {
-              {name = "toNothing", from = {"search","autoMove","chase","escape","devour","useExclusive"}, to = "idle"},    --执行搜寻
+              {name = "toIdle", from = {"search","autoMove","chase","escape","devour","useExclusive"}, to = "idle"},    --执行搜寻
               {name = "toSearch", from = {"idle","autoMove","chase","escape","devour","useExclusive"}, to = "search"},    --执行搜寻
               {name = "toSelect", from = {"idle","autoMove","chase","escape","devour","useExclusive"}, to = "select"},    --去选择目标
               {name = "toAutoMove", from = {"idle","search","chase","escape","devour","useExclusive"}, to = "autoMove"},  --随机移动
@@ -645,8 +666,12 @@ function CommonMonsterLogic:initStateMachine( )
               {name = "toUseExclusive", from = {"idle","search","chase","escape","devour","devour"}, to = "useExclusive"},  --使用专属技能
           },
         callbacks = {
-           onbeforeidle = function(event) print("onbeforestart ") end,
-           onenteridle= function(event)  end,
+           
+           -- toIdle
+           onbeforidle = function(event) end, 
+           onenteridle = function(event) self:calm() end,
+           onafteridle  = function(event)  end,
+           onleaveidle = function(event)  end,
           
            -- toSearch
            onbeforesearch = function(event) end, 
