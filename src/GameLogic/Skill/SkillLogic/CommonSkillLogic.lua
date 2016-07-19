@@ -218,15 +218,15 @@ end
 --成功 则执行 目标怪兽的销毁 和 增加对应的饱食度 和 进化值
 --失败 则执行 禁锢BUFF 并给目标怪兽 增加不可吞噬的BUFF
 --【只适用于 吞噬技能 ，其他技能请不要使用】
-function CommonSkillLogic:devourMonster(monster)
+function CommonSkillLogic:devourMonster(monster,callBack)
    --应该判断一下 当前技能是否属于吞噬技能，不属于则无效并提示
    local targetMonster = self:getTargetMonster(monster)
    --先判断 目标怪兽 是否有 不可吞噬的BUFF
    if targetMonster then 
        if self:canIEat(monster,targetMonster) == true then 
-          self:devourMonsterSuccess(monster,targetMonster)
+          self:devourMonsterSuccess(monster,targetMonster,callBack)
        else
-          self:devourMonsterFail(monster,targetMonster)
+          self:devourMonsterFail(monster,targetMonster,callBack)
        end
    else 
        print("目标怪兽不存在")
@@ -240,7 +240,7 @@ function CommonSkillLogic:canIEat( monster,targetMonster )
 end
 
 --吞噬怪兽成功
-function CommonSkillLogic:devourMonsterSuccess( monster,targetMonster )
+function CommonSkillLogic:devourMonsterSuccess( monster,targetMonster,callBack )
      local satiation = targetMonster:getLogic():getMonsterData():getMonsterSatiation()
      local evolution = targetMonster:getLogic():getMonsterData():getMonsterEvolution()
 
@@ -256,11 +256,19 @@ function CommonSkillLogic:devourMonsterSuccess( monster,targetMonster )
         local newSkillID = targetMonster:getLogic():getMonsterData():getMonsterExclusiveSkillID()
         monster:getLogic():createFlowSkill(newSkillID)
      end
+     
+     if callBack ~= nil then 
+        callBack()
+     end
 end
 
 --吞噬失败
-function CommonSkillLogic:devourMonsterFail( monster,targetMonster )
+function CommonSkillLogic:devourMonsterFail( monster,targetMonster,callBack )
   -- body
+
+     if callBack ~= nil then 
+        callBack()
+     end
 end
 
 return CommonSkillLogic
