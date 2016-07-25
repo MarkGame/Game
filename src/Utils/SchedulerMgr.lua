@@ -76,6 +76,9 @@ end
 --调用次数times 为-1时，为无限次数 为整型
 function SchedulerMgr:addScheduler(interval,times,callBack)
     --在队列里面累加
+    assert(type(interval) == "number")
+    assert(type(times) == "number")
+    assert(type(callBack)=="function")
 	self.schedulerID = self.schedulerID + 1 
 
     self.schedulerList[self.schedulerID] = 

@@ -15,7 +15,7 @@ local LoadingSceneView = require("View.SceneView.LoadingSceneView")
 local StartSceneView = require("View.SceneView.StartSceneView")
 local BattleSceneView = require("View.SceneView.BattleSceneView")
 
-
+local LoginSceneView = require("View.LoginView.LoginSceneView")
 
 Game = class("Game")
 Game.__index = Game
@@ -46,7 +46,7 @@ function Game:start()
     mtSchedulerMgr()
 
     self:enterLoadingScene()
-
+    --LoginSceneView.open()
 end
 
 function Game:getTargetPlatform()

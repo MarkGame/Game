@@ -454,3 +454,10 @@ function mtTouchLayer()
 end
 
 
+local netWorkService = nil
+function mtNetworkService()
+    if netWorkService == nil then
+        netWorkService = require("Network.NetworkService").new()
+    end
+    return netWorkService
+end
