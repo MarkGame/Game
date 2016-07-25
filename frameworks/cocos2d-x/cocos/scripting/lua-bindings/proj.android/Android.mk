@@ -67,6 +67,8 @@ LOCAL_SRC_FILES := ../manual/CCLuaBridge.cpp \
 		  ../../../../external/lua/lpeg/lpprint.c \
 		  ../../../../external/lua/lpeg/lptree.c \
 		  ../../../../external/lua/lpeg/lpvm.c \
+      ../../../../external/lua/crypt/lsha1.c \
+      ../../../../external/lua/crypt/lua-crypt.c \
           ../../../../external/xxtea/xxtea.cpp \
           ../auto/lua_cocos2dx_audioengine_auto.cpp \
           ../manual/audioengine/lua_cocos2dx_audioengine_manual.cpp

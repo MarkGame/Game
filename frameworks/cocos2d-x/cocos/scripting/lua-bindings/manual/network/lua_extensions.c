@@ -11,6 +11,7 @@ extern "C" {
 #include "sproto/lsproto.h"
 #include "lpeg/lptree.h"
 #include "cjson/lua_cjson.h"
+#include "crypt/lua-crypt.h"
 static luaL_Reg luax_exts[] = {
     {"socket.core", luaopen_socket_core},
 	{ "sproto.core",luaopen_sproto_core },
@@ -18,6 +19,7 @@ static luaL_Reg luax_exts[] = {
 	{"cjson.safe",luaopen_cjson_safe },
 	{"lpeg",luaopen_lpeg},
     {"mime.core", luaopen_mime_core},
+	{"crypt",luaopen_crypt},
     {NULL, NULL}
 };
 
