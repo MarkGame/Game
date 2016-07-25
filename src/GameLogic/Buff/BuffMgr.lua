@@ -7,7 +7,7 @@
     
 ]]
 
-require "Utils.Config.BuffMap"
+require "BuffMap"
 
 local BuffMgr = class("BuffMgr")
 

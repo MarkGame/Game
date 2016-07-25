@@ -45,8 +45,8 @@ function Game:start()
     --开始唯一调度器 并开始 每帧调用
     mtSchedulerMgr()
 
-    self:enterLoadingScene()
-    --LoginSceneView.open()
+    --self:enterLoadingScene()
+    LoginSceneView.open()
 end
 
 function Game:getTargetPlatform()

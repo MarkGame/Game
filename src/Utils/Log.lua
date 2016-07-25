@@ -8,7 +8,7 @@ logDebug(1)
 logTrace("222")
 --]]
 
-require("Utils.Queue")
+require("Queue")
 
 --日志输出级别
 local logCurrentLevel = 5;

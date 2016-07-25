@@ -1,6 +1,7 @@
 
 cc.FileUtils:getInstance():setPopupNotify(false)
 cc.FileUtils:getInstance():addSearchPath("src/")
+cc.FileUtils:getInstance():addSearchPath("src/common")
 cc.FileUtils:getInstance():addSearchPath("src/Network")
 cc.FileUtils:getInstance():addSearchPath("res/")
 
@@ -21,8 +22,8 @@ LuaFileList = {
   "Utils.TiledMapID",
   "Utils.GameUtil",
   "Utils.AnimationCacheFunc",
-  "Utils.GameDefine",
-  "Utils.Config.ConfigManager",
+  "GameDefine",
+  "ConfigManager",
   --"Utils.TimeMgr",
   "Utils.Worker",
   

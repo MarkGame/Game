@@ -336,7 +336,7 @@ local StateMachine = nil
 -- @return Utils.StateMachine
 function mtStateMachine()
     if StateMachine == nil then
-        StateMachine = require("Utils.StateMachine")
+        StateMachine = require("StateMachine")
     end
     return StateMachine
 end

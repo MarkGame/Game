@@ -5,8 +5,8 @@
 @brief  全局配置管理
 --]]
 
-require "Utils.Config.ConfigFileHelper"
-require "Utils.Config.GameConfig"
+require "ConfigFileHelper"
+require "GameConfig"
 ------------------------------------------------
 
 ConfigManager = class("ConfigManager");
