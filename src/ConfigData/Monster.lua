@@ -1,0 +1,50 @@
+ExcelConfig = ExcelConfig or {}
+ExcelConfig["Monster"] = {}
+ExcelConfig["Monster"].list = {
+{ MaxEvolution = 200,  Evolution = 12,  MaxSatiation = 200,  Name = "幽灵",  Level = 1,  Character = 1001,  HatchTime = 1,  Hungry = 1,  DevourSkillID = 10004,  Satiation = 10,  ExclusiveSkillID = 10007,  ResName = "Ghost_%d",  Velocity = 300,  AnimName = "Ghost_",  ID = 1001,  DetectSkillID = 10001,  Desc = "我是一只小幽灵"},
+{ MaxEvolution = 205,  Evolution = 13,  MaxSatiation = 210,  Name = "火妖",  Level = 2,  Character = 1002,  HatchTime = 2,  Hungry = 1,  DevourSkillID = 10005,  Satiation = 11,  ExclusiveSkillID = 10008,  ResName = "FireMan_%d",  Velocity = 300,  AnimName = "FireMan_",  ID = 1002,  DetectSkillID = 10002,  Desc = "火妖"},
+{ MaxEvolution = 210,  Evolution = 14,  MaxSatiation = 220,  Name = "骷髅怪",  Level = 1,  Character = 1003,  HatchTime = 3,  Hungry = 1,  DevourSkillID = 10006,  Satiation = 12,  ExclusiveSkillID = 10009,  ResName = "Skeleton_%d",  Velocity = 300,  AnimName = "Skeleton_",  ID = 1003,  DetectSkillID = 10003,  Desc = "一堆骷髅动起来了！"},
+{ MaxEvolution = 215,  Evolution = 15,  MaxSatiation = 230,  Name = "风妖",  Level = 1,  Character = 1004,  HatchTime = 4,  Hungry = 3,  DevourSkillID = 10004,  Satiation = 13,  ExclusiveSkillID = 10010,  ResName = "WindMan_%d",  Velocity = 300,  AnimName = "WindMan_",  ID = 1004,  DetectSkillID = 10001,  Desc = "一堆骷髅动起来了！"},
+{ MaxEvolution = 220,  Evolution = 16,  MaxSatiation = 240,  Name = "哥布林",  Level = 2,  Character = 1005,  HatchTime = 5,  Hungry = 1,  DevourSkillID = 10005,  Satiation = 14,  ExclusiveSkillID = 10007,  ResName = "Goblin_%d",  Velocity = 300,  AnimName = "Goblin_",  ID = 1005,  DetectSkillID = 10002,  Desc = "一堆骷髅动起来了！"},
+{ MaxEvolution = 225,  Evolution = 17,  MaxSatiation = 250,  Name = "死神",  Level = 1,  Character = 1001,  HatchTime = 6,  Hungry = 1,  DevourSkillID = 10006,  Satiation = 15,  ExclusiveSkillID = 10008,  ResName = "Death_%d",  Velocity = 300,  AnimName = "Death_",  ID = 1006,  DetectSkillID = 10003,  Desc = "一堆骷髅动起来了！"},
+{ MaxEvolution = 230,  Evolution = 18,  MaxSatiation = 260,  Name = "石像鬼",  Level = 1,  Character = 1002,  HatchTime = 7,  Hungry = 1,  DevourSkillID = 10004,  Satiation = 16,  ExclusiveSkillID = 10009,  ResName = "Gargoyle_%d",  Velocity = 300,  AnimName = "Gargoyle_",  ID = 1007,  DetectSkillID = 10001,  Desc = "一堆骷髅动起来了！"},
+{ MaxEvolution = 235,  Evolution = 19,  MaxSatiation = 270,  Name = "牛魔王",  Level = 3,  Character = 1003,  HatchTime = 8,  Hungry = 2,  DevourSkillID = 10005,  Satiation = 17,  ExclusiveSkillID = 10010,  ResName = "Supra_%d",  Velocity = 300,  AnimName = "Supra_",  ID = 1008,  DetectSkillID = 10002,  Desc = "一堆骷髅动起来了！"},
+{ MaxEvolution = 240,  Evolution = 20,  MaxSatiation = 280,  Name = "绿蜥蜴",  Level = 2,  Character = 1004,  HatchTime = 9,  Hungry = 1,  DevourSkillID = 10006,  Satiation = 18,  ExclusiveSkillID = 10007,  ResName = "Dragon_%d",  Velocity = 400,  AnimName = "Dragon_",  ID = 1009,  DetectSkillID = 10003,  Desc = "一堆骷髅动起来了！"},
+{ MaxEvolution = 245,  Evolution = 21,  MaxSatiation = 290,  Name = "红蜥蜴",  Level = 1,  Character = 1005,  HatchTime = 2,  Hungry = 1,  DevourSkillID = 10004,  Satiation = 19,  ExclusiveSkillID = 10008,  ResName = "Dragonr_%d",  Velocity = 300,  AnimName = "Dragonr_",  ID = 1010,  DetectSkillID = 10001,  Desc = "一堆骷髅动起来了！"},
+{ MaxEvolution = 250,  Evolution = 22,  MaxSatiation = 300,  Name = "食人花",  Level = 1,  Character = 1001,  HatchTime = 3,  Hungry = 1,  DevourSkillID = 10005,  Satiation = 20,  ExclusiveSkillID = 10009,  ResName = "Flower_%d",  Velocity = 300,  AnimName = "Flower_",  ID = 1011,  DetectSkillID = 10002,  Desc = "一堆骷髅动起来了！"},
+{ MaxEvolution = 255,  Evolution = 23,  MaxSatiation = 310,  Name = "冰冻化",  Level = 1,  Character = 1002,  HatchTime = 4,  Hungry = 5,  DevourSkillID = 10006,  Satiation = 21,  ExclusiveSkillID = 10010,  ResName = "Flowerb_%d",  Velocity = 300,  AnimName = "Flowerb_",  ID = 1012,  DetectSkillID = 10003,  Desc = "一堆骷髅动起来了！"},
+{ MaxEvolution = 260,  Evolution = 24,  MaxSatiation = 320,  Name = "史莱姆",  Level = 1,  Character = 1003,  HatchTime = 5,  Hungry = 1,  DevourSkillID = 10004,  Satiation = 22,  ExclusiveSkillID = 10007,  ResName = "Slime_%d",  Velocity = 300,  AnimName = "Slime_",  ID = 1013,  DetectSkillID = 10001,  Desc = "一堆骷髅动起来了！"},
+{ MaxEvolution = 265,  Evolution = 25,  MaxSatiation = 330,  Name = "鼻涕怪",  Level = 1,  Character = 1004,  HatchTime = 6,  Hungry = 1,  DevourSkillID = 10005,  Satiation = 23,  ExclusiveSkillID = 10008,  ResName = "Slimeg_%d",  Velocity = 300,  AnimName = "Slimeg_",  ID = 1014,  DetectSkillID = 10002,  Desc = "一堆骷髅动起来了！"},
+{ MaxEvolution = 270,  Evolution = 26,  MaxSatiation = 340,  Name = "魅魔伪娘",  Level = 3,  Character = 1005,  HatchTime = 7,  Hungry = 7,  DevourSkillID = 10006,  Satiation = 24,  ExclusiveSkillID = 10009,  ResName = "Succubus_%d",  Velocity = 300,  AnimName = "Succubus_",  ID = 1015,  DetectSkillID = 10003,  Desc = "一堆骷髅动起来了！"},
+{ MaxEvolution = 275,  Evolution = 27,  MaxSatiation = 350,  Name = "魅魔",  Level = 3,  Character = 1001,  HatchTime = 8,  Hungry = 1,  DevourSkillID = 10004,  Satiation = 25,  ExclusiveSkillID = 10010,  ResName = "Succubusp_%d",  Velocity = 200,  AnimName = "Succubusp_",  ID = 1016,  DetectSkillID = 10001,  Desc = "一堆骷髅动起来了！"},
+{ MaxEvolution = 280,  Evolution = 28,  MaxSatiation = 360,  Name = "吸血蝙蝠",  Level = 1,  Character = 1002,  HatchTime = 9,  Hungry = 1,  DevourSkillID = 10005,  Satiation = 26,  ExclusiveSkillID = 10007,  ResName = "Bat_%d",  Velocity = 300,  AnimName = "Bat_",  ID = 1017,  DetectSkillID = 10002,  Desc = "一堆骷髅动起来了！"},
+{ MaxEvolution = 285,  Evolution = 29,  MaxSatiation = 370,  Name = "大眼怪",  Level = 1,  Character = 1003,  HatchTime = 2,  Hungry = 1,  DevourSkillID = 10006,  Satiation = 27,  ExclusiveSkillID = 10008,  ResName = "Beholder_%d",  Velocity = 300,  AnimName = "Beholder_",  ID = 1018,  DetectSkillID = 10003,  Desc = "一堆骷髅动起来了！"},
+{ MaxEvolution = 290,  Evolution = 30,  MaxSatiation = 380,  Name = "触手怪",  Level = 1,  Character = 1004,  HatchTime = 3,  Hungry = 1,  DevourSkillID = 10004,  Satiation = 28,  ExclusiveSkillID = 10009,  ResName = "Jellyfish_%d",  Velocity = 300,  AnimName = "Jellyfish_",  ID = 1019,  DetectSkillID = 10001,  Desc = "一堆骷髅动起来了！"},
+{ MaxEvolution = 295,  Evolution = 31,  MaxSatiation = 390,  Name = "耗子",  Level = 1,  Character = 1005,  HatchTime = 4,  Hungry = 1,  DevourSkillID = 10005,  Satiation = 29,  ExclusiveSkillID = 10010,  ResName = "Mouse_%d",  Velocity = 300,  AnimName = "Mouse_",  ID = 1020,  DetectSkillID = 10002,  Desc = "一堆骷髅动起来了！"},
+{ MaxEvolution = 300,  Evolution = 32,  MaxSatiation = 400,  Name = "鱼人怪",  Level = 3,  Character = 1001,  HatchTime = 5,  Hungry = 5,  DevourSkillID = 10006,  Satiation = 30,  ExclusiveSkillID = 10007,  ResName = "Murloc_%d",  Velocity = 300,  AnimName = "Murloc_",  ID = 1021,  DetectSkillID = 10003,  Desc = "一堆骷髅动起来了！"},
+{ MaxEvolution = 305,  Evolution = 33,  MaxSatiation = 410,  Name = "蝎子精",  Level = 1,  Character = 1002,  HatchTime = 6,  Hungry = 1,  DevourSkillID = 10004,  Satiation = 31,  ExclusiveSkillID = 10008,  ResName = "Scorpion_%d",  Velocity = 300,  AnimName = "Scorpion_",  ID = 1022,  DetectSkillID = 10001,  Desc = "一堆骷髅动起来了！"},
+{ MaxEvolution = 310,  Evolution = 34,  MaxSatiation = 420,  Name = "蜘蛛精",  Level = 1,  Character = 1003,  HatchTime = 7,  Hungry = 1,  DevourSkillID = 10005,  Satiation = 32,  ExclusiveSkillID = 10009,  ResName = "Spider_%d",  Velocity = 300,  AnimName = "Spider_",  ID = 1023,  DetectSkillID = 10002,  Desc = "一堆骷髅动起来了！"},
+{ MaxEvolution = 315,  Evolution = 35,  MaxSatiation = 430,  Name = "蚊子精",  Level = 1,  Character = 1004,  HatchTime = 8,  Hungry = 1,  DevourSkillID = 10006,  Satiation = 33,  ExclusiveSkillID = 10010,  ResName = "Wasp_%d",  Velocity = 300,  AnimName = "Wasp_",  ID = 1024,  DetectSkillID = 10003,  Desc = "一堆骷髅动起来了！"},
+{ HatchTime = 9}
+}
+
+ExcelConfig["Monster"].key = {
+"ID",
+"Name",
+"Level",
+"ResName",
+"AnimName",
+"Desc",
+"Icon",
+"DevourSkillID",
+"DetectSkillID",
+"ExclusiveSkillID",
+"Velocity",
+"Satiation",
+"Evolution",
+"MaxSatiation",
+"MaxEvolution",
+"Hungry",
+"Character",
+"HatchTime"
+}

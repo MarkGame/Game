@@ -1,0 +1,50 @@
+ExcelConfig = ExcelConfig or {}
+ExcelConfig["Skill"] = {}
+ExcelConfig["Skill"].list = {
+{ SkillRangeType = 1,  SkillRange = 1,  Name = "低级探测",  Level = 1,  SkillType = 2,  StepLevel = 1,  ID = 10001,  Desc = "探测技能"},
+{ SkillRangeType = 1,  SkillRange = 2,  Name = "中级探测",  Level = 2,  SkillType = 2,  StepLevel = 2,  ID = 10002,  Desc = "探测技能"},
+{ SkillRangeType = 1,  SkillRange = 3,  Name = "高级探测",  Level = 3,  SkillType = 2,  StepLevel = 3,  ID = 10003,  Desc = "探测技能"},
+{ SkillRangeType = 4,  SkillRange = 1,  Name = "低级吞噬",  Level = 1,  SkillType = 1,  CD = 5,  StepLevel = 1,  ID = 10004,  Desc = "吞噬敌方 提升进化度 和 饱食度 "},
+{ SkillRangeType = 4,  SkillRange = 1,  Name = "中级吞噬",  Level = 2,  SkillType = 1,  CD = 5,  StepLevel = 2,  ID = 10005,  Desc = "吞噬敌方 提升进化度 和 饱食度 "},
+{ SkillRangeType = 4,  SkillRange = 1,  Name = "高级吞噬",  Level = 3,  SkillType = 1,  CD = 5,  StepLevel = 3,  ID = 10006,  Desc = "吞噬敌方 提升进化度 和 饱食度 "},
+{ SkillRangeType = 1,  SkillRange = 1,  Name = "低级减速",  Level = 1,  BuffID = 1001,  SkillType = 1,  CD = 5,  StepLevel = 1,  ID = 10007,  Desc = "范围内的怪兽减速"},
+{ SkillRangeType = 1,  SkillRange = 2,  Name = "中级减速",  Level = 2,  BuffID = 1002,  SkillType = 1,  CD = 5,  StepLevel = 2,  ID = 10008,  Desc = "范围内的怪兽减速"},
+{ SkillRangeType = 1,  SkillRange = 3,  Name = "高级减速",  Level = 3,  BuffID = 1003,  SkillType = 1,  CD = 5,  StepLevel = 3,  ID = 10009,  Desc = "范围内的怪兽减速"},
+{ SkillRangeType = 1,  SkillRange = 1,  Name = "低级加速",  Level = 1,  BuffID = 1004,  SkillType = 1,  CD = 5,  StepLevel = 1,  ID = 10010,  Desc = "自身加速"},
+{ SkillRangeType = 1,  SkillRange = 1,  Name = "中级加速",  Level = 2,  BuffID = 1005,  SkillType = 1,  CD = 5,  StepLevel = 2,  ID = 10011,  Desc = "自身加速"},
+{ SkillRangeType = 1,  SkillRange = 1,  Name = "高级加速",  Level = 3,  BuffID = 1006,  SkillType = 1,  CD = 5,  StepLevel = 3,  ID = 10012,  Desc = "自身加速"},
+{ SkillRangeType = 1,  SkillRange = 2,  Name = "低级禁锢",  Level = 1,  BuffID = 1005,  SkillType = 1,  CD = 5,  StepLevel = 2,  ID = 10013,  Desc = "将敌方无法移动"},
+{ SkillRangeType = 1,  SkillRange = 2,  Name = "中级禁锢",  Level = 2,  BuffID = 1006,  SkillType = 1,  CD = 5,  StepLevel = 2,  ID = 10014,  Desc = "将敌方无法移动"},
+{ SkillRangeType = 1,  SkillRange = 2,  Name = "高级禁锢",  Level = 3,  BuffID = 1007,  SkillType = 1,  CD = 5,  StepLevel = 3,  ID = 10015,  Desc = "将敌方无法移动"},
+{ SkillRangeType = 1,  SkillRange = 3,  Name = "低级传送",  Level = 1,  SkillType = 1,  CD = 5,  StepLevel = 2,  ID = 10016,  Desc = "将敌方随机传送"},
+{ SkillRangeType = 1,  SkillRange = 3,  Name = "中级传送",  Level = 2,  SkillType = 1,  CD = 5,  StepLevel = 2,  ID = 10017,  Desc = "将敌方随机传送"},
+{ SkillRangeType = 1,  SkillRange = 3,  Name = "高级传送",  Level = 3,  SkillType = 1,  CD = 5,  StepLevel = 3,  ID = 10018,  Desc = "将敌方随机传送"},
+{ SkillRangeType = 1,  SkillRange = 1,  Name = "低级隐身",  Level = 1,  BuffID = 1008,  SkillType = 1,  CD = 5,  StepLevel = 2,  ID = 10019,  Desc = "使自身在一定时间内隐身"},
+{ SkillRangeType = 1,  SkillRange = 1,  Name = "中级隐身",  Level = 2,  BuffID = 1009,  SkillType = 1,  CD = 5,  StepLevel = 2,  ID = 10020,  Desc = "使自身在一定时间内隐身"},
+{ SkillRangeType = 1,  SkillRange = 1,  Name = "高级隐身",  Level = 3,  BuffID = 1010,  SkillType = 1,  CD = 5,  StepLevel = 3,  ID = 10021,  Desc = "使自身在一定时间内隐身"},
+{ SkillRangeType = 1,  SkillRange = 3,  Name = "闪耀",  Level = 3,  BuffID = 1011,  SkillType = 2,  CD = 5,  StepLevel = 1,  ID = 10022,  Desc = "可以让自身金闪闪，破除隐身"},
+{ SkillRangeType = 1,  SkillRange = 1,  Name = "低级恐惧",  Level = 1,  BuffID = 1012,  SkillType = 1,  CD = 5,  StepLevel = 2,  ID = 10023,  Desc = "使敌方恐惧，到处瞎跑"},
+{ SkillRangeType = 1,  SkillRange = 2,  Name = "中级恐惧",  Level = 2,  BuffID = 1013,  SkillType = 1,  CD = 5,  StepLevel = 2,  ID = 10024,  Desc = "使敌方恐惧，到处瞎跑"},
+{ SkillRangeType = 1,  SkillRange = 3,  Name = "高级恐惧",  Level = 3,  BuffID = 1014,  SkillType = 1,  CD = 5,  StepLevel = 3,  ID = 10025,  Desc = "使敌方恐惧，到处瞎跑"},
+{ SkillRangeType = 1,  SkillRange = 1,  Name = "影分身",  Level = 3,  SkillType = 2,  CD = 5,  StepLevel = 3,  ID = 10026,  Desc = "分身出多个自己，到处乱跑，分身不能吞噬与被吞噬，但可以被控制"},
+{ SkillRangeType = 4,  SkillRange = 3,  Name = "诅咒",  Level = 3,  BuffID = 1015,  SkillType = 1,  CD = 5,  StepLevel = 3,  ID = 10027,  Desc = "使敌方进入禁魔状态，无法释放技能"},
+{ SkillRangeType = 6,  Name = "弹射勾爪",  Level = 1,  SkillType = 1,  CD = 5,  StepLevel = 2,  ID = 10028,  Desc = "可以让自身金闪闪，破除隐身"},
+{ SkillRangeType = 1,  Name = "the world",  Level = 3,  BuffID = 1016,  SkillType = 1,  CD = 5,  StepLevel = 3,  ID = 10029,  Desc = "可以让自身金闪闪，破除隐身"},
+{ SkillRangeType = 6,  SkillRange = 1,  Name = "筑墙",  Level = 1,  SkillType = 2,  CD = 5,  StepLevel = 2,  ID = 10030,  Desc = "可以让自身金闪闪，破除隐身"}
+}
+
+ExcelConfig["Skill"].key = {
+"ID",
+"Name",
+"Desc",
+"StepLevel",
+"Level",
+"SkillType",
+"SkillRangeType",
+"SkillRange",
+"ResName",
+"AnimName",
+"Icon",
+"BuffID",
+"CD"
+}

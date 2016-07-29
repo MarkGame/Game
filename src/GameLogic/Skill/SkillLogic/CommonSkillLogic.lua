@@ -43,11 +43,11 @@ end
 --初始化技能数据
 function CommonSkillLogic:initSkillData(  )
 
-    self.skillInfo = g_Config:getData(GameConfig.addConfig["Skill"],"ID",self.skillID)[1]
+    self.skillInfo = g_Config:getData("Skill","ID",self.skillID)[1]
     
     self.skillData = mtSkillBaseInfo().new(self.skillInfo)
 
-    self.skillRangeInfo = g_Config:getData2(GameConfig.addConfig["SkillRange"],{{key = "SkillRangeType",value = self.skillInfo.SkillRangeType},{key = "SkillRange",value = self.skillInfo.SkillRange}})[1]
+    self.skillRangeInfo = g_Config:getData2("SkillRange",{{key = "SkillRangeType",value = self.skillInfo.SkillRangeType},{key = "SkillRange",value = self.skillInfo.SkillRange}})[1]
     --dump(skillRangeInfo)
 end
 

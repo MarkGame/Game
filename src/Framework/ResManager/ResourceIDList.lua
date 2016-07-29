@@ -21,4 +21,7 @@ res.RES_DIALOGUE_STIRPS_CHOICE = "publish/UiDialogue_2.json"
 --战斗场景主UI
 res.RES_BATTLE_MAIN_UI = "publish/UiBattle_1.json"
 
+--怪兽行为日志UI
+res.RES_MONSTER_BEHAVIORLOG_UI = "publish/UiBehaviorLog_1.json"
+
 

@@ -39,10 +39,10 @@ function BattleSceneView:initTileMap()
     self.isUsingSkill = false
 
     --加载背景图片
-    self.guiBackgroundNode = createGUINode(res.RES_BACKGROUND_ORIGINAL)
-    self.guiBackgroundNode:setName("self.guiBackgroundNode")
+    --self.guiBackgroundNode = createGUINode(res.RES_BACKGROUND_ORIGINAL)
+    --self.guiBackgroundNode:setName("self.guiBackgroundNode")
     --背景层是不需要动的
-    self:addChild(self.guiBackgroundNode)
+    --self:addChild(self.guiBackgroundNode)
     --self.guiNode:setVisible(false)
     --dump(cc.Camera:getDefaultCamera():getPosition())
 
@@ -99,7 +99,7 @@ function BattleSceneView:initTileMap()
     self:addChild(self.rocker,10)
     self.rocker:startRocker(true)
 
-    -- local info = g_Config:getData2(GameConfig.addConfig["SkillRange"],{{key = "SkillRangeType",value = 1},{key = "SkillRange",value = 2}})
+    -- local info = g_Config:getData2("SkillRange",{{key = "SkillRangeType",value = 1},{key = "SkillRange",value = 2}})
     -- dump(info)
 
     --开启触摸事件
@@ -214,6 +214,10 @@ function BattleSceneView:refreshPlayerInfo()
 
 end
 
+function BattleSceneView:createSkillIcon( skillID )
+    
+end
+
 --初始化 孵化场
 function BattleSceneView:initHatchery( )
     --这里去读表吧。。
@@ -221,8 +225,9 @@ function BattleSceneView:initHatchery( )
     local hatcheryCount = mtBattleMgr():getBattleData():getHatcheryCount()
     local hatcheryPosList = mtBattleMgr():getBattleData():getHatcheryPosList()
     local initHatchPosList = mtBattleMgr():getBattleData():getInitHatchPosList()
-
-    for i =1 ,hatcheryCount do 
+    
+    --test 只放出一个孵化场
+    for i =1 ,1 do 
         local data = {}
         data.initPos = hatcheryPosList[i]
 

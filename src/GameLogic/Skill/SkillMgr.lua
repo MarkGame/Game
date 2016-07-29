@@ -8,7 +8,7 @@
     技能需要有两种： 主动技能 和 被动技能 
 
 ]]
-require "SkillMap"
+require "common.SkillMap"
 
 local SkillMgr = class("SkillMgr")
 

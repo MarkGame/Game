@@ -11,6 +11,7 @@ GameConfig.addConfig["SkillRange"] = "config/SkillRange.json"
 GameConfig.addConfig["Battle"] = "config/Battle.json"
 GameConfig.addConfig["Hatchery"] = "config/Hatchery.json"
 GameConfig.addConfig["HatcheryInfo"] = "config/HatcheryInfo.json"
+GameConfig.addConfig["Buff"] = "config/Buff.json"
 --GameConfig.addConfig["Common"] = "config/Common.json"
 
 GameConfig.indexConfig = 

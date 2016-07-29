@@ -1,8 +1,6 @@
 
 cc.FileUtils:getInstance():setPopupNotify(false)
 cc.FileUtils:getInstance():addSearchPath("src/")
-cc.FileUtils:getInstance():addSearchPath("src/common")
-cc.FileUtils:getInstance():addSearchPath("src/Network")
 cc.FileUtils:getInstance():addSearchPath("res/")
 
 require "config"
@@ -17,13 +15,13 @@ LuaFileList = {
   "Utils.Functions",
 
   --"Utils.Log",
-  --"Utils.Queue",
+  --"common.Queue",
   "Utils.EventID",
   "Utils.TiledMapID",
   "Utils.GameUtil",
   "Utils.AnimationCacheFunc",
-  "GameDefine",
-  "ConfigManager",
+  "common.GameDefine",
+  "common.ConfigManagerToLua",
   --"Utils.TimeMgr",
   "Utils.Worker",
   
@@ -61,7 +59,7 @@ local function startGameWithSplash()
     g_ResManager      = ResManager:getInstance()
     --g_EventDispatch   = EventDispatch:getInstance()
     --g_scheduler       = cc.Director:getInstance():getScheduler()
-    g_Config          = ConfigManager:getInstance()
+    g_Config          = ConfigManagerToLua:getInstance()
     --g_TimeMgr         = TimeMgr:getInstance()
     g_Worker          = Worker:getInstance()  
 

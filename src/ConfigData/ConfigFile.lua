@@ -1,0 +1,10 @@
+require "ConfigData.Battle"
+require "ConfigData.Buff"
+require "ConfigData.Character"
+require "ConfigData.Common"
+require "ConfigData.Hatchery"
+require "ConfigData.HatcheryInfo"
+require "ConfigData.Monster"
+require "ConfigData.Skill"
+require "ConfigData.SkillRange"
+return ExcelConfig

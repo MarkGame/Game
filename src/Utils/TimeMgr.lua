@@ -443,4 +443,59 @@ function TimeMgr:string2Timestamp( strTime )
 	return convertedTimestamp
 end
 
+function TimeMgr:formatTimeSpanFromSeconds(seconds)
+    local seconds = seconds or 0;
+    local kSecondsPerMinute = 60
+    local kSecondsPerHour   = 60*60
+    local kSecondsPerDay    = 24*60*60
+
+    local secondsRound = seconds%kSecondsPerMinute
+    local minutesRound = math.floor(seconds/kSecondsPerMinute)%60
+    local hoursRound = math.floor(seconds/kSecondsPerHour)%24
+    local days  = math.floor(seconds/kSecondsPerDay)
+
+    local textTimeSpan = nil
+    local isInOneDay = (days==0)
+    if isInOneDay then
+        textTimeSpan = string.format("%02d:%02d:%02d",
+                                     hoursRound,
+                                     minutesRound,
+                                     secondsRound)
+    else
+        textTimeSpan = string.format("%dd %02d:%02d:%02d",
+                                     days,
+                                     hoursRound,
+                                     minutesRound,
+                                     secondsRound)
+    end
+
+    return textTimeSpan
+end
+
+
+function TimeMgr:convertTimeForLocalStr( secondsTime )
+    local nHours = string.format("%d", math.floor(secondsTime/3600));
+	local nMins = string.format("%02.f", math.floor(secondsTime/60 - (nHours*60)));
+	local nSecs = string.format("%02.f", math.floor(secondsTime - nHours*3600 - nMins *60));
+    return nHours..":"..nMins..":"..nSecs;
+end
+
+--时间戳转换为日期
+function TimeMgr:getStrByTimestamp(stamp)
+    local time = os.date("*t", stamp)
+    return string.format("%02.f", time.hour) .. ':' .. string.format("%02.f", time.min) .. ':' .. string.format("%02.f", time.sec)
+end
+
+--时间戳转换为日期
+function TimeMgr:getStrDateByTimestamp(stamp)
+    local time = os.date("*t", stamp)
+    return time.year .. '-' .. time.month .. '-' .. time.day .. '  ' .. string.format("%02.f", time.hour) .. ':' .. string.format("%02.f", time.min) .. ':' .. string.format("%02.f", time.sec)
+end
+
+--时间戳转换为年月日期
+function TimeMgr:getDayStrDateByTimestamp(stamp)
+    local time = os.date("*t", stamp)
+    return time.year .. '-' .. time.month .. '-' .. time.day
+end
+
 return TimeMgr

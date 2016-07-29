@@ -49,6 +49,15 @@ function BattleMgr:initData(data)
     --当前战场ID
     self.battleAreaID = 101 --data.battleAreaID
 
+
+    --记录怪兽行为日志的ID
+    self.monsterLogID = 0
+    
+    --怪兽行为日志的怪兽ID
+    self.monsterLogMonsterID = {}
+
+    self.monsterLogList = {}
+
     self:initBattleInfo()
 
 
@@ -58,7 +67,7 @@ function BattleMgr:initData(data)
 end
 
 function BattleMgr:initBattleInfo( )
-    local battleInfo = g_Config:getData(GameConfig.addConfig["Battle"],"BattleAreaID",self.battleAreaID)[1]
+    local battleInfo = g_Config:getData("Battle","BattleAreaID",self.battleAreaID)[1]
     self.battleData = mtBattleBaseInfo().new(battleInfo)
 end
 
@@ -98,7 +107,7 @@ function BattleMgr:getBattleAreaID( )
    return self.battleAreaID
 end
 
---获取当前存货的怪兽
+--获取当前存活的怪兽
 function BattleMgr:getMonsterList( )
    return self.monsterList
 end
@@ -175,7 +184,7 @@ function BattleMgr:getMonsterMaxCountByID( monsterID )
    if self.allMonsterList[monsterID] == nil then 
       return 0
    else 
-        return self.allMonsterList[monsterID]
+      return self.allMonsterList[monsterID]
    end
 end
 
@@ -349,6 +358,62 @@ function BattleMgr:updateAllHatcheriesHeart( )
     end
 end
 
+------------------------------------------------行为日志-----------------------------------------
+
+--获得当前的怪兽日志ID
+--只有在怪兽出生的时候调用一次，不允许重复调用
+function BattleMgr:getNowMonsterLogID(monsterID)
+
+    self.monsterLogID = self.monsterLogID + 1
+    self.monsterLogMonsterID[self.monsterLogID] = monsterID
+    
+    mtEventDispatch():dispatchEvent(BATTLE_NEW_BEHAVIORLOG_BTN) 
+
+    return self.monsterLogID
+end
+
+--获得当前最大的怪物日志ID
+function BattleMgr:getMonsterLogID( )
+    return self.monsterLogID
+end
+
+--获得monsterLogID 指定的怪兽的ID（对应查表去找怪物信息）
+function BattleMgr:getMonsterIDByMonsterLogID(monsterLogID)
+   return self.monsterLogMonsterID[monsterLogID]
+end
+
+--添加怪物行为日志
+function BattleMgr:addBehaviorLog(monsterLogID,behaviorType)
+
+    if self.monsterLogList[monsterLogID] == nil then 
+       self.monsterLogList[monsterLogID] = {}
+    end
+
+    local index = #self.monsterLogList[monsterLogID] + 1
+    local data = {}
+
+    data.index = index
+    data.monsterLogID = monsterLogID
+    data.behaviorType = behaviorType
+
+    local behaviorLog = mtBehaviorLogInfo().new(data)
+
+    table.insert(self.monsterLogList[monsterLogID] ,index , behaviorLog)
+
+
+    mtEventDispatch():dispatchEvent(BATTLE_NEW_BEHAVIORLOG,{ newLog = behaviorLog})  
+     
+    --输出怪物在做什么。（临时做法）
+    print(behaviorLog:getLogStr())
+
+end
+
+--获得monsterLogID 怪兽行为日志列表
+function BattleMgr:getBehaviorLogByID( monsterLogID )
+    if self.monsterLogList[monsterLogID] ~= nil then 
+       return self.monsterLogList[monsterLogID]
+    end
+end
 
 
 return BattleMgr

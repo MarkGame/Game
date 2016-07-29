@@ -4,7 +4,7 @@
 -- 孵化场视图节点
 --
 
-local HatcheryView = class("HatcheryView",mtHatcheryNode())
+local HatcheryView = class("HatcheryView",mtBuildNode())
 
 function HatcheryView:ctor(hatcheryLogic)
 	HatcheryView.super.ctor(self)
@@ -14,10 +14,6 @@ function HatcheryView:ctor(hatcheryLogic)
     local icon = "publish/resource/Hatchery/Hatchery_"..num..".png"
 	self.sprite = cc.Sprite:create(icon)
 	self:addChild(self.sprite)
-
-	self.sprite:setAnchorPoint(cc.p(0.25,0.2))
-    local size = self.sprite:getContentSize()
-	self.sprite:setPositionY(-size.height/2-10)
 
     self.parentScene = mtBattleMgr():getScene()
 	self.map = self.parentScene:getMap()

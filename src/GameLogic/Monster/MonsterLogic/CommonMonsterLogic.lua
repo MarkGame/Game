@@ -11,6 +11,9 @@ function CommonMonsterLogic:ctor(data)
    self.parentScene = mtBattleMgr():getScene()
    self.monsterID = data.monsterID
    
+    --获得怪兽行为日志的ID  一只怪兽只能调用一次
+   self.monsterLogID = mtBattleMgr():getNowMonsterLogID(self.monsterID)
+   
    --怪兽的基本信息
    self.monsterInfo = nil
    --怪兽的吞噬技能
@@ -31,7 +34,9 @@ function CommonMonsterLogic:ctor(data)
    self.buffList = {}
 
    --流动技能表（敌对怪兽才用的到，普通怪兽只有一个专属技能）
-    self.flowSkillsList = {}
+   self.flowSkillsList = {}
+   
+  
 
    
 end
@@ -39,7 +44,7 @@ end
 --初始化 怪兽信息
 function CommonMonsterLogic:initMonsterInfo( )
 	  --获得表格里面的怪兽信息
-	  self.monsterInfo = g_Config:getData(GameConfig.addConfig["Monster"],"ID",self.monsterID)[1]
+	  self.monsterInfo = g_Config:getData("Monster","ID",self.monsterID)[1]
     
     self.monsterData = mtMonsterBaseInfo().new(self.monsterInfo)
 
@@ -86,8 +91,7 @@ end
 
 --移除怪兽
 function CommonMonsterLogic:removeMonster(  )
-
-    
+   --现在这里暂时不做操作
 end
 
 --获得怪兽的TiledPos x,y
@@ -127,7 +131,7 @@ function CommonMonsterLogic:checkMonsterData( )
     local nowSatiation = self.monsterData:getMonsterNowSatiation()
     if nowSatiation <= 0 then 
        --删除怪兽
-       --self.monster:removeMonster()
+       self.monster:removeMonster()
     end
 
 end
@@ -317,7 +321,6 @@ end
 
 function CommonMonsterLogic:runningBrain()
     --执行第一步操作
-
    self:doEvent("toSearch")
 end
 
@@ -328,9 +331,7 @@ end
 function CommonMonsterLogic:calm(  )
 
    local func = function ( )
-       
        self:doEvent("toSearch")
-
        self.updateDelayHandler = mtSchedulerMgr():removeScheduler(self.updateDelayHandler)
    end
 
@@ -351,12 +352,12 @@ function CommonMonsterLogic:autoSearchTarget( )
     
     --self.detectSkill:showSkillRangeDiagram(self.monster)
     local targets = self.detectSkill:getDetectMonsterBySkill(self.monster)
+    dump(targets)
     if targets and #targets > 0 then --找到目标后，告诉大脑 下一步要做什么
        self:setTargetMonster(targets)
-        print("toSelect")
+       dump(self.targetMonster)
        self:doEvent("toSelect")
     else           --没有找到目标，也要回调给大脑信息
-       print("toAutoMove")
        self:doEvent("toAutoMove")
     end
 
@@ -370,12 +371,10 @@ function CommonMonsterLogic:autoSelectTarget()
 
     if self.targetMonster and #self.targetMonster > 0 then 
        --这里先优先选择 最近的 一个目标
-       print("autoSelectTarget ")
        local target = self.targetMonster[1]
        self:setTargetMonster(target)
        self:doEvent("toChase")
     else
-       print(" autoSelectTarget  toAutoMove")
        self:doEvent("toAutoMove")
     end
 
@@ -415,14 +414,7 @@ function CommonMonsterLogic:autoRandomMovement( )
            break
         else
            if i == 5 then 
-              local callBack = function()
-                 print(" autoRandomMovement toSearch ")
-                 self:doEvent("toSearch")
-                 self.updateHatchCDHandler = mtSchedulerMgr():removeScheduler(self.updateHatchCDHandler)
-              end
-              self.updateHatchCDHandler = mtSchedulerMgr():removeScheduler(self.updateHatchCDHandler)
-              self.updateHatchCDHandler = mtSchedulerMgr():addScheduler(1,-1,callBack)
-              
+              self:doEvent("toIdle")
            end
         end
     end
@@ -539,7 +531,11 @@ end
 ]]
 
 function CommonMonsterLogic:chaseToTarget(target)
-    if target == nil then return end
+
+    if self.targetMonster == nil then return self:doEvent("toIdle") end
+    if target == nil then 
+       target = self.targetMonster
+    end
     local targetPos = self.parentScene:tileCoordForPosition(cc.p(target:getPosition()))
     self.detectSkill:showSkillRangeDiagram(self.monster)
 
@@ -551,18 +547,22 @@ function CommonMonsterLogic:chaseToTarget(target)
           --成功靠近了目标，并回调值为true
           if isFindByDevourSkill == true then 
              --吞噬技能范围内，可以吞噬，发出吞噬指令
+             print("1")
              self:doEvent("toDevour")
              self.monster:stopMoveToward()
           else
               --在可以释放skill技能范围内时，回调，并继续执行追捕过程
               if isFindBySkill == true then   
                  --skill释放指令 释放不释放不影响
+                 print("2")
                  self:doEvent("toUseExclusive")
+
               end
 
               local nowTargetPos = self.parentScene:tileCoordForPosition(cc.p(target:getPosition()))
               if targetPos.x == nowTargetPos.x and targetPos.y == nowTargetPos.y then  --如果目标没有发生移动,不执行
                  --print("不执行") 
+                 print("3")
                  return false
               else  --目标发生移动 开始新的寻路
                  --print("开始新的寻路")
@@ -572,11 +572,12 @@ function CommonMonsterLogic:chaseToTarget(target)
               end
           end
       else
+          print("4")
           self:doEvent("toAutoMove")
           self.monster:stopMoveToward()  
       end
     end
-    
+    print("0")
     self.monster:moveToward(targetPos,nil,funcStep)
 
 end
@@ -656,62 +657,86 @@ function CommonMonsterLogic:initStateMachine( )
     --正在配置表，等待test
     initial = "idle",
     events = {
-              {name = "toIdle", from = {"search","autoMove","chase","escape","devour","useExclusive"}, to = "idle"},    --执行搜寻
-              {name = "toSearch", from = {"idle","autoMove","chase","escape","devour","useExclusive"}, to = "search"},    --执行搜寻
-              {name = "toSelect", from = {"idle","autoMove","chase","escape","devour","useExclusive"}, to = "select"},    --去选择目标
-              {name = "toAutoMove", from = {"idle","search","chase","escape","devour","useExclusive"}, to = "autoMove"},  --随机移动
-              {name = "toChase", from = {"idle","search","autoMove","escape","devour","useExclusive"}, to = "chase"},     --追捕
-              {name = "toEscape", from = {"idle","search","chase","chase","devour","useExclusive"}, to = "escape"},           --逃跑
-              {name = "toDevour", from = {"idle","search","chase","escape","escape","useExclusive"}, to = "devour"},    --吞噬
-              {name = "toUseExclusive", from = {"idle","search","chase","escape","devour","devour"}, to = "useExclusive"},  --使用专属技能
+              {name = "toIdle", from = {"search","autoMove","chase","escape","devour","useExclusive","selectTarget"}, to = "idle"},    --执行搜寻
+              {name = "toSearch", from = {"idle","autoMove","chase","escape","devour","useExclusive","selectTarget"}, to = "search"},    --执行搜寻
+              {name = "toSelect", from = {"idle","autoMove","chase","escape","devour","useExclusive","search"}, to = "selectTarget"},    --去选择目标
+              {name = "toAutoMove", from = {"idle","search","chase","escape","devour","useExclusive","selectTarget"}, to = "autoMove"},  --随机移动
+              {name = "toChase", from = {"idle","search","autoMove","escape","devour","useExclusive","selectTarget"}, to = "chase"},     --追捕
+              {name = "toEscape", from = {"idle","search","chase","devour","useExclusive","selectTarget","autoMove"}, to = "escape"},           --逃跑
+              {name = "toDevour", from = {"idle","search","chase","escape","useExclusive","selectTarget","autoMove"}, to = "devour"},    --吞噬
+              {name = "toUseExclusive", from = {"idle","search","chase","escape","devour","selectTarget","autoMove"}, to = "useExclusive"},  --使用专属技能
           },
         callbacks = {
            
            -- toIdle
            onbeforidle = function(event) end, 
-           onenteridle = function(event) self:calm() end,
+           onenteridle = function(event)
+              mtBattleMgr():addBehaviorLog(self.monsterLogID,MonsterBehaviorType.idle)
+              self:calm() 
+           end,
            onafteridle  = function(event)  end,
            onleaveidle = function(event)  end,
           
            -- toSearch
            onbeforesearch = function(event) end, 
-           onentersearch = function(event) self:autoSearchTarget() end,
+           onentersearch = function(event) 
+              mtBattleMgr():addBehaviorLog(self.monsterLogID,MonsterBehaviorType.search)
+              self:autoSearchTarget() 
+           end,
            onaftersearch  = function(event)  end,
            onleavesearch = function(event)  end,
 
            -- toSelect
-           onbeforeselect = function(event) end, 
-           onenterselect = function(event) self:autoSelectTarget() end,
-           onafterselect  = function(event)  end,
-           onleaveselect = function(event)  end,
+           onbeforeselectTarget = function(event) end, 
+           onenterselectTarget = function(event) 
+              mtBattleMgr():addBehaviorLog(self.monsterLogID,MonsterBehaviorType.selectTarget)
+              self:autoSelectTarget() 
+           end,
+           onafterselectTarget  = function(event)  end,
+           onleaveselectTarget = function(event)  end,
                      
            -- toAutoMove
            onbeforeautoMove = function(event) end, 
-           onenterautoMove = function(event) self:autoRandomMovement() end,
+           onenterautoMove = function(event) 
+              mtBattleMgr():addBehaviorLog(self.monsterLogID,MonsterBehaviorType.autoMove) 
+              self:autoRandomMovement() 
+           end,
            onafterautoMove = function(event)  end,
            onleaveautoMove = function(event)  end,
 
            -- toChase
            onbeforechase = function(event) end, 
-           onenterchase = function(event) self:chaseToTarget() end,
+           onenterchase = function(event) 
+              mtBattleMgr():addBehaviorLog(self.monsterLogID,MonsterBehaviorType.chase)
+              self:chaseToTarget() 
+           end,
            onafterchase  = function(event)  end,
            onleavechase = function(event)  end,
 
            -- toEscape
            onbeforeescape = function(event) end, 
-           onenterescape = function(event) self:escapeFromTarget() end,
+           onenterescape = function(event) 
+              mtBattleMgr():addBehaviorLog(self.monsterLogID,MonsterBehaviorType.escape)
+              self:escapeFromTarget() 
+           end,
            onafterescape  = function(event)  end,
            onleaveescape = function(event)  end,
 
            -- toDevour
            onbeforedevour = function(event) end, 
-           onenterdevour = function(event) self:devourMonster() end,
+           onenterdevour = function(event) 
+              mtBattleMgr():addBehaviorLog(self.monsterLogID,MonsterBehaviorType.devour)
+              self:devourMonster() 
+           end,
            onafterdevour  = function(event)  end,
            onleavedevour = function(event)  end,
 
            -- toUseExclusive
            onbeforeuseExclusive = function(event) end, 
-           onenteruseExclusive = function(event) self:useExclusiveSkill() end,
+           onenteruseExclusive = function(event) 
+              mtBattleMgr():addBehaviorLog(self.monsterLogID,MonsterBehaviorType.useExclusive)
+              self:useExclusiveSkill() 
+           end,
            onafteruseExclusive  = function(event)  end,
            onleaveuseExclusive = function(event)  end,
 

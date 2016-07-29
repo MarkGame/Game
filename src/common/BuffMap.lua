@@ -10,13 +10,13 @@ local AccelerateBuffLogic = require("GameLogic.Buff.BuffLogic.AccelerateBuffLogi
 
 BuffMap = BuffMap or {}
 
-BuffMap[10001] = {buffLogic = DecelerateBuffLogic.createBuff,buffView = nil}
-BuffMap[10002] = {buffLogic = DecelerateBuffLogic.createBuff,buffView = nil}
-BuffMap[10003] = {buffLogic = DecelerateBuffLogic.createBuff,buffView = nil}
+BuffMap[1001] = {buffLogic = DecelerateBuffLogic.createBuff,buffView = nil}
+BuffMap[1002] = {buffLogic = DecelerateBuffLogic.createBuff,buffView = nil}
+BuffMap[1003] = {buffLogic = DecelerateBuffLogic.createBuff,buffView = nil}
 
-BuffMap[10004] = {buffLogic = AccelerateBuffLogic.createBuff,buffView = nil}
-BuffMap[10005] = {buffLogic = AccelerateBuffLogic.createBuff,buffView = nil}
-BuffMap[10006] = {buffLogic = AccelerateBuffLogic.createBuff,buffView = nil}
+BuffMap[1004] = {buffLogic = AccelerateBuffLogic.createBuff,buffView = nil}
+BuffMap[1005] = {buffLogic = AccelerateBuffLogic.createBuff,buffView = nil}
+BuffMap[1006] = {buffLogic = AccelerateBuffLogic.createBuff,buffView = nil}
 
 -- BuffMap[10007] = {buffLogic = DecelerateSkillLogic.createBuff,buffView = nil}
 -- BuffMap[10008] = {buffLogic = DecelerateSkillLogic.createBuff,buffView = nil}

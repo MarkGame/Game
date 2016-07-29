@@ -19,7 +19,7 @@ function HatcheryBaseInfo:ctor( data )
 
 	self.battleAreaID = mtBattleMgr():getBattleAreaID()
     --获得表格里面的当前战场的 孵化池信息
-    self.hatcheryList = g_Config:getData(GameConfig.addConfig["Hatchery"],"BattleAreaID",self.battleAreaID)
+    self.hatcheryList = g_Config:getData("Hatchery","BattleAreaID",self.battleAreaID)
     
     self.hatcheryPoolList = {}
     
@@ -79,7 +79,7 @@ end
 
 function HatcheryBaseInfo:getNowHatcheryInfo( stage )
 	local poolID = self:getPoolIDByStage(stage)
-	local hatcheryInfoList = g_Config:getData(GameConfig.addConfig["HatcheryInfo"],"PoolID",poolID)[1]
+	local hatcheryInfoList = g_Config:getData("HatcheryInfo","PoolID",poolID)[1]
     return hatcheryInfoList
 end
 

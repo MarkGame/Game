@@ -3,7 +3,7 @@
 -- Date: 2016-04-24 00:51:13
 -- 孵化场节点封装
 
-local HatcheryNode = class("HatcheryNode",function ()
+local BuildNode = class("BuildNode",function ()
 	return cc.Node:create()
 end)
 
@@ -16,7 +16,7 @@ end)
 
 ]]
 
-function HatcheryNode:ctor()
+function BuildNode:ctor()
     --进入时，调用onEnter() 
     --退出时，调用onExit()
   	self:registerScriptHandler(function ( event )
@@ -40,19 +40,19 @@ function HatcheryNode:ctor()
 
 end
 
-function HatcheryNode:dispatchEvent(event,data)
+function BuildNode:dispatchEvent(event,data)
 	   mtEventDispatch():dispatchEvent(event,data)
 end
 
 
-function HatcheryNode:registerEvent( event,callBack,groupID,priority )
+function BuildNode:registerEvent( event,callBack,groupID,priority )
   	--将事件加入数组，方便在退出的时候将侦听事件给移除掉
   	self.eventListeners = self.eventListeners or {}
   	self.eventListeners[#self.eventListeners + 1] = mtEventDispatch():registerEvent(event,callBack,groupID,priority)
   	return self.eventListeners[#self.eventListeners + 1]
 end
 
-function HatcheryNode:onExit( )
+function BuildNode:onExit( )
   	if self.eventListeners == nil then
   		return 
   	end
@@ -62,11 +62,11 @@ function HatcheryNode:onExit( )
   	end	
 end
 
-function HatcheryNode:onEnter( )
+function BuildNode:onEnter( )
 	
 end
 
-function HatcheryNode:onHide(  )
+function BuildNode:onHide(  )
 	
 end
 
@@ -77,7 +77,7 @@ end
     比如 骷髅怪 一列  资源名称  Skeleton_%d
                       动画名称  Skeleton_
 ]]
-function HatcheryNode:initAnim(resName,animName)
+function BuildNode:initAnim(resName,animName)
     self.animNameList = {}
 
     local animationNames = {"idleD","idleL","idleR","idleU","walkD","walkL", "walkR", "walkU"}
@@ -93,10 +93,10 @@ function HatcheryNode:initAnim(resName,animName)
     end
 end
 
-function HatcheryNode:playAnim( animType )
+function BuildNode:playAnim( animType )
     AnimationCacheFunc.playAnimationForever(self.sprite, AnimationCacheFunc.getAnimationCache(self.animNameList[animType]))
 end
 
-return HatcheryNode
+return BuildNode
 
 	

@@ -22,3 +22,14 @@ end
 function YggdrasilMgr:ctor()
 
 end
+
+function YggdrasilMgr:createHatchery(data)
+	local yggdrasilLogic = mtYggdrasilLogic().new(data)
+    
+    local yggdrasilView = mtYggdrasilView().new(yggdrasilLogic)
+    
+    return yggdrasilView
+    
+end
+
+return YggdrasilMgr

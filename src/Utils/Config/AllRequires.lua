@@ -165,6 +165,17 @@ function mtBattleBaseInfo()
     return BattleBaseInfo
 end
 
+local BehaviorLogInfo = nil
+--- 行为日志
+-- @function mtBehaviorLogInfo
+-- @return GameLogic.Battle.BattleBase.BehaviorLogInfo
+function mtBehaviorLogInfo()
+    if BehaviorLogInfo == nil then
+        BehaviorLogInfo = require("GameLogic.Battle.BattleBase.BehaviorLogInfo")
+    end
+    return BehaviorLogInfo
+end
+
 
 -------------------------------------孵化器---------------------------------
 
@@ -214,6 +225,53 @@ function mtHatcheryView()
 	end
     return HatcheryView
 end
+
+----------------------------------世界树----------------------------
+local YggdrasilMgr = nil
+--- 世界树管理
+-- @function mtYggdrasilMgr
+-- @return GameLogic.Yggdrasil.YggdrasilMgr
+function mtYggdrasilMgr()
+    if YggdrasilMgr == nil then
+        YggdrasilMgr = require("GameLogic.Yggdrasil.YggdrasilMgr"):getInstance()
+    end
+    return YggdrasilMgr
+end
+
+local YggdrasilLogic = nil
+--- 世界树逻辑
+-- @function mtYggdrasilLogic
+-- @return GameLogic.Yggdrasil.YggdrasilLogic
+function mtYggdrasilLogic()
+    if YggdrasilLogic == nil then
+        YggdrasilLogic = require("GameLogic.Yggdrasil.YggdrasilLogic")
+    end
+    return YggdrasilLogic
+end
+
+local YggdrasilBaseInfo = nil
+--- 世界树基础数据
+-- @function mtYggdrasilBaseInfo
+-- @return GameLogic.HatcheryBase.YggdrasilBaseInfo
+function mtYggdrasilBaseInfo()
+    if YggdrasilBaseInfo == nil then
+        YggdrasilBaseInfo = require("GameLogic.Yggdrasil.YggdrasilBase.YggdrasilBaseInfo")
+    end
+    return YggdrasilBaseInfo
+end
+
+
+local YggdrasilView = nil
+--- 世界树视图
+-- @function mtYggdrasilView
+-- @return View.Yggdrasil.YggdrasilView
+function mtYggdrasilView()
+    if YggdrasilView == nil then
+        YggdrasilView = require("View.Yggdrasil.YggdrasilView")
+    end
+    return YggdrasilView
+end
+
 
 ----------------------------------怪兽------------------------------
 local MonsterMgr = nil
@@ -287,10 +345,10 @@ end
 local Queue = nil
 --- 队列管理
 -- @function mtQueue
--- @return Utils.Queue
+-- @return common.Queue
 function mtQueue()
     if Queue == nil then
-        Queue = require("Utils.Queue")
+        Queue = require("common.Queue")
     end
     return Queue
 end
@@ -313,7 +371,7 @@ local SchedulerMgr = nil
 -- @return Utils.SchedulerMgr
 function mtSchedulerMgr()
     if SchedulerMgr == nil then
-        SchedulerMgr = require("Utils.SchedulerMgr"):getInstance()
+        SchedulerMgr = require("GameLogic.Common.SchedulerMgr"):getInstance()
     end
     return SchedulerMgr
 end
@@ -336,7 +394,7 @@ local StateMachine = nil
 -- @return Utils.StateMachine
 function mtStateMachine()
     if StateMachine == nil then
-        StateMachine = require("StateMachine")
+        StateMachine = require("common.StateMachine")
     end
     return StateMachine
 end
@@ -351,6 +409,9 @@ function mtHRocker()
     end
     return HRocker
 end
+
+
+
 
 -- local Game = nil
 -- --- 游戏管理
@@ -409,15 +470,15 @@ function mtMonsterNode()
     return MonsterNode
 end
 
-local HatcheryNode = nil 
+local BuildNode = nil 
 --- 战斗场景节点
--- @function mtHatcheryNode
--- @return GameLogic.HatcheryNode
-function mtHatcheryNode()
-    if HatcheryNode == nil then
-        HatcheryNode = require("View.BaseNode.HatcheryNode")
+-- @function BuildNode
+-- @return GameLogic.BuildNode
+function mtBuildNode()
+    if BuildNode == nil then
+        BuildNode = require("View.BaseNode.BuildNode")
     end
-    return HatcheryNode
+    return BuildNode
 end
 
 local BattleScene = nil 
@@ -454,10 +515,3 @@ function mtTouchLayer()
 end
 
 
-local netWorkService = nil
-function mtNetworkService()
-    if netWorkService == nil then
-        netWorkService = require("Network.NetworkService").new()
-    end
-    return netWorkService
-end

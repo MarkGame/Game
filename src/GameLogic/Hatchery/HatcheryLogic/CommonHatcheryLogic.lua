@@ -23,6 +23,8 @@ function CommonHatcheryLogic:ctor(data)
    --孵化结束的时间
    self.hatchCompleteTime = 0
 
+   self.isOnlyMonster = false
+
    --是否正在孵化
    self.isHatching = false
 
@@ -60,7 +62,7 @@ end
 function CommonHatcheryLogic:updateHatcheryHeart()
     --此时可以孵化
 
-    if self:isCanHatchery() == true and self.isHatching == false then 
+    if self:isCanHatchery() == true and self.isHatching == false and self.isOnlyMonster == false then 
         print(" self.residualTime : "..self.residualTime)
         self.isHatching = true
         self.monsterID = self:getSelectedMonsterID()
@@ -130,8 +132,6 @@ function CommonHatcheryLogic:addMonster(monsterID)
     data.monsterID = monsterID
     local monster = mtMonsterMgr():createMonster(data)
     self.parentScene:getMap():addChild(monster,10)
-    --2016年5月3日17:33:31的我：看一看 这里加载进的是不是 self.map
-    --2016年5月4日00:04:30的我：是的，这里没问题
     mtBattleMgr():addMonsterToList(monster)
     --初始位置
     --2016年5月3日17:33:55的我：这里要看看 坐标是否正确
@@ -142,6 +142,8 @@ function CommonHatcheryLogic:addMonster(monsterID)
     monster:setPosition(initPos)
 
     self.isHatching = false
+
+    --self.isOnlyMonster = true
     
 end
 
@@ -197,7 +199,7 @@ end
 
 --孵化怪兽
 function CommonHatcheryLogic:hatchingMonster(  )
-    local monsterInfo = g_Config:getData(GameConfig.addConfig["Monster"],"ID",self.monsterID)[1]
+    local monsterInfo = g_Config:getData("Monster","ID",self.monsterID)[1]
     self.residualTime = monsterInfo.HatchTime
     self.hatchCompleteTime = mtTimeMgr():getMSTime() + monsterInfo.HatchTime
     self.updateHatchCDHandler = mtSchedulerMgr():removeScheduler(self.updateHatchCDHandler)
@@ -222,7 +224,7 @@ function CommonHatcheryLogic:isCanHatchery( )
     --控制当前怪兽 当前阶段怪兽的总数
     local hatcheryInfo = self.hatcheryData:getNowHatcheryInfo(mtBattleMgr():getBattleStage())
     local monstersByLevelList,totalMonstersCounts = mtBattleMgr():getMonsterListByLevel()
-    if monstersByLevelList[nowStage] ~= nil and monstersByLevelList[nowStage].count >= hatcheryInfo.MonsterTotal then 
+    if monstersByLevelList[nowStage] ~= nil and monstersByLevelList[nowStage].count >= 1 then --hatcheryInfo.MonsterTotal then 
        return false
     else
        return true

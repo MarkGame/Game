@@ -26,7 +26,7 @@ end
 --初始化BUFF信息
 function CommonBuffLogic:initBuffData()
     	  --获得表格里面的BUFF信息
-	local buffInfo = g_Config:getData(GameConfig.addConfig["Buff"],"ID",self.buffID)[1]
+	local buffInfo = g_Config:getData("Buff","ID",self.buffID)[1]
     
     self.buffData = mtBuffBaseInfo().new(buffInfo)
     
