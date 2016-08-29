@@ -59,7 +59,7 @@ function PlayerView:initPlayer()
     self:playAnim(AnimationType.walkD)
 
     --初始化 怪物数据
-    self:initMonsterInfo()
+    self:initBaseInfo()
 	--self:initStateMachine()
 
     --设置技能 

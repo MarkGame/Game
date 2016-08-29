@@ -42,6 +42,9 @@ function MonsterNode:ctor()
 
     self.isMoving = false
     
+    --默认不为恒速
+    self.isConstantSpeed = false
+    
     self.parentScene = mtBattleMgr():getScene()
 
   	self:setName(self.__cname)
@@ -182,12 +185,19 @@ function MonsterNode:playAnim( animType )
     end
 end
 
-function MonsterNode:initMonsterInfo(  )
+function MonsterNode:initBaseInfo( constantSpeed )
+    if constantSpeed == nil then
+       constantSpeed = false 
+    end
     --每一次移动的距离 公共配置
     self.pix = 60--g_Config:getData("Common")[1].PixelSpec
     --怪兽的速度 【在程序里是指 移动完一格的时间】
-    self.monsterVelocity = self.pix/self.monsterLogic:getMonsterData():getMonsterVelocity()
-    
+    self.isConstantSpeed = constantSpeed
+    if self.isConstantSpeed == false then 
+       self.monsterVelocity = self.pix/self.monsterLogic:getMonsterData():getMonsterVelocity()
+    else
+       self.monsterVelocity = constantSpeed
+    end
 end
 
 --根据下一个坐标点来判断需要执行什么样的动作动画
@@ -539,8 +549,11 @@ function MonsterNode:popStepAndAnimate(callBack,callBackStep)
     --需要判断一下 下一步的移动方向 从而改变当前人物的移动状态
     self:decideDirection(cc.p(self.parentScene:positionForTileCoord(cc.p(s:getPosition()))))
     
-    --速度可能会随时变化，所以每次都要重新获取新的速度  t = s / v  
-    self.monsterVelocity = self.pix/self.monsterLogic:getMonsterData():getMonsterVelocity()
+    if self.isConstantSpeed == false then 
+      --速度可能会随时变化，所以每次都要重新获取新的速度  t = s / v  
+      self.monsterVelocity = self.pix/self.monsterLogic:getMonsterData():getMonsterVelocity()
+
+    end
 
     local sequence = cc.Sequence:create(
      cc.MoveTo:create(self.monsterVelocity, cc.p(self.parentScene:positionForTileCoord(cc.p(s:getPosition())).x,self.parentScene:positionForTileCoord(cc.p(s:getPosition())).y)),

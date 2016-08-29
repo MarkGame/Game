@@ -106,6 +106,28 @@ function mtSkillDetect()
     return SkillDetect
 end
 
+local CommonBulletView = nil
+--- 公用子弹视图
+-- @function mtCommonBulletView
+-- @return View.SkillView.CommonBulletView
+function mtCommonBulletView()
+    if CommonBulletView == nil then
+        CommonBulletView = require("View.SkillView.CommonBulletView")
+    end
+    return CommonBulletView
+end
+
+local CommonSkillView = nil
+--- 公用技能视图
+-- @function mtCommonSkillView
+-- @return View.SkillView.CommonSkillView
+function mtCommonSkillView()
+    if CommonSkillView == nil then
+        CommonSkillView = require("View.SkillView.CommonSkillView")
+    end
+    return CommonSkillView
+end
+
 -----------------------------------BUFF--------------------------------------
 local BuffMgr = nil;
 ---BUFF管理器

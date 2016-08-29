@@ -48,7 +48,7 @@ function MonsterView:initMonster()
     
     self:playAnim(AnimationType.walkD)
 	--self:initStateMachine()
-    self:initMonsterInfo()
+    self:initBaseInfo()
     
     --test 探测技能
     --self.monsterLogic:getDevourSkill():showSkillRangeDiagram(self)

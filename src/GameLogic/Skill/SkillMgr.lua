@@ -76,4 +76,13 @@ function SkillMgr:getSkillLogicBySkillID( skillID )
     return skillLogic
 end
 
+
+--创建子弹
+function SkillMgr:createBullet( skillLogic )
+
+    local bullet = mtCommonBulletView().new(skillLogic)
+    return bullet
+
+end
+
 return SkillMgr

@@ -25,6 +25,8 @@ function CommonSkillLogic:init(data)
     self.skillRangeDiagram = nil
 
     self.buff = nil
+
+    self.parentScene = mtBattleMgr():getScene()
     
     --技能CD冷却结束的时间
     self.skillCDCompleteTime = 0
@@ -212,6 +214,7 @@ function CommonSkillLogic:getSkillRangeDiagram()
     return mtSkillDetect():getSkillRangeDiagram(self.skillRangeInfo)
 end
 
+------------------------------------------吞噬逻辑---------------------------------------------------
 
 --吞噬目标怪兽 这里怪兽只有一只
 --根据公式 来计算吞噬的几率
@@ -270,5 +273,34 @@ function CommonSkillLogic:devourMonsterFail( monster,targetMonster,callBack )
         callBack()
      end
 end
+
+------------------------------------------------发射类的技能公用逻辑-------------------------------------------
+--生成技能子弹，并且设定方向 速度 和 事件回调
+function CommonSkillLogic:createBullet( skillLogic,callBack )
+
+    local bullet = mtSkillMgr():createBullet(skillLogic)
+    self.parentScene:getMap():addChild(bullet,10)
+
+    local initPos = cc.p(0,0)
+    
+    bullet:setPosition(initPos)
+
+    local targetPos = cc.p(0,0)
+    
+    --到达终点之后的回调
+    local func = function ( )
+       
+    end
+    
+    --每一步的回调，检测是否触发事件
+    local funcStep = function ( )
+       
+    end
+    
+    bullet:moveToward(targetPos,func,funcStep)
+
+end
+
+
 
 return CommonSkillLogic

@@ -321,7 +321,7 @@ function PlayerNode:playAnim( animType )
     AnimationCacheFunc.playAnimationForever(self.sprite, AnimationCacheFunc.getAnimationCache(self.animNameList[animType]))
 end
 
-function PlayerNode:initMonsterInfo(  )
+function PlayerNode:initBaseInfo(  )
       --每一次移动的距离
     self.pix = 60--g_Config:getData("Common")[1].PixelSpec
     --怪兽的速度 【在程序里是指 移动完一格的时间】
