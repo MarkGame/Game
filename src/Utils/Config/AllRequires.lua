@@ -432,6 +432,16 @@ function mtHRocker()
     return HRocker
 end
 
+local BehaviorLogView = nil
+--- 行为日志输出
+-- @function mtBehaviorLogView
+-- @return View.Widget.BehaviorLogView
+function mtBehaviorLogView()
+    if BehaviorLogView == nil then
+        BehaviorLogView = require("View.Widget.BehaviorLogView")
+    end
+    return BehaviorLogView
+end
 
 
 

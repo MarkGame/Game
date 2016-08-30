@@ -183,6 +183,15 @@ function BattleSceneView:initGUI( )
            self.isUsingSkill = false 
         end 
     end)
+
+    self.behaviorLogBtn = self.guiBattleMainNode:getChildByName("Button_14")
+    self.behaviorLogBtn:addTouchEventListener(function(sender,event)
+        if event == ccui.TouchEventType.ended then --松开
+           local behaviorLogView = mtBehaviorLogView().new()
+           self:addChild(behaviorLogView,20) 
+        end       
+    end)
+    
     
     --初始化刷新
     self:refreshPlayerInfo()

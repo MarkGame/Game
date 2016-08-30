@@ -19,7 +19,7 @@ end
 --monster 释放技能本身
 --index 对应流动技能序号 没有可以不填（普通怪兽不需要）
 function DecelerateSkillLogic:launch(monster,index)
-
+   self:showSkillRangeDiagram(monster)
    if monster ~= nil then 
       self:setOwner(monster)
       local targetMonster = self:getTargetMonster(monster)
@@ -33,9 +33,11 @@ function DecelerateSkillLogic:launch(monster,index)
             targetMonster:getLogic():addBuffToBuffList(buff)
          end
          if self:isDisposableSkill() == true then 
+            self:hideSkillRangeDiagram(monster)
             self:removeSkill(index)
          else
             print("不是一次性技能，需要在特定的地方去移除技能，不自动删除")
+            self:hideSkillRangeDiagram(monster)
          end
       else 
          print("目标怪兽不存在")

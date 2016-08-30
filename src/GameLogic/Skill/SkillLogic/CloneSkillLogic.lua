@@ -16,13 +16,15 @@ end
 
 --单独逻辑
 function CloneSkillLogic:launch(monster)
+	--self:showSkillRangeDiagram(monster)
+
 	local targetMonster = self:getTargetMonster(monster)
    
-   if targetMonster then 
-      
-   else 
-      print("目标怪兽不存在")
-   end
+    if targetMonster then 
+       
+    else 
+       print("目标怪兽不存在")
+    end
 end
 
 return CloneSkillLogic

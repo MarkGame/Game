@@ -547,22 +547,20 @@ function CommonMonsterLogic:chaseToTarget(target)
           --成功靠近了目标，并回调值为true
           if isFindByDevourSkill == true then 
              --吞噬技能范围内，可以吞噬，发出吞噬指令
-             print("1")
+             self.detectSkill:hideSkillRangeDiagram()
              self:doEvent("toDevour")
              self.monster:stopMoveToward()
           else
               --在可以释放skill技能范围内时，回调，并继续执行追捕过程
               if isFindBySkill == true then   
                  --skill释放指令 释放不释放不影响
-                 print("2")
+                 self.detectSkill:hideSkillRangeDiagram()
                  self:doEvent("toUseExclusive")
-
               end
 
               local nowTargetPos = self.parentScene:tileCoordForPosition(cc.p(target:getPosition()))
               if targetPos.x == nowTargetPos.x and targetPos.y == nowTargetPos.y then  --如果目标没有发生移动,不执行
                  --print("不执行") 
-                 print("3")
                  return false
               else  --目标发生移动 开始新的寻路
                  --print("开始新的寻路")
@@ -572,12 +570,11 @@ function CommonMonsterLogic:chaseToTarget(target)
               end
           end
       else
-          print("4")
+          self.detectSkill:hideSkillRangeDiagram()
           self:doEvent("toAutoMove")
           self.monster:stopMoveToward()  
       end
     end
-    print("0")
     self.monster:moveToward(targetPos,nil,funcStep)
 
 end

@@ -34,11 +34,19 @@ function BehaviorLogView:initGUI(  )
     self.guiNode:setName("self.guiNode")
     self:addChild(self.guiNode,15)
 
-    --self.btnListView
+    self.btnListView = self.guiNode:getChildByName("ListView_2")
+    self.btnModel = self.btnListView:getChildByName("Panel_4")
 
-    --self.listView
+    self.btnListView:setItemModel(self.btnModel)
+    self.btnListView:removeAllItems()
 
-	--self:refreshAllMonsterLogBtn()
+    self.listView = self.guiNode:getChildByName("ListView_3")
+    self.listViewModel = self.listView:getChildByName("Panel_6")
+
+    self.listView:setItemModel(self.listViewModel)
+    self.listView:removeAllItems()
+
+	self:refreshAllMonsterLogBtn()
 end
 
 function BehaviorLogView:initEvent()
@@ -95,7 +103,7 @@ function BehaviorLogView:setLogBtnPanel()
 	self.btnListView:pushBackDefaultItem()
     local panel = self.btnListView:getItem(self.initBtnIndex - 1) --从0开始
 
-    local btn = panel:getChildByName("btn")
+    local btn = panel:getChildByName("Button_5")
     btn.btnIndex = self.initBtnIndex
    
     btn:addTouchEventListener(function(sender,event)
@@ -158,7 +166,7 @@ function BehaviorLogView:setBehaviorLogPanel(str)
 	self.listView:pushBackDefaultItem()
     local panel = self.listView:getItem(self.initIndex - 1) --从0开始
 
-    local text = panel:getChildByName("text")
+    local text = panel:getChildByName("Label_7")
     text:setString(str)
 
 
