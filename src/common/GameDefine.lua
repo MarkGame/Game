@@ -46,12 +46,13 @@ SkillType = {
 }
 
 MonsterBehaviorType = {
-	idle = 1 ,
-	search = 2 ,
+	idle         = 1 ,
+	search       = 2 ,
 	selectTarget = 3 ,
-	autoMove = 4 ,
-	chase = 5 ,
-	escape = 6 ,
-	devour = 7 ,
-    useExclusive = 8,
+	autoMove     = 4 ,
+	chase        = 5 ,
+	escape       = 6 ,
+	devour       = 7 ,
+    useExclusive = 8 ,
+    die          = 9 ,
 }

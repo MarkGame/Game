@@ -11,6 +11,7 @@ function BehaviorLogInfo:ctor( data )
 
     self.behaviorType = data.behaviorType 
     self.monsterLogID = data.monsterLogID
+    self.behaviorTime = mtTimeMgr():getStrByTimestamp(mtTimeMgr():getCurTime())
     
 end
 
@@ -36,14 +37,15 @@ function BehaviorLogInfo:getBehaviorStr( )
        return "正在吞噬目标……"
 	elseif self.behaviorType == MonsterBehaviorType.useExclusive then 
        return "使用了专属技能"
+  elseif self.behaviorType == MonsterBehaviorType.die then 
+       return "死亡"
 	end
-    return ""
+  return ""
 end
 
 function BehaviorLogInfo:getLogStr( )
 	local behaviorStr = self:getBehaviorStr()
-  local nowTime = mtTimeMgr():getStrByTimestamp(mtTimeMgr():getCurTime())
-	return self.index.." : ".. self.monsterLogID .."号怪兽，在"..nowTime.." 执行了——"..behaviorStr
+	return self.index.." : ".. self.monsterLogID .."号怪兽，在"..self.behaviorTime.." 执行了——"..behaviorStr
 end
 
 return BehaviorLogInfo

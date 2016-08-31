@@ -36,17 +36,17 @@ function HRocker:ctor()
 	-- 摇杆背景的坐标
 	self.rockerBGPosition = nil
 	-- const PI
-	self.PI = 3.1415
+	self.PI = 3.1415926
 
 end
 
 -- 创建摇杆(摇杆的操作题图片资源名，摇杆背景图片资源名，起始坐标)
-function HRocker:createHRocker( rockerImageName, rockerBGImageName, position )
+function HRocker:createHRocker( rockerImageName, rockerBGImageName, position ,range)
 
 	local layer = HRocker.new()
 	if layer then
 		-- 1 按钮， 2 背景
-		layer:rockerInit(rockerImageName, rockerBGImageName, position)
+		layer:rockerInit(rockerImageName, rockerBGImageName, position ,range)
 		return layer
 	end
     return nil
@@ -55,7 +55,7 @@ end
 
 -- privete 
 -- 自定义初始化函数 ， 1 按钮，  2 背景图
-function HRocker:rockerInit( rockerImageName, rockerBGImageName, position )
+function HRocker:rockerInit( rockerImageName, rockerBGImageName, position ,range )
 
 	local spRockerBG = ccui.ImageView:create(rockerBGImageName)
 	spRockerBG:setPosition( position )
@@ -68,7 +68,7 @@ function HRocker:rockerInit( rockerImageName, rockerBGImageName, position )
 
 	self.rockerBGPosition = position
 	--控制 最远滚轴范围
-	self.rockerBGR = spRockerBG:getContentSize().width * 0.5
+	self.rockerBGR = spRockerBG:getContentSize().width * range
 
 	-- 表示摇杆方向不变
 	self.rocketDirection = self.tagDirecton.rocker_stay

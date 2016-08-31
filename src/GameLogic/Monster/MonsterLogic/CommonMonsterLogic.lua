@@ -92,6 +92,7 @@ end
 --移除怪兽
 function CommonMonsterLogic:removeMonster(  )
    --现在这里暂时不做操作
+   mtBattleMgr():addBehaviorLog(self.monsterLogID,MonsterBehaviorType.die)
 end
 
 --获得怪兽的TiledPos x,y
@@ -352,10 +353,10 @@ function CommonMonsterLogic:autoSearchTarget( )
     
     --self.detectSkill:showSkillRangeDiagram(self.monster)
     local targets = self.detectSkill:getDetectMonsterBySkill(self.monster)
-    dump(targets)
+    -- dump(targets)
     if targets and #targets > 0 then --找到目标后，告诉大脑 下一步要做什么
        self:setTargetMonster(targets)
-       dump(self.targetMonster)
+       -- dump(self.targetMonster)
        self:doEvent("toSelect")
     else           --没有找到目标，也要回调给大脑信息
        self:doEvent("toAutoMove")
@@ -571,7 +572,7 @@ function CommonMonsterLogic:chaseToTarget(target)
           end
       else
           self.detectSkill:hideSkillRangeDiagram()
-          self:doEvent("toAutoMove")
+          self:doEvent("toIdle")
           self.monster:stopMoveToward()  
       end
     end

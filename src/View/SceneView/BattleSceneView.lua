@@ -94,13 +94,10 @@ function BattleSceneView:initTileMap()
        self:initKeyBoardListener()
     end
 
-
-    self.rocker = mtHRocker():createHRocker("publish/resource/close.png", "publish/resource/bg13.png", cc.p(100, 100))
+    --摇杆添加
+    self.rocker = mtHRocker():createHRocker("publish/resource/close.png", "publish/resource/bg13.png", cc.p(100, 100) ,0.5)
     self:addChild(self.rocker,10)
     self.rocker:startRocker(true)
-
-    -- local info = g_Config:getData2("SkillRange",{{key = "SkillRangeType",value = 1},{key = "SkillRange",value = 2}})
-    -- dump(info)
 
     --开启触摸事件
     --self.player:moveToward(cc.p(25,5))

@@ -60,6 +60,7 @@ function mtSkillMgr()
 end
 
 --是否有存在的意义？
+--有
 local SkillViewMgr = nil
 --- 技能视图管理器
 -- @function mtSkillViewMgr
@@ -104,17 +105,6 @@ function mtSkillDetect()
         SkillDetect = require("GameLogic.Skill.SkillDetect")
 	end
     return SkillDetect
-end
-
-local CommonBulletView = nil
---- 公用子弹视图
--- @function mtCommonBulletView
--- @return View.SkillView.CommonBulletView
-function mtCommonBulletView()
-    if CommonBulletView == nil then
-        CommonBulletView = require("View.SkillView.CommonBulletView")
-    end
-    return CommonBulletView
 end
 
 local CommonSkillView = nil
@@ -544,6 +534,18 @@ function mtTouchLayer()
         TouchLayer = require("View.BaseNode.TouchLayer")
     end
     return TouchLayer
+end
+
+
+local SkillNode = nil 
+--- 点击场景节点
+-- @function mtSkillNode
+-- @return View.BaseNode.SkillNode
+function mtSkillNode()
+    if SkillNode == nil then
+        SkillNode = require("View.BaseNode.SkillNode")
+    end
+    return SkillNode
 end
 
 

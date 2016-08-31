@@ -400,11 +400,11 @@ function BattleMgr:addBehaviorLog(monsterLogID,behaviorType)
 
     table.insert(self.monsterLogList[monsterLogID] ,index , behaviorLog)
 
-
+    --推送到 行为日志视图中 去添加
     mtEventDispatch():dispatchEvent(BATTLE_NEW_BEHAVIORLOG,{ newLog = behaviorLog})  
      
     --输出怪物在做什么。（临时做法）
-    print(behaviorLog:getLogStr())
+    --print(behaviorLog:getLogStr())
 
 end
 

@@ -33,6 +33,14 @@ function BehaviorLogView:initGUI(  )
     self.guiNode = createGUINode(res.RES_MONSTER_BEHAVIORLOG_UI)
     self.guiNode:setName("self.guiNode")
     self:addChild(self.guiNode,15)
+    
+    --点击其他区域 关闭界面
+    self.guiNode:setTouchEnabled(true)
+    self.guiNode:addTouchEventListener(function(sender,event)
+        if event == ccui.TouchEventType.ended then
+           self:onExit()
+        end 
+    end)
 
     self.btnListView = self.guiNode:getChildByName("ListView_2")
     self.btnModel = self.btnListView:getChildByName("Panel_4")

@@ -276,9 +276,9 @@ end
 
 ------------------------------------------------发射类的技能公用逻辑-------------------------------------------
 --生成技能子弹，并且设定方向 速度 和 事件回调
-function CommonSkillLogic:createBullet( skillLogic,callBack )
+function CommonSkillLogic:createBullet( skillID,callBack )
 
-    local bullet = mtSkillMgr():createBullet(skillLogic)
+    local bullet = mtSkillViewMgr():createSkill(skillID)
     self.parentScene:getMap():addChild(bullet,10)
 
     local initPos = cc.p(0,0)
