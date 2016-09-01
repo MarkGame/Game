@@ -47,7 +47,7 @@ function FloatMsgMgr:showMsg2( text ,delay)
 		delay = 1;
 	end
 	 
-	local color = cc.c3b(254,231,44)--ig.COLOR.GOLD;
+	local color = cc.c3b(254,231,44)
 
 	local label = FntNormal.create(text,26,ig.WHITE)--cc.LabelTTF:create(text, "Marker Felt", fntSize);
 	label:setColor(color);

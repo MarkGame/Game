@@ -17,7 +17,6 @@ LuaFileList = {
   --"Utils.Log",
   --"common.Queue",
   "Utils.EventID",
-  "Utils.TiledMapID",
   "Utils.GameUtil",
   "Utils.AnimationCacheFunc",
   "common.GameDefine",

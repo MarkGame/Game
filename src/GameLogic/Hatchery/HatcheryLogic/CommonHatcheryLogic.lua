@@ -131,7 +131,7 @@ function CommonHatcheryLogic:addMonster(monsterID)
     local data = {}
     data.monsterID = monsterID
     local monster = mtMonsterMgr():createMonster(data)
-    self.parentScene:getMap():addChild(monster,10)
+    self.parentScene:getMap():addChild(monster,ZVALUE_BATTLEMAP_MONSTER)
     mtBattleMgr():addMonsterToList(monster)
     --初始位置
     --2016年5月3日17:33:55的我：这里要看看 坐标是否正确

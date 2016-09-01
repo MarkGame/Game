@@ -45,15 +45,28 @@ function BattleSceneView:initTileMap()
     --self:addChild(self.guiBackgroundNode)
     --self.guiNode:setVisible(false)
     --dump(cc.Camera:getDefaultCamera():getPosition())
+    
+    -- 创建UI层
+    self.uiLayer = cc.Layer:create()
+    self.uiLayer:setPosition(cc.p(0,0))
+    self.uiLayer:setTag(UI_LAYER_TAG)
+    self:addChild(self.uiLayer)
+
+    --创建地图层
+    self.mapLayer = cc.Layer:create()
+    self.mapLayer:setPosition(cc.p(0,0))
+    self.mapLayer:setTag(BATTLEMAP_MAP_LAYER_TAG)
+    self:addChild(self.mapLayer)
+
 
     self.guiBattleMainNode = createGUINode(res.RES_BATTLE_MAIN_UI)
     self.guiBattleMainNode:setName("self.guiBattleMainNode")
-    self:addChild(self.guiBattleMainNode,15)
+    self.uiLayer:addChild(self.guiBattleMainNode,ZVALUE_UI)
   
     --加载地图
     self.map = self:createTMXTM(ORIGINAL_SCENCE_64_TMX)
     self.map:setName("self.map")
-    self:addChild(self.map,5)
+    self.mapLayer:addChild(self.map,ZVALUE_BATTLEMAP_TMX)
     self.map:setAnchorPoint(cc.p(0,0))    
       
     self.impactLayer = self:getLayer(TiledMapLayer.barrier)
@@ -62,7 +75,7 @@ function BattleSceneView:initTileMap()
     --self.impactLayer:setOpacity(255*0.8)
     local data = {}
     self.player =  mtPlayerMgr():createPlayerView(data)
-    self.map:addChild(self.player,10) 
+    self.map:addChild(self.player,ZVALUE_BATTLEMAP_PLAYER) 
     --self:setPlayer(self.player)
     --self.player:openOrColseGravity(true)
     --主角初始位置
@@ -96,7 +109,7 @@ function BattleSceneView:initTileMap()
 
     --摇杆添加
     self.rocker = mtHRocker():createHRocker("publish/resource/close.png", "publish/resource/bg13.png", cc.p(100, 100) ,0.5)
-    self:addChild(self.rocker,10)
+    self.uiLayer:addChild(self.rocker,ZVALUE_ROCKER)
     self.rocker:startRocker(true)
 
     --开启触摸事件
@@ -185,7 +198,7 @@ function BattleSceneView:initGUI( )
     self.behaviorLogBtn:addTouchEventListener(function(sender,event)
         if event == ccui.TouchEventType.ended then --松开
            local behaviorLogView = mtBehaviorLogView().new()
-           self:addChild(behaviorLogView,20) 
+           self.uiLayer:addChild(behaviorLogView,ZVALUE_UI) 
         end       
     end)
     
@@ -238,7 +251,7 @@ function BattleSceneView:initHatchery( )
         data.initPos = hatcheryPosList[i]
 
         local hatchery = mtHatcheryMgr():createHatchery(data)
-        self.map:addChild(hatchery,10) 
+        self.map:addChild(hatchery,ZVALUE_BATTLEMAP_HATCHERY) 
 
         mtBattleMgr():addHatcheryToList(hatchery)
      
