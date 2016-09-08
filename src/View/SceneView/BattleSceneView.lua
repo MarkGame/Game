@@ -215,8 +215,15 @@ function BattleSceneView:initEvent()
 
     --战斗阶段变化
     self:registerEvent(BATTLE_STAGE_REFRESH,function(event)
-          
+        self:refreshBattleState()  
     end)
+
+    --战斗阶段变化
+    self:registerEvent(BATTLE_STATE_END,function(event)
+        self:refreshBattleState()
+        self:gameOver()  
+    end)
+    
 end
 
 --刷新UI 面板信息
@@ -260,6 +267,15 @@ function BattleSceneView:initHatchery( )
         hatchery:setPosition(hatcheryPos)
     end
     
+end
+
+function BattleSceneView:refreshBattleState( )
+    local str = mtBattleMgr():getBattleStageDesc()
+    mtFloatMsgMgr():showTips(str,3)
+end
+
+function BattleSceneView:gameOver( )
+    --处理游戏结束时 弹出的界面
 end
 
 --获得 当前地图

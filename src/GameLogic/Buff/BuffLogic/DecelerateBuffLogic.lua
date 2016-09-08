@@ -42,7 +42,7 @@ function DecelerateBuffLogic:removeBuff( )
 	-- 要先把 施加的BUFF给移除掉，再移除自身
 	--如果对象还存在的话，则把扣除的属性返回
 	if self.monster and self.isActivation == true then 
-     monster:getLogic():getMonsterData():initMonsterVelocity()
+     self.monster:getLogic():getMonsterData():initMonsterVelocity()
 	end
 
 	g_Worker:pushDelayQueue(function()

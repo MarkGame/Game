@@ -67,7 +67,7 @@ BATTLEMAP_MAP_LAYER_TAG = 850000
 
 ------------------------------------------------ UI层级 ----------------------------------------------------
 ZVALUE_GUIDE        =950000;
-ZVALUE_UISETTINGS   =900000;
+ZVALUE_TIPS         =900000;
 ZVALUE_UIANIM		=800000;
 ZVALUE_ROCKER       =750000;
 ZVALUE_UI			=700000;

@@ -4,37 +4,37 @@
 
 --探测
 local DetectSkillLogic = require("GameLogic.Skill.SkillLogic.DetectSkillLogic")
-local DetectSkillView = require("GameLogic.Skill.SkillLogic.DetectSkillView")
+local DetectSkillView = require("View.SkillView.DetectSkillView")
 --吞噬
 local DevourSkillLogic = require("GameLogic.Skill.SkillLogic.DevourSkillLogic")
-local DevourSkillView = require("GameLogic.Skill.SkillLogic.DevourSkillView")
+local DevourSkillView = require("View.SkillView.DevourSkillView")
 --减速
 local DecelerateSkillLogic = require("GameLogic.Skill.SkillLogic.DecelerateSkillLogic")
-local DecelerateSkillView = require("GameLogic.Skill.SkillLogic.DecelerateSkillView")
+local DecelerateSkillView = require("View.SkillView.DecelerateSkillView")
 --加速
 local AccelerateSkillLogic = require("GameLogic.Skill.SkillLogic.AccelerateSkillLogic")
-local AccelerateSkillView = require("GameLogic.Skill.SkillLogic.AccelerateSkillView")
+local AccelerateSkillView = require("View.SkillView.AccelerateSkillView")
 --禁锢
 local ImprisonSkillLogic = require("GameLogic.Skill.SkillLogic.ImprisonSkillLogic")
-local ImprisonSkillView = require("GameLogic.Skill.SkillLogic.ImprisonSkillView")
+local ImprisonSkillView = require("View.SkillView.ImprisonSkillView")
 --传送
 local TransferSkillLogic = require("GameLogic.Skill.SkillLogic.TransferSkillLogic")
-local TransferSkillView = require("GameLogic.Skill.SkillLogic.TransferSkillView")
+local TransferSkillView = require("View.SkillView.TransferSkillView")
 --隐身
 local InvisibleSkillLogic = require("GameLogic.Skill.SkillLogic.InvisibleSkillLogic")
-local InvisibleSkillView = require("GameLogic.Skill.SkillLogic.InvisibleSkillView")
+local InvisibleSkillView = require("View.SkillView.InvisibleSkillView")
 --闪耀
 local ShineSkillLogic = require("GameLogic.Skill.SkillLogic.ShineSkillLogic")
-local ShineSkillView = require("GameLogic.Skill.SkillLogic.ShineSkillView")
+local ShineSkillView = require("View.SkillView.ShineSkillView")
 --恐惧
 local FearSkillLogic = require("GameLogic.Skill.SkillLogic.FearSkillLogic")
-local FearSkillView = require("GameLogic.Skill.SkillLogic.FearSkillView")
+local FearSkillView = require("View.SkillView.FearSkillView")
 --分身
 local CloneSkillLogic = require("GameLogic.Skill.SkillLogic.CloneSkillLogic")
-local CloneSkillView = require("GameLogic.Skill.SkillLogic.CloneSkillView")
+local CloneSkillView = require("View.SkillView.CloneSkillView")
 --子弹
 local ShootSkillLogic = require("GameLogic.Skill.skillLogic.ShootSkillLogic")
-local ShootSkillView = require("GameLogic.Skill.skillLogic.ShootSkillView")
+local ShootSkillView = require("View.SkillView.ShootSkillView")
 
 SkillMap = SkillMap or {}
 

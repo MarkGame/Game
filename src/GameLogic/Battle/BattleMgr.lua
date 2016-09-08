@@ -103,6 +103,29 @@ function BattleMgr:getBattleStage( )
    return self.battleStage
 end
 
+function BattleMgr:getBattleStageDesc( )
+  local str = ""
+   switch(self.battleStage) : caseof
+    {
+     [BattleStage.init]  = function()  
+         str = "游戏准备开始……"
+      end,
+     [BattleStage.level1] = function()  
+         str = "一阶段开始……"
+      end,
+     [BattleStage.level2]    = function()   
+         str = "二阶段开始……"
+      end,
+     [BattleStage.level3]  = function()  
+         str = "三阶段开始……"
+     end, 
+     [BattleStage.ended]  = function()   
+         str = "游戏结束……"
+     end,
+    }
+    return str
+end
+
 function BattleMgr:getBattleAreaID( )
    return self.battleAreaID
 end
@@ -287,6 +310,10 @@ function BattleMgr:checkBattleStage(  )
 
     if playerSatiation <= 0 then 
        mtEventDispatch():dispatchEvent(BATTLE_STATE_END,{winer = PlayerType.player})
+    end
+
+    if self.battleStage == BattleStage.init then 
+       mtEventDispatch():dispatchEvent(BATTLE_STAGE_REFRESH) 
     end
 
     --阶段是不能跳跃的，只能一步一步的来，相同的阶段就不会持续发消息

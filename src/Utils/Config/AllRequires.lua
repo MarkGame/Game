@@ -434,6 +434,29 @@ function mtBehaviorLogView()
 end
 
 
+local FntNormal = nil
+--- 字体
+-- @function mtFntNormal
+-- @return Utils.FntNormal
+function mtFntNormal()
+    if FntNormal == nil then
+        FntNormal = require("Utils.FntNormal")
+    end
+    return FntNormal
+end
+
+
+
+local FloatMsgMgr = nil
+---字体消息管理
+-- @function mtFloatMsgMgr
+-- @return Utils.FloatMsgMgr
+function mtFloatMsgMgr()
+    if FloatMsgMgr == nil then
+        FloatMsgMgr = require("Utils.FloatMsgMgr")
+    end
+    return FloatMsgMgr
+end
 
 -- local Game = nil
 -- --- 游戏管理

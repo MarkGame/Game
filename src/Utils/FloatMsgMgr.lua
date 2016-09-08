@@ -33,43 +33,38 @@ end
 
 
 function FloatMsgMgr:showTips( text,delay )
-	-- body
+
+	if delay == nil then
+	   delay = 1 
+	end
+   
+    local bg = ccui.ImageView:create("publish/resource/login_font_base.png");
+    --设置九宫的四个属性
+	bg:setCapInsets(cc.rect(20,20,20,20));
+	bg:setScale9Enabled(true);
+	bg:setContentSize(cc.size(300,100))
+
+	local fnt = mtFntNormal().create(text,26)
+	bg:addChild(fnt)
+	bg:setContentSize(cc.size(fnt:getContentSize().width + 20,fnt:getContentSize().height + 20));
+	bg:setCascadeOpacityEnabled(true)
+	fnt:setPosition(cc.p(bg:getContentSize().width * 0.5,bg:getContentSize().height * 0.5 + 2));
+	local seq = cc.Sequence:create(cc.DelayTime:create(delay),cc.FadeOut:create(0.5),cc.CallFunc:create(function (  )
+		if bg then
+			bg:removeFromParent();
+		end
+	end))
+	bg:runAction(seq);
+
+    local size = cc.Director:getInstance():getVisibleSize()
+	bg:setPosition(cc.p(size.width/2,size.height/2))
+
+	cc.Director:getInstance():getRunningScene():getChildByTag(UI_LAYER_TAG):addChild(bg,ZVALUE_TIPS)
+
 end
 
 function FloatMsgMgr:showMsg2( text ,delay)
-	if text == nil then
-		return ;
-	end
-	if fntSize == nil then 
-		fntSize = 36;
-	end
-	if delay == nil then
-		delay = 1;
-	end
-	 
-	local color = cc.c3b(254,231,44)
 
-	local label = FntNormal.create(text,26,ig.WHITE)--cc.LabelTTF:create(text, "Marker Felt", fntSize);
-	label:setColor(color);
-	g_scene:addChild(label);
-	local winSize = cc.Director:getInstance():getVisibleSize();
-	local idx = self:_findSpare();
-	label:setPosition(cc.p(winSize.width * 0.5,winSize.height * 0.5 + (idx - 1) * label:getContentSize().height + 28));
-	local move = cc.MoveBy:create(0.5,cc.p(0,150));
-	local fade = cc.FadeOut:create(0.5);
-	local spawn = cc.Spawn:create(move,fade);
-	local function moveOver( )
-		label:removeFromParent();
-		self:_setSpare(idx,nil);
-	end
-	local scale = cc.ScaleTo:create(0.1,0.8)
-	local scale2 = cc.ScaleTo:create(0.1,1.0)
-	label:setScale(4)
-	label:setOpacity(0)
-	label:runAction(cc.FadeIn:create(0.2))
-	local seq = cc.Sequence:create(scale,scale2,cc.DelayTime:create(delay),spawn,cc.CallFunc:create(moveOver));
-	label:runAction(seq);
-    self:_setSpare(idx,label);
 end
 
 
