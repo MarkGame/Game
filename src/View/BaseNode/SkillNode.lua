@@ -474,7 +474,7 @@ end
 	
 
 function SkillNode:computeHScoreFromCoordToCoord(fromCoord,toCoord)
-return  math.abs(toCoord.x - fromCoord.x) + math.abs(toCoord.y - fromCoord.y)
+    return  math.abs(toCoord.x - fromCoord.x) + math.abs(toCoord.y - fromCoord.y)
 end
 
 --function SkillNode:costToMoveFromStepToAdjacentStep (fromStep,toStep) 
@@ -493,7 +493,7 @@ function SkillNode:getStepIndex(steps,step)
     		end 
       end 
     end 
-	return -1 
+  	return -1 
 end
 
 

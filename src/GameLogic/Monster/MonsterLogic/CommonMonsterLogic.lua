@@ -10,6 +10,7 @@ function CommonMonsterLogic:ctor(data)
 
    self.parentScene = mtBattleMgr():getScene()
    self.monsterID = data.monsterID
+   self.playerType = data.playerType
    
     --获得怪兽行为日志的ID  一只怪兽只能调用一次
    self.monsterLogID = mtBattleMgr():getNowMonsterLogID(self.monsterID)
@@ -35,9 +36,6 @@ function CommonMonsterLogic:ctor(data)
 
    --流动技能表（敌对怪兽才用的到，普通怪兽只有一个专属技能）
    self.flowSkillsList = {}
-   
-  
-
    
 end
 
@@ -110,6 +108,14 @@ end
 function CommonMonsterLogic:setTargetMonster(target)
     self.targetMonster = nil 
     self.targetMonster = target
+end
+
+function CommonMonsterLogic:isEnemyPlayer( )
+    if self.playerType and self.playerType == PlayerType.enemy then 
+       return true
+    else
+       return false
+    end 
 end
 ----------------------------------------------怪兽心跳 START----------------------------------------------
 
@@ -527,27 +533,45 @@ end
     target 目标
 
     使用专属技能 self.exclusiveSkill  寻找到目标以后使用的技能
-  
+     
+    2016年10月20日11:21:46 
+    导致现在游戏中断的主要凶手，具体问题还没有找到，需要多打日志来观察
 
 ]]
 
-function CommonMonsterLogic:chaseToTarget(target)
-
-    if self.targetMonster == nil then return self:doEvent("toIdle") end
+function CommonMonsterLogic:chaseToTarget(_target)
+    local target = _target
     if target == nil then 
        target = self.targetMonster
     end
+
+    local function funcFinish( )
+        print("funcFinish ")
+        self.monster:stopMoveToward()
+        self:doEvent("toIdle")
+        return
+    end
+
+    --如果此时丢失了目标，则进入等待 并结束当前动作
+    if target == nil then 
+       print("target == nil funcFinish ")
+       funcFinish()
+    end
+    
+    --获得目标的当前坐标
     local targetPos = self.parentScene:tileCoordForPosition(cc.p(target:getPosition()))
+    --show 探索范围
     self.detectSkill:showSkillRangeDiagram(self.monster)
 
     local function funcStep( )
        if target ~= nil then --目标没有被销毁
-
+          print("target ~= nil")
           local isFindBySkill = self.exclusiveSkill:isTargetInDetectList(self.monster,target)
           local isFindByDevourSkill = self.devourSkill:isTargetInDetectList(self.monster,target)
           --成功靠近了目标，并回调值为true
           if isFindByDevourSkill == true then 
              --吞噬技能范围内，可以吞噬，发出吞噬指令
+             print( " isFindByDevourSkill == true  toDevour")
              self.detectSkill:hideSkillRangeDiagram()
              self:doEvent("toDevour")
              self.monster:stopMoveToward()
@@ -555,6 +579,7 @@ function CommonMonsterLogic:chaseToTarget(target)
               --在可以释放skill技能范围内时，回调，并继续执行追捕过程
               if isFindBySkill == true then   
                  --skill释放指令 释放不释放不影响
+                 print( " isFindBySkill == true  toUseExclusive")
                  self.detectSkill:hideSkillRangeDiagram()
                  self:doEvent("toUseExclusive")
               end
@@ -562,21 +587,26 @@ function CommonMonsterLogic:chaseToTarget(target)
               local nowTargetPos = self.parentScene:tileCoordForPosition(cc.p(target:getPosition()))
               if targetPos.x == nowTargetPos.x and targetPos.y == nowTargetPos.y then  --如果目标没有发生移动,不执行
                  --print("不执行") 
+                 --2016年10月20日10:48:01 这里存在问题 逻辑再好好整理一下
+                 print( " nowTargetPos == targetPos  to do nothing")
                  return false
               else  --目标发生移动 开始新的寻路
                  --print("开始新的寻路")
-                 targetPos = self.parentScene:tileCoordForPosition(cc.p(target:getPosition()))
+                 print( " to a new move ")
+                 targetPos = nowTargetPos
                  self.monster:stopMoveToward()
-                 self.monster:moveToward(targetPos,nil,funcStep)
+                 self.monster:moveToward(targetPos,funcFinish,funcStep)
               end
           end
       else
+          print("target ~= nil toIdle") 
           self.detectSkill:hideSkillRangeDiagram()
-          self:doEvent("toIdle")
-          self.monster:stopMoveToward()  
+          self.monster:stopMoveToward()
+          self:doEvent("toIdle")     
       end
     end
-    self.monster:moveToward(targetPos,nil,funcStep)
+    --向目标距离 移动，移动结束回调，分步回调
+    self.monster:moveToward(targetPos,funcFinish,funcStep)
 
 end
 

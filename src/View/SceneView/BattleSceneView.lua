@@ -38,6 +38,8 @@ function BattleSceneView:initTileMap()
     --当前是否在使用技能
     self.isUsingSkill = false
 
+    self.flowSkillBtnList = {}
+
     --加载背景图片
     --self.guiBackgroundNode = createGUINode(res.RES_BACKGROUND_ORIGINAL)
     --self.guiBackgroundNode:setName("self.guiBackgroundNode")
@@ -73,35 +75,9 @@ function BattleSceneView:initTileMap()
     --self.backGroundLayer = self:getLayer(TiledMapLayer.background)
     self.impactLayer:setVisible(false)
     --self.impactLayer:setOpacity(255*0.8)
-    local data = {}
-    self.player =  mtPlayerMgr():createPlayerView(data)
-    self.map:addChild(self.player,ZVALUE_BATTLEMAP_PLAYER) 
-    --self:setPlayer(self.player)
-    --self.player:openOrColseGravity(true)
-    --主角初始位置
-    self.initPlayerPos = self:positionForTileCoord(cc.p(14,8))
-    --self.player:moveToward(cc.p(18,7))
-    self.player:setPosition(self.initPlayerPos)
-    mtBattleMgr():setMyMonster(self.player)
-    
-    -- print("---convertToNodeSpace player:getPosition()--")
-    -- dump(self.map:convertToNodeSpace(cc.p(self.player:getPosition())))
-    -- print("---player:getPosition()--")
-    -- dump(cc.p(self.player:getPosition()))
 
-   
-    --self:refreshMonster()
-    
-    --添加摄像机 （背景相机 和 地图相机）
-    --2016年5月3日17:27:40的我：怪兽的偏移可能和摄像机的相关设置有关
-    --2016年5月3日23:53:40的我：经测试 和 摄像机有关
-    --2016年5月5日01:05:44的我: 问题解决了，传进去的不能是self.map 而是self 就好了
-    --2016年5月5日23:14:20的我：然而 并没有解决问题，加在上面 根本就看不到了
-    --2016年5月6日01:38:37的我：沉重的表示，放弃相机的使用
-    --self.backgroundCamera = self:setBackgroundCamera(self.guiBackgroundNode)
-    --self.mapCamera = self:setMapCamera(self,self.player)
-    
- 
+
+
     --开启键盘控制（win32版本使用）
     if g_game:getTargetPlatform() == cc.PLATFORM_OS_WINDOWS then 
        self:initKeyBoardListener()
@@ -115,14 +91,12 @@ function BattleSceneView:initTileMap()
     --开启触摸事件
     --self.player:moveToward(cc.p(25,5))
 
-    --初始化 孵化场
-    self:initHatchery()
     --初始化 面板UI
     self:initGUI() 
     --初始化事件
     self:initEvent()
     
-    self:initMapPos()
+    
 end
 
 function BattleSceneView:initGUI( )
@@ -202,12 +176,23 @@ function BattleSceneView:initGUI( )
         end       
     end)
     
-    
+    --将三个按钮添加进数组，方便管理和调用
+    table.insert(self.flowSkillBtnList,1,self.buttonSkill1)
+    table.insert(self.flowSkillBtnList,2,self.buttonSkill2)
+    table.insert(self.flowSkillBtnList,3,self.buttonSkill3)
+     
     --初始化刷新
     self:refreshPlayerInfo()
 end
 
+--这里最好可以通过 事件的推送 来完成一系列的游戏流程
 function BattleSceneView:initEvent()
+
+    --准备结束，开始召唤
+    self:registerEvent(BATTLE_READYTIME_END,function(event)
+        self:hatchStart()
+    end)
+
     --刷新面板的角色信息
     self:registerEvent(REFRESH_PLAYER_INFO,function(event)
         self:refreshPlayerInfo()
@@ -218,10 +203,15 @@ function BattleSceneView:initEvent()
         self:refreshBattleState()  
     end)
 
-    --战斗阶段变化
+    --战斗结束
     self:registerEvent(BATTLE_STATE_END,function(event)
         self:refreshBattleState()
         self:gameOver()  
+    end)
+    
+    --刷新技能的ICON
+    self:registerEvent(BATTLE_SKILL_ICON_REFRESH,function(event)
+        self:refreshFlowSkillIcon()
     end)
     
 end
@@ -240,8 +230,41 @@ function BattleSceneView:refreshPlayerInfo()
 
 end
 
-function BattleSceneView:createSkillIcon( skillID )
-    
+--刷新当前玩家的流水技能的技能ICON
+function BattleSceneView:refreshFlowSkillIcon( )
+    for i = 1, 3 do 
+        local flowSkill = self.player:getLogic():getFlowSkillByIndex(i)
+        --当前位置的技能为空时，删除该位置的技能图标，并将该按钮设为禁用
+        if flowSkill == nil then 
+           if self.flowSkillBtnList[i] then 
+              self.flowSkillBtnList[i]:removeAllChildren()
+              self.flowSkillBtnList[i]:setTouchEnabled(false)
+           end
+        else
+           if self.flowSkillBtnList[i] then 
+              self.flowSkillBtnList[i]:removeAllChildren()
+              self.flowSkillBtnList[i]:setTouchEnabled(true)
+              local skillResName = flowSkill:getSkillInfo():getSkillResName()
+              local btnSize = self.flowSkillBtnList[i]:getContentSize()
+              local iconImage = ccui.ImageView:create(skillResName)
+              self.flowSkillBtnList[i]:addChild(iconImage,1)
+              iconImage:setAnchorPoint(cc.p(0.5,0.5))
+              iconImage:setPosition(cc.p(btnSize.width/2,btnSize.height/2))
+           end
+        end
+    end
+end
+
+--孵化开始啦
+function BattleSceneView:hatchStart( )
+
+    --创建玩家 和 敌对玩家 
+    self.player = mtBattleMgr():createPlayer(cc.p(14,8))
+    self.enemyPlayer = mtBattleMgr():createEnemy(1015,cc.p(15,8))
+    --初始化 孵化场
+    self:initHatchery()
+    --初始化地图位置
+    self:initMapPos()
 end
 
 --初始化 孵化场
@@ -269,6 +292,7 @@ function BattleSceneView:initHatchery( )
     
 end
 
+--刷新战场状态 弹出提示框
 function BattleSceneView:refreshBattleState( )
     local str = mtBattleMgr():getBattleStageDesc()
     mtFloatMsgMgr():showTips(str,3)
@@ -290,13 +314,13 @@ end
 
 function BattleSceneView:onEnter()
 	BattleSceneView.super.onEnter(self)
-    print("BattleSceneView onEnter")
+    -- print("BattleSceneView onEnter")
     --self:initScene()
 end
 
 function BattleSceneView:onExit()
 	BattleSceneView.super.onExit(self)
-    print("BattleSceneView onExit")
+    -- print("BattleSceneView onExit")
 end
 
 function BattleSceneView.open()

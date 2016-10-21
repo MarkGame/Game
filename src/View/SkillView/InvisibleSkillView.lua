@@ -1,7 +1,7 @@
 --
 -- Author: HLZ
 -- Date: 2016-05-19 19:33:00
--- 隐身技能的逻辑
+-- 隐身技能的视图
 -- 
 local InvisibleSkillView = class("InvisibleSkillView",mtCommonSkillView())
 InvisibleSkillView.__index            = InvisibleSkillView

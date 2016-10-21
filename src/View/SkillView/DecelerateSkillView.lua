@@ -1,7 +1,7 @@
 --
 -- Author: HLZ
 -- Date: 2016-05-18 20:21:31
--- 减速技能的逻辑
+-- 减速技能的视图
 -- 
 local DecelerateSkillView = class("DecelerateSkillView",mtCommonSkillView())
 DecelerateSkillView.__index            = DecelerateSkillView

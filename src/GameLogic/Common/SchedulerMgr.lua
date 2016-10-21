@@ -46,15 +46,35 @@ function SchedulerMgr:updateGame( )
     self.lastFrameTime =  mtTimeMgr():getMSTime()
 
     --获得 数组里面最大的key值
-	local totalCount = table.maxn(self.schedulerList)
+	  local totalCount = table.maxn(self.schedulerList)
     
     --当数组内没有需要调度的时候 直接返回 
     if totalCount == 0 then
        return 
     end
 
-    for key,scheduler in pairs(self.schedulerList) do
-        if scheduler then 
+    -- for key,scheduler in pairs(self.schedulerList) do
+    --     if scheduler then 
+    --        scheduler.m_pastTime = scheduler.m_pastTime + eachFrameTime
+    --        if scheduler.m_interval == 0 or scheduler.m_pastTime >= scheduler.m_interval then
+    --           --回调一次该方法
+    --           scheduler.m_callBack(key)
+    --           scheduler.m_pastTime = scheduler.m_pastTime - scheduler.m_interval
+    --           scheduler.m_curTimes = scheduler.m_curTimes + 1
+    --           if scheduler.m_times >= 0 and scheduler.m_curTimes >= scheduler.m_times then 
+    --              self:removeScheduler(key)
+    --           end
+    --        end
+    --     end
+    -- end
+    
+    -- 这里 吸取 巨龙经验，在一些特殊情况下，有的调度器 会被清掉，导致pais调用时 会找不到，报错
+    -- 改用当前的数据长度去使用  具体的 ，等以后出现了 再去特殊解决
+
+    local len = #self.schedulerList
+    for key=1,len do
+        local scheduler = self.schedulerList[key]
+        if scheduler then
            scheduler.m_pastTime = scheduler.m_pastTime + eachFrameTime
            if scheduler.m_interval == 0 or scheduler.m_pastTime >= scheduler.m_interval then
               --回调一次该方法
@@ -92,7 +112,7 @@ end
 
 --移除调度方法从调度数组中
 function SchedulerMgr:removeScheduler( id )
-	if id ~= nil and self.schedulerList[id] ~= nil then 
+	  if id ~= nil and self.schedulerList[id] ~= nil then 
        self.schedulerList[id] = nil
     end
     return nil

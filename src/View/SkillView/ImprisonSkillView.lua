@@ -1,7 +1,7 @@
 --
 -- Author: HLZ
 -- Date: 2016-05-19 19:31:00
--- 禁锢技能的逻辑
+-- 禁锢技能的视图
 -- 
 local ImprisonSkillView = class("ImprisonSkillView",mtCommonSkillView())
 ImprisonSkillView.__index            = ImprisonSkillView

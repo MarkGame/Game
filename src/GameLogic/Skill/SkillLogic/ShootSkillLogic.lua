@@ -17,12 +17,11 @@ end
 --单独逻辑
 --[[
     非指向性技能
-    
 ]]
 function ShootSkillLogic:launch()
 	
-	self:createBullet()
-
+	local bullet = self:createBullet()
+    --self:shootBullet(bullet)
 end
 
 

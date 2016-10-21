@@ -275,8 +275,8 @@ function CommonSkillLogic:devourMonsterFail( monster,targetMonster,callBack )
 end
 
 ------------------------------------------------发射类的技能公用逻辑-------------------------------------------
---生成技能子弹，并且设定方向 速度 和 事件回调
-function CommonSkillLogic:createBullet( skillID,callBack )
+--生成技能子弹，
+function CommonSkillLogic:createBullet( skillID )
 
     local bullet = mtSkillViewMgr():createSkill(skillID)
     self.parentScene:getMap():addChild(bullet,10)
@@ -285,22 +285,32 @@ function CommonSkillLogic:createBullet( skillID,callBack )
     
     bullet:setPosition(initPos)
 
-    local targetPos = cc.p(0,0)
-    
-    --到达终点之后的回调
-    local func = function ( )
-       
-    end
-    
-    --每一步的回调，检测是否触发事件
-    local funcStep = function ( )
-       
-    end
-    
-    bullet:moveToward(targetPos,func,funcStep)
-
+    return bullet
 end
 
+--根据 子弹 及目标点 触发移动过程 并接收事件回调
+function CommonSkillLogic:shootBullet( bullet,targetPos,callBack )
+    if bullet and targetPos then 
+        -- 到达终点之后的回调 
+        -- 自然消除
+        local func = function ( )
+           
+        end
+        
+        -- 每一步的回调，检测是否触发事件
+        -- 碰撞（其实就是坐标判断）时触发
+        local funcStep = function ( )
+           if callBack then 
+              callBack()
+           end
+        end
+        
+        --向某个坐标发射  
+        --
+        bullet:moveToward(targetPos,func,funcStep)
+
+    end
+end
 
 
 return CommonSkillLogic

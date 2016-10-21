@@ -6,7 +6,6 @@
 --[[
     需要处理 当前进化阶段 
     整个 游戏本体流程的大主管
-
 ]]
 
 --local SkillDetect = require("GameLogic.Skill.SkillDetect")
@@ -31,38 +30,38 @@ end
 function BattleMgr:initData(data)
   	--当前的阶段  0 init 1 level1 2 :level2 3 :level3 4 :end
  
-  	self.battleStage = BattleStage.level1
+  	self.battleStage = BattleStage.init
     self.startTime = mtTimeMgr():getCurTime()
     
-  
+    self.battleScene = data.scene
+    --当前战场ID
+    self.battleAreaID = 101 --data.battleAreaID
+    --记录怪兽行为日志的ID
+    self.monsterLogID = 0
+    --准备倒计时
+    self.readyTimeMaxCount = 5
+
+    self.readyTimeCount = self.readyTimeMaxCount
+    
+    --怪兽行为日志的怪兽ID
+    self.monsterLogMonsterID = {}
+    --怪兽行为日志数组
+    self.monsterLogList = {}
     --当前存活的怪兽表
-    --包含 主怪 中立怪 敌方怪
+    --仅包含 中立怪 
     self.monsterList = {}
     --孵化出的怪兽（保护已经死亡，消失的）
     --根据怪兽的ID 来存放
     self.allMonsterList = {}
     --当前激活的孵化场
     self.hatcheryList = {}
-    
-    self.battleScene = data.scene
 
-    --当前战场ID
-    self.battleAreaID = 101 --data.battleAreaID
-
-
-    --记录怪兽行为日志的ID
-    self.monsterLogID = 0
-    
-    --怪兽行为日志的怪兽ID
-    self.monsterLogMonsterID = {}
-
-    self.monsterLogList = {}
+    --当前的敌对玩家数组 
+    self.enemyPlayerList = {}
 
     self:initBattleInfo()
 
-
-    --开始计时器
-    self:startUpdateBattle()
+    self:enterReadyTime()
 
 end
 
@@ -81,6 +80,17 @@ end
 function BattleMgr:getMyMonster( )
     return self.player
 end
+
+--设置敌人的怪兽
+--敌人自身
+function BattleMgr:setEnemyMonster(enemy)
+    self.enemy = enemy
+end
+
+function BattleMgr:getEnemyMonster( )
+    return self.enemy
+end
+
 --设置当前的 战斗场景(暂时没用到的)
 function BattleMgr:setScene(scene)
     self.battleScene = scene
@@ -107,8 +117,8 @@ function BattleMgr:getBattleStageDesc( )
   local str = ""
    switch(self.battleStage) : caseof
     {
-     [BattleStage.init]  = function()  
-         str = "游戏准备开始……"
+     [BattleStage.readyTime]  = function()  
+         str = "游戏准备阶段……"
       end,
      [BattleStage.level1] = function()  
          str = "一阶段开始……"
@@ -138,6 +148,68 @@ end
 --获取 生成过的怪兽（包含当前存活和已经死亡的）
 function BattleMgr:getAllMonsterList(  )
    return self.allMonsterList
+end
+
+function BattleMgr:endScene( )
+   
+   --结束更新battle
+   self:stopUpdateBattle()
+
+   --等待下一次 进入场景 重新初始化数据
+
+end
+
+
+------------------------------------------------玩家的创建---------------------------------------
+
+--[[
+    initPos 初始坐标 cc.p(x,y)
+]]
+function BattleMgr:createPlayer(initPos)
+
+    local data = {}
+    data.playerType = PlayerType.player
+    local player =  mtPlayerMgr():createPlayerView(data)
+    self.parentScene:getMap():addChild(player,ZVALUE_BATTLEMAP_PLAYER) 
+    --主角初始位置
+    local initPlayerPos = self.parentScene:positionForTileCoord(initPos)
+    player:setPosition(initPlayerPos)
+  
+    self:setMyMonster(player)
+
+end
+
+--[[
+    initPos 初始坐标 cc.p(x,y)
+    monsterID 敌对怪兽的ID
+]]
+function BattleMgr:createEnemy(monsterID,initPos)
+
+    local data = {}
+    data.playerType = PlayerType.enemy
+    data.monsterID = monsterID
+    local enemy =  mtMonsterMgr():createMonster(data)
+    self.parentScene:getMap():addChild(enemy,ZVALUE_BATTLEMAP_MONSTER) 
+    --主角初始位置
+    local initEnemyPos = self.parentScene:positionForTileCoord(initPos)
+    enemy:setPosition(initEnemyPos)
+
+    self:addEnemyToList(enemy)
+
+    -- 当前按 1V1 一个怪兽来处理 后面再做数组处理
+    self:setEnemyMonster(enemy)
+
+end
+
+--添加敌人到敌人数组内
+function BattleMgr:addEnemyToList(enemy) 
+    if enemy then 
+       table.insert(self.enemyPlayerList,enemy)
+    end
+end
+
+function BattleMgr:getEnemyFromList( )
+    
 end
 
 ----------------------------------------------------怪兽----------------------------------------
@@ -240,7 +312,7 @@ function BattleMgr:detectMonster(initPos,skillRangeInfo)
 end
 
 ------------------------------------------------孵化场管理部分-------------------------------------
-
+  
 --添加孵化场进入列表
 --[[
      
@@ -264,6 +336,48 @@ function BattleMgr:removeHatcheryFromList(hatchery)
          end
     end
 end
+
+----------------------------------------------------准备阶段---------------------------------------------
+--[[
+    准备阶段 有两种类型 ，一种是手动点击 准备按钮，开始游戏 
+                          另一种是 倒计时，时间到则开始游戏
+]]
+function BattleMgr:enterReadyTime( )
+    
+    self.readyTimeHandler = mtSchedulerMgr():removeScheduler(self.readyTimeHandler)
+    --初始化倒计时时间
+    self.readyTimeCount = self.readyTimeMaxCount
+
+    self:setBattleStage(BattleStage.readyTime)
+    mtEventDispatch():dispatchEvent(BATTLE_STAGE_REFRESH)
+    --开始倒计时
+    self.readyTimeHandler = mtSchedulerMgr():addScheduler(1,-1,handler(self,self.updateReadyTime))
+   
+end
+
+--每秒更新一次 判断是否倒计时结束
+function BattleMgr:updateReadyTime( )
+    if self.readyTimeCount - 1 <= 0 then 
+       self.readyTimeHandler = mtSchedulerMgr():removeScheduler(self.readyTimeHandler)
+       self.readyTimeCount = self.readyTimeMaxCount
+       self:startBattle()
+    else
+       --显示倒计时
+       local str = self.readyTimeCount
+       mtFloatMsgMgr():showTips(str,0.5)
+       self.readyTimeCount = self.readyTimeCount - 1
+    end
+end
+
+-- 开始战斗
+function BattleMgr:startBattle( )
+    --推送消息 开始游戏
+    mtEventDispatch():dispatchEvent(BATTLE_READYTIME_END)
+    --开始计时器
+    self:startUpdateBattle()
+end
+
+
 
 ----------------------------------------------------战斗调度器--------------------------------------------
 
@@ -298,48 +412,71 @@ function BattleMgr:updateBattle( )
     self:updateAllHatcheriesHeart()
 end
 
+--获得当前最新的参考值（最小的饥饿值，以及最大的进化值）
+--目前最小的饥饿值还没有具体的作用，后续补充
+function BattleMgr:getNowReferenceValue( )
+       --当前玩家的 饱食度 和 进化值
+    local playerSatiation = self.player:getMonsterData():getMonsterNowSatiation()
+    local playerEvolution = self.player:getMonsterData():getMonsterNowEvolution()
+
+    --敌方玩家的 饱食度 和 进化值
+    local enemySatiation = self.enemy:getMonsterData():getMonsterNowSatiation()
+    local enemyEvolution = self.enemy:getMonsterData():getMonsterNowEvolution()
+
+    --得到最低当前最低的饱食度 和 最大的进化值  并需要知道是哪个玩家
+    local minSat,minSatPlayerType,maxEvo,maxEvoPlayerType  = nil 
+    --这里还要考虑一下 玩家和敌人同时死亡 或者 进化的条件 最好能够避免这种情况的出现
+    if playerSatiation < enemySatiation then 
+       minSat = playerSatiation
+       minSatPlayerType = PlayerType.player
+    else
+       minSat = enemySatiation
+       minSatPlayerType = PlayerType.enemy
+    end
+    
+    if playerEvolution < enemyEvolution then 
+       maxEvo = enemyEvolution
+       maxEvoPlayerType = PlayerType.enemy
+    else
+       maxEvo = playerEvolution
+       maxEvoPlayerType = PlayerType.player
+    end
+
+    return minSat,minSatPlayerType,maxEvo,maxEvoPlayerType
+end
+
+
 --检查当前的战斗状态
 --这里还需要改一下
 function BattleMgr:checkBattleStage(  )
     
-    --当前玩家的 饱食度 和 进化值
-    local playerSatiation = self.player:getMonsterData():getMonsterNowSatiation()
-    local playerEvolution = self.player:getMonsterData():getMonsterNowEvolution()
-    --敌方玩家的 饱食度 和 进化值
-    --
-
-    if playerSatiation <= 0 then 
-       mtEventDispatch():dispatchEvent(BATTLE_STATE_END,{winer = PlayerType.player})
-    end
-
-    if self.battleStage == BattleStage.init then 
-       mtEventDispatch():dispatchEvent(BATTLE_STAGE_REFRESH) 
-    end
+    local minSat,minSatPlayerType,maxEvo,maxEvoPlayerType = self:getNowReferenceValue()
 
     --阶段是不能跳跃的，只能一步一步的来，相同的阶段就不会持续发消息
     --第一阶段
-    if playerEvolution < 20 then 
-       if self.battleStage == BattleStage.init then 
+    if maxEvo < 20 then 
+       if self.battleStage == BattleStage.readyTime then 
           self:setBattleStage(BattleStage.level1)
           mtEventDispatch():dispatchEvent(BATTLE_STAGE_REFRESH)
        end
     --第二阶段
-    elseif playerEvolution >= 20 and playerEvolution < 80 then 
+    elseif maxEvo >= 20 and maxEvo < 80 then 
        if self.battleStage == BattleStage.level1 then
           self:setBattleStage(BattleStage.level2)
           mtEventDispatch():dispatchEvent(BATTLE_STAGE_REFRESH)  
        end
     --第三阶段
-    elseif playerEvolution >= 80 and playerEvolution < 100 then 
+    elseif maxEvo >= 80 and maxEvo < 100 then 
        if self.battleStage == BattleStage.level2 then
           self:setBattleStage(BattleStage.level3)
           mtEventDispatch():dispatchEvent(BATTLE_STAGE_REFRESH)
        end
     --进化完成 游戏结束
-    elseif playerEvolution == 100 then 
+    elseif maxEvo == 100 then 
        if self.battleStage == BattleStage.level3 then
           self:setBattleStage(BattleStage.ended)
-          mtEventDispatch():dispatchEvent(BATTLE_STATE_END) 
+          -- mtEventDispatch():dispatchEvent(BATTLE_STATE_END) 
+          mtEventDispatch():dispatchEvent(BATTLE_STATE_END,{winer = maxEvoPlayerType})
        end
     end
 end
@@ -347,6 +484,10 @@ end
 
 --每秒扣除  耐饿值
 function BattleMgr:updateMonsterSatiation( )
+    
+    --刷新主界面 玩家信息
+    self.battleScene:refreshPlayerInfo()
+    
     --每只怪兽都扣除一下
     if self.monsterList and #self.monsterList > 0 then 
         for k,v in ipairs(self.monsterList) do
@@ -355,8 +496,16 @@ function BattleMgr:updateMonsterSatiation( )
            end
         end
     end
-    --刷新主界面 玩家信息
-    self.battleScene:refreshPlayerInfo()
+
+    --敌对玩家都扣除一下
+    if self.enemyPlayerList and #self.enemyPlayerList > 0 then 
+        for k,v in ipairs(self.enemyPlayerList) do
+           if v then 
+              v:getLogic():decSatiation()    
+           end
+        end
+    end
+
 end
 
 --更新存活怪兽的心脏跳动
@@ -365,6 +514,17 @@ function BattleMgr:updateAllMonstersHeart( )
     if self.player then 
        self.player:getLogic():updateMonsterHeart()
     end
+    
+    --刷新敌对玩家的
+    if self.enemyPlayerList and #self.enemyPlayerList > 0 then 
+        for k,v in ipairs(self.enemyPlayerList) do
+           if v then 
+              v:getLogic():updateMonsterHeart()    
+           end
+        end
+    end
+
+    --刷新中立怪兽的
     if self.monsterList and #self.monsterList > 0 then 
         for k,v in ipairs(self.monsterList) do
            if v then 

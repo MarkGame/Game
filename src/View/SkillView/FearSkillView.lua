@@ -1,7 +1,7 @@
 --
 -- Author: HLZ
 -- Date: 2016-05-19 19:35:00
--- 恐惧技能的逻辑
+-- 恐惧技能的视图
 -- 
 local FearSkillView = class("FearSkillView",mtCommonSkillView())
 FearSkillView.__index            = FearSkillView

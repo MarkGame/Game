@@ -1,7 +1,7 @@
 --
 -- Author: HLZ
 -- Date: 2016-05-19 00:13:00
--- 探测技能的逻辑
+-- 探测技能的视图
 -- 
 local DetectSkillView = class("DetectSkillView",mtCommonSkillView())
 DetectSkillView.__index            = DetectSkillView

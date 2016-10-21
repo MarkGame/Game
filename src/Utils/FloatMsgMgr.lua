@@ -8,7 +8,7 @@
 --]]
 
 
-FloatMsgMgr = class("FloatMsgMgr",function ( )
+local FloatMsgMgr = class("FloatMsgMgr",function ( )
 	return cc.Node:create();
 end);
 
@@ -31,11 +31,17 @@ function FloatMsgMgr:ctor( )
 	self:setName(self.__cname)
 end
 
-
-function FloatMsgMgr:showTips( text,delay )
+-- text:文本
+-- delay 持续时间
+-- fontSize 字体大小
+function FloatMsgMgr:showTips( text,delay,fontSize)
 
 	if delay == nil then
 	   delay = 1 
+	end
+
+	if fontSize == nil then 
+	   fontSize = 26
 	end
    
     local bg = ccui.ImageView:create("publish/resource/login_font_base.png");
@@ -44,7 +50,7 @@ function FloatMsgMgr:showTips( text,delay )
 	bg:setScale9Enabled(true);
 	bg:setContentSize(cc.size(300,100))
 
-	local fnt = mtFntNormal().create(text,26)
+	local fnt = mtFntNormal().create(text,fontSize)
 	bg:addChild(fnt)
 	bg:setContentSize(cc.size(fnt:getContentSize().width + 20,fnt:getContentSize().height + 20));
 	bg:setCascadeOpacityEnabled(true)
@@ -84,3 +90,5 @@ end
 function FloatMsgMgr:_setSpare(idx ,label)
 	self._queueText[idx] = label;
 end
+
+return FloatMsgMgr

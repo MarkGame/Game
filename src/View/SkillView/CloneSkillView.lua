@@ -1,7 +1,7 @@
 --
 -- Author: HLZ
 -- Date: 2016-05-19 19:36:00
--- 分身技能的逻辑
+-- 分身技能的视图
 -- 
 local CloneSkillView = class("CloneSkillView",mtCommonSkillView())
 CloneSkillView.__index            = CloneSkillView

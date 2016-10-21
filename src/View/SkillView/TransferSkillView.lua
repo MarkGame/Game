@@ -1,7 +1,7 @@
 --
 -- Author: HLZ
 -- Date: 2016-05-19 19:31:00
--- 传送技能的逻辑
+-- 传送技能的视图
 -- 
 local TransferSkillView = class("TransferSkillView",mtCommonSkillView())
 TransferSkillView.__index            = TransferSkillView

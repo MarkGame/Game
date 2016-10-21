@@ -1,7 +1,7 @@
 --
 -- Author: HLZ
 -- Date: 2016-05-19 19:33:00
--- 闪耀技能的逻辑
+-- 闪耀技能的视图
 -- 
 local ShineSkillView = class("ShineSkillView",mtCommonSkillView())
 ShineSkillView.__index            = ShineSkillView

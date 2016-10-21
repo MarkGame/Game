@@ -1,7 +1,7 @@
 --
 -- Author: HLZ
 -- Date: 2016-08-29 15:35:00
--- 喷射技能的逻辑
+-- 喷射技能的视图
 -- 
 local ShootSkillView = class("ShootSkillView",mtCommonSkillView())
 ShootSkillView.__index            = ShootSkillView
@@ -17,7 +17,7 @@ end
 
 function ShootSkillView:launch()
 	
-	self:initBaseInfo(600)
+	self:initBullet(600)
 
 end
 

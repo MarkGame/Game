@@ -27,11 +27,12 @@ AnimationType = {
 
 --战斗阶段
 BattleStage = {
-	init   = 0,
-	level1 = 1,
-	level2 = 2,
-	level3 = 3,
-	ended = 4,
+	init      = 0,
+	readyTime = 1,
+	level1    = 2,
+	level2    = 3,
+	level3    = 4,
+	ended     = 5,
 }
 
 --玩家类型

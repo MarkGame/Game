@@ -1,6 +1,8 @@
 require "Network.SocketTCP"
 require "Utils.Log"
+--剖析器
 local sprotoparser = require "Network.sprotoparser"
+--加载器
 local sprotoloader = require "Network.sprotoloader"
 local sproto = require "Network.sproto"
 local crypt = require "crypt"

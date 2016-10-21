@@ -15,17 +15,23 @@ function CommonSkillView:ctor(skillLogic)
 	self.sprite = cc.Sprite:create("publish/resource/1.png")
 	self:addChild(self.sprite)
     
-    --怪兽逻辑
+    --逻辑
     self.skillLogic = skillLogic
-
-    --self:initBullet()
     
 end
 
-function CommonSkillView:initBullet( )
-    -- body
-    --这里要设置默认速度
-    self:initBaseInfo(600)
+--初始技能视图
+function CommonSkillView:initSkillImage( )
+
 end
+
+--初始化子弹 非子弹类技能 则不需要调用这个
+function CommonSkillView:initBullet(speed)
+    --这里要设置默认速度
+end
+
+
+
+
 
 return CommonSkillView

@@ -1,7 +1,7 @@
 --
 -- Author: HLZ
 -- Date: 2016-05-19 00:10:31
--- 吞噬技能的逻辑
+-- 吞噬技能的视图
 -- 
 local DevourSkillView = class("DevourSkillView",mtCommonSkillView())
 DevourSkillView.__index            = DevourSkillView

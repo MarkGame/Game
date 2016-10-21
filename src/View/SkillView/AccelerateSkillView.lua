@@ -1,7 +1,7 @@
 --
 -- Author: HLZ
 -- Date: 2016-05-18 20:22:31
--- 加速技能的逻辑
+-- 加速技能的视图
 -- 
 local AccelerateSkillView = class("AccelerateSkillView",mtCommonSkillView())
 AccelerateSkillView.__index            = AccelerateSkillView

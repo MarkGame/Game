@@ -10,7 +10,6 @@ function PlayerLogic:ctor(data)
     
     self.playerData = nil
 
-
     --怪兽的吞噬技能
     self.devourSkill = nil 
     
@@ -108,48 +107,54 @@ end
 
 --创建一个流动技能，需要填入技能ID
 function PlayerLogic:createFlowSkill( skillID )
-	local newFlowSkill = mtSkillMgr():createSkill(skillID)
-	if newFlowSkill then 
-       self:addSkillToFlowSkillsList(newFlowSkill)
-	end
+  	local newFlowSkill = mtSkillMgr():createSkill(skillID)
+  	if newFlowSkill then 
+         self:addSkillToFlowSkillsList(newFlowSkill)
+  	end
 end
 
 --添加技能到 流动技能数组
 function PlayerLogic:addSkillToFlowSkillsList(skill)
-	--判断 当前流动技能数组 是否已满
-	
-	if #self.flowSkillsList < 3 then --当流动技能数组小于三个技能时，可以直接添加 
+  	--判断 当前流动技能数组 是否已满
+  	
+  	if #self.flowSkillsList < 3 then --当流动技能数组小于三个技能时，可以直接添加 
        table.insert(self.flowSkillsList,skill)
-	else --当流动技能数组大于等于三个时，按一定规则删除技能
+       --刷新面板的技能图标
+       mtEventDispatch():dispatchEvent(BATTLE_SKILL_ICON_REFRESH)
+  	else --当流动技能数组大于等于三个时，按一定规则删除技能
        self:deleSkillFromFlowSkillsList(1) 
-	end
-
+  	end
+    
 end
 
 --第index号技能从 流动技能数组 删除
 function PlayerLogic:deleSkillFromFlowSkillsList(index)
-	--技能满的时候，将第一个技能移除，其他技能依次向前移位
-	local discardSkill = self.flowSkillsList[index]
-	--在技能移除的地方 自身removeFromParent 这里单纯从流动技能表中删除
-	--discardSkill:removeSkill()
-	table.remove(self.flowSkillsList,index)
-    
+  	--技能满的时候，将第一个技能移除，其他技能依次向前移位
+  	local discardSkill = self.flowSkillsList[index]
+  	--在技能移除的地方 自身removeFromParent 这里单纯从流动技能表中删除
+  	--discardSkill:removeSkill()
+  	table.remove(self.flowSkillsList,index)
+      
     if self.flowSkillsList and #self.flowSkillsList > 0 then 
-		for k,v in ipairs(self.flowSkillsList) do
-			--把flowSkillsList剩余的技能 依次向前移动
-			if self.flowSkillsList[1] == nil and k > 1 then 
-	           local tempSkill = v
-	           table.insert(self.flowSkillsList,1,skill)
-			elseif self.flowSkillsList[2] == nil and k > 2 then 
-	           local tempSkill = v
-	           table.insert(self.flowSkillsList,2,skill)
-			elseif self.flowSkillsList[3] == nil then 
-	           local tempSkill = v
-	           table.insert(self.flowSkillsList,3,skill)
-			end
-		end
+  		for k,v in ipairs(self.flowSkillsList) do
+  			--把flowSkillsList剩余的技能 依次向前移动
+  			if self.flowSkillsList[1] == nil and k > 1 then 
+  	           local tempSkill = v
+  	           table.insert(self.flowSkillsList,1,skill)
+  			elseif self.flowSkillsList[2] == nil and k > 2 then 
+  	           local tempSkill = v
+  	           table.insert(self.flowSkillsList,2,skill)
+  			elseif self.flowSkillsList[3] == nil then 
+  	           local tempSkill = v
+  	           table.insert(self.flowSkillsList,3,skill)
+  			end
+  		end
     end
+
+    --三个技能按钮都需要刷新ICON
+    mtEventDispatch():dispatchEvent(BATTLE_SKILL_ICON_REFRESH)
 end
+
 --刷新自身的怪兽的 心脏跳动
 function PlayerLogic:updateMonsterHeart( )
 	-- body

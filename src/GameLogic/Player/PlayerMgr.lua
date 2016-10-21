@@ -25,8 +25,9 @@ function PlayerMgr:createPlayerView(data)
 	local playerView = mtPlayerView().new(playerLogic)
     local birthTime = mtTimeMgr():getCurTime()
     playerLogic:setMonsterBirthTime(birthTime)
-
-    mtBattleMgr():addMonsterToList(playerView)
+    
+    --玩家不能添加到该数组内
+    --mtBattleMgr():addMonsterToList(playerView)
     
     return playerView
 end
