@@ -46,9 +46,9 @@ function FloatMsgMgr:showTips( text,delay,fontSize)
    
     local bg = ccui.ImageView:create("publish/resource/login_font_base.png");
     --设置九宫的四个属性
-	bg:setCapInsets(cc.rect(20,20,20,20));
-	bg:setScale9Enabled(true);
-	bg:setContentSize(cc.size(300,100))
+	-- bg:setCapInsets(cc.rect(20,20,20,20));
+	-- bg:setScale9Enabled(true);
+	bg:setContentSize(cc.size(100,50))
 
 	local fnt = mtFntNormal().create(text,fontSize)
 	bg:addChild(fnt)

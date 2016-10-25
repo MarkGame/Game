@@ -440,7 +440,7 @@ local FntNormal = nil
 -- @return Utils.FntNormal
 function mtFntNormal()
     if FntNormal == nil then
-        FntNormal = require("Utils.FntNormal")
+        FntNormal = require("Utils.Font")
     end
     return FntNormal
 end

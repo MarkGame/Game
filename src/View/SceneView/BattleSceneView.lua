@@ -52,18 +52,20 @@ function BattleSceneView:initTileMap()
     self.uiLayer = cc.Layer:create()
     self.uiLayer:setPosition(cc.p(0,0))
     self.uiLayer:setTag(UI_LAYER_TAG)
-    self:addChild(self.uiLayer)
+    self:addChild(self.uiLayer,ZVALUE_UI)
 
     --创建地图层
     self.mapLayer = cc.Layer:create()
     self.mapLayer:setPosition(cc.p(0,0))
     self.mapLayer:setTag(BATTLEMAP_MAP_LAYER_TAG)
-    self:addChild(self.mapLayer)
+    self:addChild(self.mapLayer,ZVALUE_MAP)
+
+
 
 
     self.guiBattleMainNode = createGUINode(res.RES_BATTLE_MAIN_UI)
     self.guiBattleMainNode:setName("self.guiBattleMainNode")
-    self.uiLayer:addChild(self.guiBattleMainNode,ZVALUE_UI)
+    self.uiLayer:addChild(self.guiBattleMainNode)
   
     --加载地图
     self.map = self:createTMXTM(ORIGINAL_SCENCE_64_TMX)
@@ -75,8 +77,6 @@ function BattleSceneView:initTileMap()
     --self.backGroundLayer = self:getLayer(TiledMapLayer.background)
     self.impactLayer:setVisible(false)
     --self.impactLayer:setOpacity(255*0.8)
-
-
 
     --开启键盘控制（win32版本使用）
     if g_game:getTargetPlatform() == cc.PLATFORM_OS_WINDOWS then 
@@ -96,6 +96,8 @@ function BattleSceneView:initTileMap()
     --初始化事件
     self:initEvent()
     
+
+    self:hideView()
     
 end
 
@@ -181,8 +183,7 @@ function BattleSceneView:initGUI( )
     table.insert(self.flowSkillBtnList,2,self.buttonSkill2)
     table.insert(self.flowSkillBtnList,3,self.buttonSkill3)
      
-    --初始化刷新
-    self:refreshPlayerInfo()
+
 end
 
 --这里最好可以通过 事件的推送 来完成一系列的游戏流程
@@ -260,11 +261,15 @@ function BattleSceneView:hatchStart( )
 
     --创建玩家 和 敌对玩家 
     self.player = mtBattleMgr():createPlayer(cc.p(14,8))
-    self.enemyPlayer = mtBattleMgr():createEnemy(1015,cc.p(15,8))
+    --self.enemyPlayer = mtBattleMgr():createEnemy(1015,cc.p(15,8))
     --初始化 孵化场
     self:initHatchery()
     --初始化地图位置
     self:initMapPos()
+    --初始化刷新
+    self:refreshPlayerInfo()
+    --开始计时器
+    mtBattleMgr():startUpdateBattle()
 end
 
 --初始化 孵化场
@@ -296,6 +301,17 @@ end
 function BattleSceneView:refreshBattleState( )
     local str = mtBattleMgr():getBattleStageDesc()
     mtFloatMsgMgr():showTips(str,3)
+end
+
+function BattleSceneView:hideView( )
+    -- -- 创建遮罩层
+    -- local hideLayer = cc.LayerColor:create(cc.c4b(0,0,0,0))
+    -- hideLayer:setPosition(cc.p(0,0))
+    -- --hideLayer:setTag(UI_LAYER_TAG)
+    -- self:addChild(hideLayer,ZVALUE_UI+10)
+
+    self.uiLayer:setVisible(false)
+    self.mapLayer:setVisible(false)
 end
 
 function BattleSceneView:gameOver( )

@@ -33,7 +33,7 @@ local FearSkillView = require("View.SkillView.FearSkillView")
 local CloneSkillLogic = require("GameLogic.Skill.SkillLogic.CloneSkillLogic")
 local CloneSkillView = require("View.SkillView.CloneSkillView")
 --子弹
-local ShootSkillLogic = require("GameLogic.Skill.skillLogic.ShootSkillLogic")
+local ShootSkillLogic = require("GameLogic.Skill.SkillLogic.ShootSkillLogic")
 local ShootSkillView = require("View.SkillView.ShootSkillView")
 
 SkillMap = SkillMap or {}

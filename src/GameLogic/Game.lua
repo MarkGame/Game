@@ -69,10 +69,6 @@ function Game:enterStartScene()
     StartSceneView.open()
 end
 
-function Game:enterOriginalScene()
-    BattleSceneView.open()
-end
-
 function Game:enterBattleScene()
-
+    BattleSceneView.open()
 end

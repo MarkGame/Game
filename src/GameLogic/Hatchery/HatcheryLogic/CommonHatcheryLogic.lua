@@ -23,7 +23,7 @@ function CommonHatcheryLogic:ctor(data)
    --孵化结束的时间
    self.hatchCompleteTime = 0
 
-   self.isOnlyMonster = false
+   self.tempMonsterCount = 1
 
    --是否正在孵化
    self.isHatching = false
@@ -62,7 +62,7 @@ end
 function CommonHatcheryLogic:updateHatcheryHeart()
     --此时可以孵化
 
-    if self:isCanHatchery() == true and self.isHatching == false and self.isOnlyMonster == false then 
+    if self:isCanHatchery() == true and self.isHatching == false then 
         print(" self.residualTime : "..self.residualTime)
         self.isHatching = true
         self.monsterID = self:getSelectedMonsterID()
@@ -142,8 +142,6 @@ function CommonHatcheryLogic:addMonster(monsterID)
     monster:setPosition(initPos)
 
     self.isHatching = false
-
-    --self.isOnlyMonster = true
     
 end
 
@@ -220,7 +218,14 @@ function CommonHatcheryLogic:isCanHatchery( )
     if nowStage == BattleStage.init or nowStage == BattleStage.ended then 
        return false
     end 
+    
+    --临时处理 只召唤一只怪兽
+    if self.tempMonsterCount <= 0 then 
+       return false 
+    end 
+    self.tempMonsterCount = self.tempMonsterCount - 1
 
+    
     --控制当前怪兽 当前阶段怪兽的总数
     local hatcheryInfo = self.hatcheryData:getNowHatcheryInfo(mtBattleMgr():getBattleStage())
     local monstersByLevelList,totalMonstersCounts = mtBattleMgr():getMonsterListByLevel()

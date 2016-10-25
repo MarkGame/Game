@@ -22,13 +22,14 @@ function DecelerateBuffLogic:launch(monster)
 	      --降低怪物的移速
 	      self.monster = monster
 
-          local oldVelocity = monster:getLogic():getMonsterData():getMonsterVelocity()
-          
-          local newVelocity = oldVelocity*self:getBuffData():getBuffValue()  --配表的扣减的百分比数值
- 
-          monster:getLogic():getMonsterData():setMonsterVelocity(newVelocity)
+        local oldVelocity = monster:getLogic():getMonsterData():getMonsterVelocity()
+        
+        local newVelocity = oldVelocity*self:getBuffData():getBuffValue()  --配表的扣减的百分比数值
 
-          self.isActivation = true
+        monster:getLogic():getMonsterData():setMonsterVelocity(newVelocity)
+
+        self.isActivation = true
+        print("成功激活BUFF")
 	   else 
 	      print("目标怪兽不存在")
 	   end  
@@ -46,7 +47,9 @@ function DecelerateBuffLogic:removeBuff( )
 	end
 
 	g_Worker:pushDelayQueue(function()
-     self:removeFromParent()           
+	   if self then 
+        self:removeFromParent()         
+     end  
   end)
 end
 

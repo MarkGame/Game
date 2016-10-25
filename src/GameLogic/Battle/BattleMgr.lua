@@ -170,12 +170,15 @@ function BattleMgr:createPlayer(initPos)
     local data = {}
     data.playerType = PlayerType.player
     local player =  mtPlayerMgr():createPlayerView(data)
-    self.parentScene:getMap():addChild(player,ZVALUE_BATTLEMAP_PLAYER) 
+    self.battleScene:getMap():addChild(player,ZVALUE_BATTLEMAP_PLAYER) 
     --主角初始位置
-    local initPlayerPos = self.parentScene:positionForTileCoord(initPos)
+    local initPlayerPos = self.battleScene:positionForTileCoord(initPos)
     player:setPosition(initPlayerPos)
   
     self:setMyMonster(player)
+    self.player = player
+
+    return player
 
 end
 
@@ -189,15 +192,18 @@ function BattleMgr:createEnemy(monsterID,initPos)
     data.playerType = PlayerType.enemy
     data.monsterID = monsterID
     local enemy =  mtMonsterMgr():createMonster(data)
-    self.parentScene:getMap():addChild(enemy,ZVALUE_BATTLEMAP_MONSTER) 
+    self.battleScene:getMap():addChild(enemy,ZVALUE_BATTLEMAP_MONSTER) 
     --主角初始位置
-    local initEnemyPos = self.parentScene:positionForTileCoord(initPos)
+    local initEnemyPos = self.battleScene:positionForTileCoord(initPos)
     enemy:setPosition(initEnemyPos)
 
     self:addEnemyToList(enemy)
 
     -- 当前按 1V1 一个怪兽来处理 后面再做数组处理
     self:setEnemyMonster(enemy)
+    self.enemy = enemy
+
+    return enemy
 
 end
 
@@ -364,7 +370,7 @@ function BattleMgr:updateReadyTime( )
     else
        --显示倒计时
        local str = self.readyTimeCount
-       mtFloatMsgMgr():showTips(str,0.5)
+       mtFloatMsgMgr():showTips(str,0.2)
        self.readyTimeCount = self.readyTimeCount - 1
     end
 end
@@ -373,8 +379,8 @@ end
 function BattleMgr:startBattle( )
     --推送消息 开始游戏
     mtEventDispatch():dispatchEvent(BATTLE_READYTIME_END)
-    --开始计时器
-    self:startUpdateBattle()
+    
+    --self:startUpdateBattle()
 end
 
 
@@ -382,7 +388,7 @@ end
 ----------------------------------------------------战斗调度器--------------------------------------------
 
 function BattleMgr:startUpdateBattle( )
-    --要想开始，先要结束
+    --要想开始，先要结束上一次
     self:stopUpdateBattle( )
     --更新战斗信息 每帧调度一次
     self.updateBattleHandler = mtSchedulerMgr():addScheduler(0,-1,handler(self,self.updateBattle))
@@ -416,12 +422,12 @@ end
 --目前最小的饥饿值还没有具体的作用，后续补充
 function BattleMgr:getNowReferenceValue( )
        --当前玩家的 饱食度 和 进化值
-    local playerSatiation = self.player:getMonsterData():getMonsterNowSatiation()
-    local playerEvolution = self.player:getMonsterData():getMonsterNowEvolution()
+    local playerSatiation = self.player:getLogic():getMonsterData():getMonsterNowSatiation()
+    local playerEvolution = self.player:getLogic():getMonsterData():getMonsterNowEvolution()
 
     --敌方玩家的 饱食度 和 进化值
-    local enemySatiation = self.enemy:getMonsterData():getMonsterNowSatiation()
-    local enemyEvolution = self.enemy:getMonsterData():getMonsterNowEvolution()
+    local enemySatiation = 100--self.enemy:getLogic():getMonsterData():getMonsterNowSatiation()
+    local enemyEvolution = 0--self.enemy:getLogic():getMonsterData():getMonsterNowEvolution()
 
     --得到最低当前最低的饱食度 和 最大的进化值  并需要知道是哪个玩家
     local minSat,minSatPlayerType,maxEvo,maxEvoPlayerType  = nil 
@@ -497,14 +503,19 @@ function BattleMgr:updateMonsterSatiation( )
         end
     end
 
-    --敌对玩家都扣除一下
-    if self.enemyPlayerList and #self.enemyPlayerList > 0 then 
-        for k,v in ipairs(self.enemyPlayerList) do
-           if v then 
-              v:getLogic():decSatiation()    
-           end
-        end
+    --刷新玩家自身的
+    if self.player then 
+       self.player:getLogic():decSatiation()
     end
+
+    --敌对玩家都扣除一下
+    -- if self.enemyPlayerList and #self.enemyPlayerList > 0 then 
+    --     for k,v in ipairs(self.enemyPlayerList) do
+    --        if v then 
+    --           v:getLogic():decSatiation()    
+    --        end
+    --     end
+    -- end
 
 end
 
@@ -515,14 +526,14 @@ function BattleMgr:updateAllMonstersHeart( )
        self.player:getLogic():updateMonsterHeart()
     end
     
-    --刷新敌对玩家的
-    if self.enemyPlayerList and #self.enemyPlayerList > 0 then 
-        for k,v in ipairs(self.enemyPlayerList) do
-           if v then 
-              v:getLogic():updateMonsterHeart()    
-           end
-        end
-    end
+    -- --刷新敌对玩家的
+    -- if self.enemyPlayerList and #self.enemyPlayerList > 0 then 
+    --     for k,v in ipairs(self.enemyPlayerList) do
+    --        if v then 
+    --           v:getLogic():updateMonsterHeart()    
+    --        end
+    --     end
+    -- end
 
     --刷新中立怪兽的
     if self.monsterList and #self.monsterList > 0 then 

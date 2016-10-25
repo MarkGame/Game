@@ -35,18 +35,20 @@ function StartSceneView:createScene()
     self.layer = cc.Layer:create()
     self:addChild(self.layer)
 
-	self.guiNode = createGUINode(res.RES_START_GAME)
-	self.layer:addChild(self.guiNode,10)
+	-- self.guiNode = createGUINode(res.RES_START_GAME)
+	-- self.layer:addChild(self.guiNode,10)
 
-	self.btnStart = self.guiNode:getChildByName("Button_2")
-	self.btnStart:addTouchEventListener(function(sender,event)
-		if event == ccui.TouchEventType.ended then 
-		   print("self.btnStart")
+	-- self.btnStart = self.guiNode:getChildByName("Button_2")
+	-- self.btnStart:addTouchEventListener(function(sender,event)
+	-- 	if event == ccui.TouchEventType.ended then 
+	-- 	   print("self.btnStart")
 
-		   g_game:enterOriginalScene()
-		   --g_EventDispatch:dispatchEvent(TEST_EVENT_RETURN)
-	    end 
-	end)
+	-- 	   g_game:enterOriginalScene()
+	-- 	   --g_EventDispatch:dispatchEvent(TEST_EVENT_RETURN)
+	--     end 
+	-- end)
+
+	g_game:enterBattleScene()
 
 end
 
