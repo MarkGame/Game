@@ -363,7 +363,7 @@ end
 
 --每秒更新一次 判断是否倒计时结束
 function BattleMgr:updateReadyTime( )
-    if self.readyTimeCount - 1 <= 0 then 
+    if self.readyTimeCount - 1 < 0 then 
        self.readyTimeHandler = mtSchedulerMgr():removeScheduler(self.readyTimeHandler)
        self.readyTimeCount = self.readyTimeMaxCount
        self:startBattle()
@@ -599,10 +599,10 @@ function BattleMgr:addBehaviorLog(monsterLogID,behaviorType)
     table.insert(self.monsterLogList[monsterLogID] ,index , behaviorLog)
 
     --推送到 行为日志视图中 去添加
-    mtEventDispatch():dispatchEvent(BATTLE_NEW_BEHAVIORLOG,{ newLog = behaviorLog})  
-     
+    --mtEventDispatch():dispatchEvent(BATTLE_NEW_BEHAVIORLOG,{ newLog = behaviorLog})  
+    
     --输出怪物在做什么。（临时做法）
-    --print(behaviorLog:getLogStr())
+    print(behaviorLog:getLogStr())
 
 end
 

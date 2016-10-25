@@ -336,8 +336,9 @@ end
 -----------------------------------------------休息 模块 START----------------------------------------------
 --冷静一下
 function CommonMonsterLogic:calm(  )
-
+   print("enter calm ")
    local func = function ( )
+       print("enter toSearch ")
        self:doEvent("toSearch")
        self.updateDelayHandler = mtSchedulerMgr():removeScheduler(self.updateDelayHandler)
    end

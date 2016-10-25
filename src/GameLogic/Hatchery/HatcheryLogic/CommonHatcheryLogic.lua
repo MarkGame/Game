@@ -130,6 +130,7 @@ function CommonHatcheryLogic:addMonster(monsterID)
 
     local data = {}
     data.monsterID = monsterID
+    print("生成怪兽的ID ：  "..monsterID)
     local monster = mtMonsterMgr():createMonster(data)
     self.parentScene:getMap():addChild(monster,ZVALUE_BATTLEMAP_MONSTER)
     mtBattleMgr():addMonsterToList(monster)
@@ -220,11 +221,10 @@ function CommonHatcheryLogic:isCanHatchery( )
     end 
     
     --临时处理 只召唤一只怪兽
-    if self.tempMonsterCount <= 0 then 
-       return false 
-    end 
-    self.tempMonsterCount = self.tempMonsterCount - 1
-
+    -- if self.tempMonsterCount <= 0 then 
+    --    return false 
+    -- end 
+    -- self.tempMonsterCount = self.tempMonsterCount - 1
     
     --控制当前怪兽 当前阶段怪兽的总数
     local hatcheryInfo = self.hatcheryData:getNowHatcheryInfo(mtBattleMgr():getBattleStage())
@@ -236,5 +236,6 @@ function CommonHatcheryLogic:isCanHatchery( )
     end
 
 end
+
 
 return CommonHatcheryLogic

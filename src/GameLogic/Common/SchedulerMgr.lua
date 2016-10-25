@@ -53,28 +53,8 @@ function SchedulerMgr:updateGame( )
        return 
     end
 
-    -- for key,scheduler in pairs(self.schedulerList) do
-    --     if scheduler then 
-    --        scheduler.m_pastTime = scheduler.m_pastTime + eachFrameTime
-    --        if scheduler.m_interval == 0 or scheduler.m_pastTime >= scheduler.m_interval then
-    --           --回调一次该方法
-    --           scheduler.m_callBack(key)
-    --           scheduler.m_pastTime = scheduler.m_pastTime - scheduler.m_interval
-    --           scheduler.m_curTimes = scheduler.m_curTimes + 1
-    --           if scheduler.m_times >= 0 and scheduler.m_curTimes >= scheduler.m_times then 
-    --              self:removeScheduler(key)
-    --           end
-    --        end
-    --     end
-    -- end
-    
-    -- 这里 吸取 巨龙经验，在一些特殊情况下，有的调度器 会被清掉，导致pais调用时 会找不到，报错
-    -- 改用当前的数据长度去使用  具体的 ，等以后出现了 再去特殊解决
-
-    local len = #self.schedulerList
-    for key=1,len do
-        local scheduler = self.schedulerList[key]
-        if scheduler then
+    for key,scheduler in pairs(self.schedulerList) do
+        if scheduler then 
            scheduler.m_pastTime = scheduler.m_pastTime + eachFrameTime
            if scheduler.m_interval == 0 or scheduler.m_pastTime >= scheduler.m_interval then
               --回调一次该方法
@@ -87,6 +67,26 @@ function SchedulerMgr:updateGame( )
            end
         end
     end
+    
+    -- 这里 吸取 巨龙经验，在一些特殊情况下，有的调度器 会被清掉，导致pais调用时 会找不到，报错
+    -- 改用当前的数据长度去使用  具体的 ，等以后出现了 再去特殊解决
+
+    -- local len = #self.schedulerList
+    -- for key=1,len do
+    --     local scheduler = self.schedulerList[key]
+    --     if scheduler then
+    --        scheduler.m_pastTime = scheduler.m_pastTime + eachFrameTime
+    --        if scheduler.m_interval == 0 or scheduler.m_pastTime >= scheduler.m_interval then
+    --           --回调一次该方法
+    --           scheduler.m_callBack(key)
+    --           scheduler.m_pastTime = scheduler.m_pastTime - scheduler.m_interval
+    --           scheduler.m_curTimes = scheduler.m_curTimes + 1
+    --           if scheduler.m_times >= 0 and scheduler.m_curTimes >= scheduler.m_times then 
+    --              self:removeScheduler(key)
+    --           end
+    --        end
+    --     end
+    -- end
 
 end
 
