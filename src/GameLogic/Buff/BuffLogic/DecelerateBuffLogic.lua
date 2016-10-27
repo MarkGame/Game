@@ -34,7 +34,7 @@ function DecelerateBuffLogic:launch(monster)
 	      print("目标怪兽不存在")
 	   end  
    else
-   	   print("已经激活了，无需重复激活")
+   	   --print("已经激活了，无需重复激活")
    end
 end
 
@@ -46,11 +46,10 @@ function DecelerateBuffLogic:removeBuff( )
      self.monster:getLogic():getMonsterData():initMonsterVelocity()
 	end
 
-	g_Worker:pushDelayQueue(function()
-	   if self then 
-        self:removeFromParent()         
-     end  
-  end)
+  -- if self then 
+  --    self:removeFromParent()         
+  -- end  
+
 end
 
 return DecelerateBuffLogic

@@ -261,7 +261,7 @@ function BattleSceneView:hatchStart( )
 
     --创建玩家 和 敌对玩家 
     self.player = mtBattleMgr():createPlayer(cc.p(14,8))
-    --self.enemyPlayer = mtBattleMgr():createEnemy(1015,cc.p(15,8))
+    self.enemyPlayer = mtBattleMgr():createEnemy(1015,cc.p(15,8))
     --初始化 孵化场
     self:initHatchery()
     --初始化地图位置

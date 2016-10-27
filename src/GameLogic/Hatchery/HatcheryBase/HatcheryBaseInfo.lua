@@ -42,7 +42,9 @@ end
 
 --获得孵化池ID
 function HatcheryBaseInfo:getPoolIDByStage( stage )
-	local poolID = (self.battleAreaID%100)*1000 + stage
+
+	-- print(" getPoolIDByStage   self.battleAreaID : " .. self.battleAreaID  .."  stage: " ..stage)
+	local poolID = (self.battleAreaID%100)*1000 + stage-1
 	return poolID
 end
 
@@ -79,6 +81,7 @@ end
 
 function HatcheryBaseInfo:getNowHatcheryInfo( stage )
 	local poolID = self:getPoolIDByStage(stage)
+	-- print("  poolID   :   "..poolID)
 	local hatcheryInfoList = g_Config:getData("HatcheryInfo","PoolID",poolID)[1]
     return hatcheryInfoList
 end

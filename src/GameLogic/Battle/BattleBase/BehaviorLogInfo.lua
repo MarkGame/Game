@@ -11,6 +11,7 @@ function BehaviorLogInfo:ctor( data )
 
     self.behaviorType = data.behaviorType 
     self.monsterLogID = data.monsterLogID
+    self.monsterType  = data.monsterType
     self.behaviorTime = mtTimeMgr():getStrByTimestamp(mtTimeMgr():getCurTime())
     
 end
@@ -43,9 +44,25 @@ function BehaviorLogInfo:getBehaviorStr( )
   return ""
 end
 
+PlayerType = {
+  player = 1,
+  enemy  = 2,
+
+function BehaviorLogInfo:getMonsterName( )
+  if self.monsterType == PlayerType.player then 
+     return "己方怪兽"
+  elseif self.monsterType == PlayerType.enemy then 
+     return "敌对怪兽"
+  elseif self.monsterType == PlayerType.npc then
+     return self.monsterLogID.."号怪兽"   
+  end
+  return "error"
+end
+
 function BehaviorLogInfo:getLogStr( )
 	local behaviorStr = self:getBehaviorStr()
-	return self.index.." : ".. self.monsterLogID .."号怪兽，在"..self.behaviorTime.." 执行了——"..behaviorStr
+  local monsterName = self:getMonsterName()
+	return self.index.." : ".. monsterName .."，在"..self.behaviorTime.." 执行了——"..behaviorStr
 end
 
 return BehaviorLogInfo

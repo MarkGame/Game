@@ -39,6 +39,7 @@ BattleStage = {
 PlayerType = {
 	player = 1,
 	enemy  = 2,
+	npc    = 3,
 }
 
 SkillType = {

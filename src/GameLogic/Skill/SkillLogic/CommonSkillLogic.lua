@@ -152,7 +152,12 @@ end
 ]]
 function CommonSkillLogic:getDetectMonsterBySkill(monster)
     if monster == nil then return end 
-	  return mtBattleMgr():detectMonster(monster:getTiledMapPos(),self:getSkillRangeInfo())
+    --dump(monster)
+    local monsterID = monster:getLogic():getMonsterID()
+    --print(" monsterID : "..monsterID)
+    local pos = monster:getTiledMapPos()
+    local skillRangeInfo = self:getSkillRangeInfo()
+	  return mtBattleMgr():detectMonster(pos,skillRangeInfo)
 end
 
 --获得技能内 最近的一个/多个目标 
@@ -251,7 +256,9 @@ function CommonSkillLogic:devourMonsterSuccess( monster,targetMonster,callBack )
  
      monster:getLogic():addSatiation(satiation)
      monster:getLogic():addEvolution(evolution)
+     print(" targetMonster:getLogic():getMonsterData():getIsMainMonster() ")
      if targetMonster:getLogic():getMonsterData():getIsMainMonster() == false then 
+        print("targetMonster:removeMonster()")
         targetMonster:removeMonster()
      end
      --如果是主角吃的，则添加流动技能

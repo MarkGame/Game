@@ -90,7 +90,10 @@ end
 --移除怪兽
 function CommonMonsterLogic:removeMonster(  )
    --现在这里暂时不做操作
-   mtBattleMgr():addBehaviorLog(self.monsterLogID,MonsterBehaviorType.die)
+   mtBattleMgr():addBehaviorLog(self.monsterLogID,MonsterBehaviorType.die,self.playerType)
+   if self.monster then 
+      self.monster:removeFromParent()
+   end
 end
 
 --获得怪兽的TiledPos x,y
@@ -176,6 +179,7 @@ function CommonMonsterLogic:clearBuffList()
     for k,v in ipairs(self.buffList) do
         if v then 
            v:removeBuff()
+           v = nil
            table.remove(self.buffList,k)
         end
     end
@@ -190,6 +194,7 @@ function CommonMonsterLogic:removeBuffFromBuffList(buff)
         --如果当前已经有相同BUFF，BUFF叠加
         if v:getBuffData():getBuffID() == buff:getBuffData():getBuffID() then 
            v:removeBuff()
+           v = nil
            table.remove(self.buffList,k)
            break
         end
@@ -700,7 +705,7 @@ function CommonMonsterLogic:initStateMachine( )
            -- toIdle
            onbeforidle = function(event) end, 
            onenteridle = function(event)
-              mtBattleMgr():addBehaviorLog(self.monsterLogID,MonsterBehaviorType.idle)
+              mtBattleMgr():addBehaviorLog(self.monsterLogID,MonsterBehaviorType.idle,self.playerType)
               self:calm() 
            end,
            onafteridle  = function(event)  end,
@@ -709,7 +714,7 @@ function CommonMonsterLogic:initStateMachine( )
            -- toSearch
            onbeforesearch = function(event) end, 
            onentersearch = function(event) 
-              mtBattleMgr():addBehaviorLog(self.monsterLogID,MonsterBehaviorType.search)
+              mtBattleMgr():addBehaviorLog(self.monsterLogID,MonsterBehaviorType.search,self.playerType)
               self:autoSearchTarget() 
            end,
            onaftersearch  = function(event)  end,
@@ -718,7 +723,7 @@ function CommonMonsterLogic:initStateMachine( )
            -- toSelect
            onbeforeselectTarget = function(event) end, 
            onenterselectTarget = function(event) 
-              mtBattleMgr():addBehaviorLog(self.monsterLogID,MonsterBehaviorType.selectTarget)
+              mtBattleMgr():addBehaviorLog(self.monsterLogID,MonsterBehaviorType.selectTarget,self.playerType)
               self:autoSelectTarget() 
            end,
            onafterselectTarget  = function(event)  end,
@@ -727,7 +732,7 @@ function CommonMonsterLogic:initStateMachine( )
            -- toAutoMove
            onbeforeautoMove = function(event) end, 
            onenterautoMove = function(event) 
-              mtBattleMgr():addBehaviorLog(self.monsterLogID,MonsterBehaviorType.autoMove) 
+              mtBattleMgr():addBehaviorLog(self.monsterLogID,MonsterBehaviorType.autoMove,self.playerType) 
               self:autoRandomMovement() 
            end,
            onafterautoMove = function(event)  end,
@@ -736,7 +741,7 @@ function CommonMonsterLogic:initStateMachine( )
            -- toChase
            onbeforechase = function(event) end, 
            onenterchase = function(event) 
-              mtBattleMgr():addBehaviorLog(self.monsterLogID,MonsterBehaviorType.chase)
+              mtBattleMgr():addBehaviorLog(self.monsterLogID,MonsterBehaviorType.chase,self.playerType)
               self:chaseToTarget() 
            end,
            onafterchase  = function(event)  end,
@@ -745,7 +750,7 @@ function CommonMonsterLogic:initStateMachine( )
            -- toEscape
            onbeforeescape = function(event) end, 
            onenterescape = function(event) 
-              mtBattleMgr():addBehaviorLog(self.monsterLogID,MonsterBehaviorType.escape)
+              mtBattleMgr():addBehaviorLog(self.monsterLogID,MonsterBehaviorType.escape,self.playerType)
               self:escapeFromTarget() 
            end,
            onafterescape  = function(event)  end,
@@ -754,7 +759,7 @@ function CommonMonsterLogic:initStateMachine( )
            -- toDevour
            onbeforedevour = function(event) end, 
            onenterdevour = function(event) 
-              mtBattleMgr():addBehaviorLog(self.monsterLogID,MonsterBehaviorType.devour)
+              mtBattleMgr():addBehaviorLog(self.monsterLogID,MonsterBehaviorType.devour,self.playerType)
               self:devourMonster() 
            end,
            onafterdevour  = function(event)  end,
@@ -763,7 +768,7 @@ function CommonMonsterLogic:initStateMachine( )
            -- toUseExclusive
            onbeforeuseExclusive = function(event) end, 
            onenteruseExclusive = function(event) 
-              mtBattleMgr():addBehaviorLog(self.monsterLogID,MonsterBehaviorType.useExclusive)
+              mtBattleMgr():addBehaviorLog(self.monsterLogID,MonsterBehaviorType.useExclusive,self.playerType)
               self:useExclusiveSkill() 
            end,
            onafteruseExclusive  = function(event)  end,

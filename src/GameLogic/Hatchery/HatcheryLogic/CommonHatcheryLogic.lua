@@ -130,6 +130,7 @@ function CommonHatcheryLogic:addMonster(monsterID)
 
     local data = {}
     data.monsterID = monsterID
+    data.playerType = PlayerType.npc 
     print("生成怪兽的ID ：  "..monsterID)
     local monster = mtMonsterMgr():createMonster(data)
     self.parentScene:getMap():addChild(monster,ZVALUE_BATTLEMAP_MONSTER)

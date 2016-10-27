@@ -65,11 +65,10 @@ end
 function MonsterView:removeMonster()
 
 	g_Worker:pushDelayQueue(function()
-        --从当前场上存活的怪兽移除
-        if self.monsterLogic ~= nil then 
-           self.monsterLogic:removeMonster()
-           self:removeFromParent()    
-        end       
+        -- 从当前场上存活的怪兽移除
+        if self and self.monsterLogic then 
+           self.monsterLogic:removeMonster() 
+        end
     end)
     --self.monsterLogic:devourMonster()
 end
@@ -92,7 +91,6 @@ function MonsterView:onExit()
     self.updateRefreshMonster = mtSchedulerMgr():removeScheduler(self.updateRefreshMonster)
 
     mtBattleMgr():removeMonsterFromList(self)
-    self:removeMonster()
     
 end
 

@@ -426,8 +426,8 @@ function BattleMgr:getNowReferenceValue( )
     local playerEvolution = self.player:getLogic():getMonsterData():getMonsterNowEvolution()
 
     --敌方玩家的 饱食度 和 进化值
-    local enemySatiation = 100--self.enemy:getLogic():getMonsterData():getMonsterNowSatiation()
-    local enemyEvolution = 0--self.enemy:getLogic():getMonsterData():getMonsterNowEvolution()
+    local enemySatiation = self.enemy:getLogic():getMonsterData():getMonsterNowSatiation()
+    local enemyEvolution = self.enemy:getLogic():getMonsterData():getMonsterNowEvolution()
 
     --得到最低当前最低的饱食度 和 最大的进化值  并需要知道是哪个玩家
     local minSat,minSatPlayerType,maxEvo,maxEvoPlayerType  = nil 
@@ -457,7 +457,7 @@ end
 function BattleMgr:checkBattleStage(  )
     
     local minSat,minSatPlayerType,maxEvo,maxEvoPlayerType = self:getNowReferenceValue()
-
+    
     --阶段是不能跳跃的，只能一步一步的来，相同的阶段就不会持续发消息
     --第一阶段
     if maxEvo < 20 then 
@@ -509,13 +509,13 @@ function BattleMgr:updateMonsterSatiation( )
     end
 
     --敌对玩家都扣除一下
-    -- if self.enemyPlayerList and #self.enemyPlayerList > 0 then 
-    --     for k,v in ipairs(self.enemyPlayerList) do
-    --        if v then 
-    --           v:getLogic():decSatiation()    
-    --        end
-    --     end
-    -- end
+    if self.enemyPlayerList and #self.enemyPlayerList > 0 then 
+        for k,v in ipairs(self.enemyPlayerList) do
+           if v then 
+              v:getLogic():decSatiation()    
+           end
+        end
+    end
 
 end
 
@@ -526,14 +526,14 @@ function BattleMgr:updateAllMonstersHeart( )
        self.player:getLogic():updateMonsterHeart()
     end
     
-    -- --刷新敌对玩家的
-    -- if self.enemyPlayerList and #self.enemyPlayerList > 0 then 
-    --     for k,v in ipairs(self.enemyPlayerList) do
-    --        if v then 
-    --           v:getLogic():updateMonsterHeart()    
-    --        end
-    --     end
-    -- end
+    --刷新敌对玩家的
+    if self.enemyPlayerList and #self.enemyPlayerList > 0 then 
+        for k,v in ipairs(self.enemyPlayerList) do
+           if v then 
+              v:getLogic():updateMonsterHeart()    
+           end
+        end
+    end
 
     --刷新中立怪兽的
     if self.monsterList and #self.monsterList > 0 then 
@@ -581,7 +581,7 @@ function BattleMgr:getMonsterIDByMonsterLogID(monsterLogID)
 end
 
 --添加怪物行为日志
-function BattleMgr:addBehaviorLog(monsterLogID,behaviorType)
+function BattleMgr:addBehaviorLog(monsterLogID,behaviorType,monsterType)
 
     if self.monsterLogList[monsterLogID] == nil then 
        self.monsterLogList[monsterLogID] = {}
@@ -593,7 +593,7 @@ function BattleMgr:addBehaviorLog(monsterLogID,behaviorType)
     data.index = index
     data.monsterLogID = monsterLogID
     data.behaviorType = behaviorType
-
+    data.monsterType = monsterType
     local behaviorLog = mtBehaviorLogInfo().new(data)
 
     table.insert(self.monsterLogList[monsterLogID] ,index , behaviorLog)
