@@ -56,6 +56,9 @@ function CommonMonsterLogic:getMonsterData()
 	return self.monsterData
 end
 
+function CommonMonsterLogic:getMonsterType( )
+  return self.playerType
+end
 
 --设置怪兽出生时间
 function CommonMonsterLogic:setMonsterBirthTime(time)
@@ -384,9 +387,24 @@ function CommonMonsterLogic:autoSelectTarget()
 
     if self.targetMonster and #self.targetMonster > 0 then 
        --这里先优先选择 最近的 一个目标
-       local target = self.targetMonster[1]
-       self:setTargetMonster(target)
-       self:doEvent("toChase")
+       local index = 1
+       local target = nil
+       for i = 1 , #self.targetMonster do 
+           target = self.targetMonster[i]
+           if self.playerType == PlayerType.npc then 
+              if target:getLogic():getMonsterType() ~= PlayerType.player and  
+                 target:getLogic():getMonsterType() ~= PlayerType.enemy then 
+                 break
+              end
+           end
+       end
+       
+       if target ~= nil then 
+          self:setTargetMonster(target)
+          self:doEvent("toChase")
+       else
+          self:doEvent("toAutoMove")
+       end
     else
        self:doEvent("toAutoMove")
     end

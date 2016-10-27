@@ -44,10 +44,6 @@ function BehaviorLogInfo:getBehaviorStr( )
   return ""
 end
 
-PlayerType = {
-  player = 1,
-  enemy  = 2,
-
 function BehaviorLogInfo:getMonsterName( )
   if self.monsterType == PlayerType.player then 
      return "己方怪兽"
