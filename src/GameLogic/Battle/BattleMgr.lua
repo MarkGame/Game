@@ -461,6 +461,7 @@ function BattleMgr:checkBattleStage(  )
 
     if minSat <= 0 then 
        print("minSat 这里开始游戏结束")
+       print(" minSatPlayerType  :  "..minSatPlayerType)
        self:setBattleStage(BattleStage.ended)
        -- mtEventDispatch():dispatchEvent(BATTLE_STATE_END) 
        mtEventDispatch():dispatchEvent(BATTLE_STATE_END,{winer = minSatPlayerType})
