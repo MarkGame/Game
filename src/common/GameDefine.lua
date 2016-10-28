@@ -57,6 +57,7 @@ MonsterBehaviorType = {
 	devour       = 7 ,
     useExclusive = 8 ,
     die          = 9 ,
+    stop         = 10,
 }
 
 ---------------------------------------------layer TAG --------------------------------------------

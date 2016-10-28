@@ -28,6 +28,8 @@ function CommonHatcheryLogic:ctor(data)
    --是否正在孵化
    self.isHatching = false
 
+   self.isStopHatch = false
+
    self:initHatcheryInfo()
    
 end
@@ -69,6 +71,12 @@ function CommonHatcheryLogic:updateHatcheryHeart()
         self.residualTime = self:hatchingMonster()
     end
 end
+
+function CommonHatcheryLogic:stopNowHatching(  )
+    self.updateHatchCDHandler = mtSchedulerMgr():removeScheduler(self.updateHatchCDHandler)
+    self.isStopHatch = true
+end
+
 
 --[[
     1、当前的阶段  init level1 level2 level3 出现的怪兽组也会跟着改变
@@ -123,27 +131,30 @@ end
 
 --满足条件才增加怪兽
 function CommonHatcheryLogic:addMonster(monsterID)
-    
-    if monsterID == nil then
-       monsterID = self.monsterID 
+     
+    if self.isStopHatch == false then 
+        if monsterID == nil then
+           monsterID = self.monsterID 
+        end
+
+        local data = {}
+        data.monsterID = monsterID
+        data.playerType = PlayerType.npc 
+        print("生成怪兽的ID ：  "..monsterID)
+        local monster = mtMonsterMgr():createMonster(data)
+        self.parentScene:getMap():addChild(monster,ZVALUE_BATTLEMAP_MONSTER)
+        mtBattleMgr():addMonsterToList(monster)
+        --初始位置
+        --2016年5月3日17:33:55的我：这里要看看 坐标是否正确
+        --2016年7月5日14:43:53的我：这里怪兽生成的坐标 还是可以做点随机性的 后面写一个方法来实现
+        --2016年7月5日17:32:09的我：已经写好了，getMonsterRandomPos
+        local initPos = self:getMonsterRandomPos()
+        
+        monster:setPosition(initPos)
+
+        self.isHatching = false
+
     end
-
-    local data = {}
-    data.monsterID = monsterID
-    data.playerType = PlayerType.npc 
-    print("生成怪兽的ID ：  "..monsterID)
-    local monster = mtMonsterMgr():createMonster(data)
-    self.parentScene:getMap():addChild(monster,ZVALUE_BATTLEMAP_MONSTER)
-    mtBattleMgr():addMonsterToList(monster)
-    --初始位置
-    --2016年5月3日17:33:55的我：这里要看看 坐标是否正确
-    --2016年7月5日14:43:53的我：这里怪兽生成的坐标 还是可以做点随机性的 后面写一个方法来实现
-    --2016年7月5日17:32:09的我：已经写好了，getMonsterRandomPos
-    local initPos = self:getMonsterRandomPos()
-    
-    monster:setPosition(initPos)
-
-    self.isHatching = false
     
 end
 

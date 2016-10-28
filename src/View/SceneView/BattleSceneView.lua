@@ -316,6 +316,10 @@ end
 
 function BattleSceneView:gameOver( )
     --处理游戏结束时 弹出的界面
+    --停止调度器
+    print("停止一切的调度器 暂停怪物各种动作行为")
+    mtBattleMgr():stopAllMonstersAction()
+    --弹出一个提示框 展示战斗结果信息 点击后 结束该场景
 end
 
 --获得 当前地图

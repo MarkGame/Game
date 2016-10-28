@@ -28,6 +28,9 @@ function CommonMonsterLogic:ctor(data)
    --记得 结束后清空该目标，方便为下次寻找；
    self.targetMonster = nil
 
+
+   self.isStop = false
+
    --初始化 怪兽信息
    self:initMonsterInfo()
 
@@ -94,6 +97,8 @@ end
 function CommonMonsterLogic:removeMonster(  )
    --现在这里暂时不做操作
    mtBattleMgr():addBehaviorLog(self.monsterLogID,MonsterBehaviorType.die,self.playerType)
+   self:doEventForce("toStop")
+   self.updateDelayHandler = mtSchedulerMgr():removeScheduler(self.updateDelayHandler)
    if self.monster then 
       self.monster:removeFromParent()
    end
@@ -131,11 +136,12 @@ end
     由BattleMgr() 的 updateAllMonstersHeart()统一调度
 ]]
 function CommonMonsterLogic:updateMonsterHeart( )
-    --检查自身的属性值
-    self:checkMonsterData()
-    --遍历自身BUFF并检查执行
-    self:refreshOwnedBuff()
-    
+    if self.isStop == false then 
+       --检查自身的属性值
+       self:checkMonsterData()
+       --遍历自身BUFF并检查执行
+       self:refreshOwnedBuff()
+    end
 end
 ----------------------------------------------怪兽心跳 END--------------------------------------------------
 
@@ -341,7 +347,7 @@ end
 
 ----------------------------------------------怪兽大脑 模块 END---------------------------------------------
 
------------------------------------------------休息 模块 START----------------------------------------------
+-----------------------------------------------休息/终止 模块 START----------------------------------------------
 --冷静一下
 function CommonMonsterLogic:calm(  )
    print("enter calm ")
@@ -357,7 +363,13 @@ function CommonMonsterLogic:calm(  )
 
 end
 
------------------------------------------------休息 模块 END------------------------------------------------
+
+function CommonMonsterLogic:stopAllBehavior()
+    self.isStop = true
+    --其他什么都不做，等场景消除，里面的子节点统一删除
+end
+
+-----------------------------------------------休息/终止 模块 END------------------------------------------------
 
 
 ----------------------------------------------智能搜寻目标 模块 START---------------------------------------
@@ -525,7 +537,6 @@ function CommonMonsterLogic:useExclusiveSkill()
 end
 
 ----------------------------------------------使用专属技能 模块 END -------------------------------------
-
 
 ----------------------------------------------怪兽追逐目标 模块 START---------------------------------------
 --[[
@@ -717,6 +728,8 @@ function CommonMonsterLogic:initStateMachine( )
               {name = "toEscape", from = {"idle","search","chase","devour","useExclusive","selectTarget","autoMove"}, to = "escape"},           --逃跑
               {name = "toDevour", from = {"idle","search","chase","escape","useExclusive","selectTarget","autoMove"}, to = "devour"},    --吞噬
               {name = "toUseExclusive", from = {"idle","search","chase","escape","devour","selectTarget","autoMove"}, to = "useExclusive"},  --使用专属技能
+              {name = "toStop", from = {"idle","search","chase","escape","devour","useExclusive","selectTarget","autoMove"}, to = "stop"},  --终止一切行为（怪兽销毁 和 游戏结束时才能使用）
+  
           },
         callbacks = {
            
@@ -791,6 +804,16 @@ function CommonMonsterLogic:initStateMachine( )
            end,
            onafteruseExclusive  = function(event)  end,
            onleaveuseExclusive = function(event)  end,
+
+           -- toStop
+           onbeforestop = function(event) end, 
+           onenterstop = function(event) 
+              mtBattleMgr():addBehaviorLog(self.monsterLogID,MonsterBehaviorType.stop,self.playerType)
+              self:stopAllBehavior() 
+           end,
+           onafterstop  = function(event)  end,
+           onleavestop = function(event)  end,
+
 
           },
   })

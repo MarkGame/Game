@@ -458,6 +458,13 @@ function BattleMgr:checkBattleStage(  )
     
     local minSat,minSatPlayerType,maxEvo,maxEvoPlayerType = self:getNowReferenceValue()
     
+
+    if minSat <= 0 then 
+       print("minSat 这里开始游戏结束")
+       self:setBattleStage(BattleStage.ended)
+       -- mtEventDispatch():dispatchEvent(BATTLE_STATE_END) 
+       mtEventDispatch():dispatchEvent(BATTLE_STATE_END,{winer = minSatPlayerType})
+    end
     --阶段是不能跳跃的，只能一步一步的来，相同的阶段就不会持续发消息
     --第一阶段
     if maxEvo < 20 then 
@@ -480,6 +487,7 @@ function BattleMgr:checkBattleStage(  )
     --进化完成 游戏结束
     elseif maxEvo == 100 then 
        if self.battleStage == BattleStage.level3 then
+          print("maxEvo 这里开始游戏结束")
           self:setBattleStage(BattleStage.ended)
           -- mtEventDispatch():dispatchEvent(BATTLE_STATE_END) 
           mtEventDispatch():dispatchEvent(BATTLE_STATE_END,{winer = maxEvoPlayerType})
@@ -545,6 +553,32 @@ function BattleMgr:updateAllMonstersHeart( )
     end
 end
 
+--停止所有怪兽的心跳
+function BattleMgr:stopAllMonstersHeart( )
+    
+    --停止玩家自身的
+    -- 一般是 夺取玩家的控制权，但有一种情况需要处理，如果玩家怪兽当前正在进行还没有执行完的操作时
+
+
+    --停止敌对玩家的
+    if self.enemyPlayerList and #self.enemyPlayerList > 0 then 
+        for k,v in ipairs(self.enemyPlayerList) do
+           if v then 
+              v:getLogic():doEventForce("toStop")    
+           end
+        end
+    end
+
+    --停止中立怪兽的
+    if self.monsterList and #self.monsterList > 0 then 
+        for k,v in ipairs(self.monsterList) do
+           if v then 
+              v:getLogic():doEventForce("toStop")  
+           end
+        end
+    end
+end
+
 --更新激活的孵化场的心脏跳动
 function BattleMgr:updateAllHatcheriesHeart( )
     if self.hatcheryList and #self.hatcheryList > 0 then 
@@ -554,6 +588,27 @@ function BattleMgr:updateAllHatcheriesHeart( )
            end
         end
     end
+end
+
+--停止所有孵化场的心脏跳动
+function BattleMgr:stopAllHatcheriesHeart( )
+    if self.hatcheryList and #self.hatcheryList > 0 then 
+        for k,v in ipairs(self.hatcheryList) do
+           if v then 
+              v:getLogic():stopNowHatching()    
+           end
+        end
+    end
+end
+
+--停止所有怪兽的行为
+function BattleMgr:stopAllMonstersAction(  )
+    --终止总战斗调度器
+    self:stopUpdateBattle()
+    --终止全部孵化场心跳
+    self:stopAllHatcheriesHeart()
+    --终止所有怪兽心跳
+    self:stopAllMonstersHeart()
 end
 
 ------------------------------------------------行为日志-----------------------------------------

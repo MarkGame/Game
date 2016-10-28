@@ -40,6 +40,8 @@ function BehaviorLogInfo:getBehaviorStr( )
        return "使用了专属技能"
   elseif self.behaviorType == MonsterBehaviorType.die then 
        return "死亡"
+  elseif self.behaviorType == MonsterBehaviorType.stop then 
+       return "停止任何行为，进入假死模式"
 	end
   return ""
 end
