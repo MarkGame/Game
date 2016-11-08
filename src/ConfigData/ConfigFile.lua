@@ -1,3 +1,4 @@
+require "ConfigData.Action"
 require "ConfigData.Battle"
 require "ConfigData.Buff"
 require "ConfigData.Character"
