@@ -30,6 +30,11 @@ function CommonMonsterLogic:ctor(data)
 
 
    self.isStop = false
+   
+   --行为ID列表
+   self.actionIDList = {}
+
+   self.actionEvents = {}
 
    --初始化 怪兽信息
    self:initMonsterInfo()
@@ -48,11 +53,12 @@ function CommonMonsterLogic:initMonsterInfo( )
 	  self.monsterInfo = g_Config:getData("Monster","ID",self.monsterID)[1]
     
     self.monsterData = mtMonsterBaseInfo().new(self.monsterInfo)
-
+    
     --初始化状态机
     self:initStateMachine()
 
 end
+
 
 --获得怪兽的即时数据
 function CommonMonsterLogic:getMonsterData()
@@ -474,44 +480,50 @@ end
 --成功 则执行 目标怪兽的销毁 和 增加对应的饱食度 和 进化值 
 --失败 则执行 禁锢BUFF 并给目标怪兽 增加不可吞噬的BUFF
 function CommonMonsterLogic:devourMonster( )
-   local callBack = function (  )
-       self:doEvent("toIdle")
-   end
-   self.devourSkill:devourMonster(self.monster,callBack)
+     local callBack = function (  )
+         self:doEvent("toIdle")
+     end
+     self.devourSkill:devourMonster(self.monster,callBack)
 end
 
 --增加饱食度
 function CommonMonsterLogic:addSatiation( value )
-  local nowSatiation = self.monsterData:getMonsterNowSatiation()
-  local maxSatiation = self.monsterData:getMonsterMaxSatiation()
-  if nowSatiation + value < maxSatiation then 
-     nowSatiation = nowSatiation + value
-  else
-       nowSatiation = maxSatiation
-       --怪兽完成进化
-       --执行 巴拉巴拉 等
-  end
-  --刷新怪兽的饱食度
-  self.monsterData:setMonsterNowSatiation(nowSatiation)
+    local nowSatiation = self.monsterData:getMonsterNowSatiation()
+    local maxSatiation = self.monsterData:getMonsterMaxSatiation()
+    if nowSatiation + value < maxSatiation then 
+       nowSatiation = nowSatiation + value
+    else
+         nowSatiation = maxSatiation
+         --怪兽完成进化
+         --执行 巴拉巴拉 等
+    end
+    --刷新怪兽的饱食度
+    self.monsterData:setMonsterNowSatiation(nowSatiation)
+
+    --即时刷新 怪物的饱食度 显示
+    self.monster:showSatiation(nowSatiation)
 end
 
 --减少饱食度
 function CommonMonsterLogic:decSatiation( value )
-  local nowSatiation = self.monsterData:getMonsterNowSatiation()
-  --如果传入的value为空值 则属于自然扣除饱食度
-  if value == nil then 
-     value = self.monsterData:getMonsterHungry()
-  end
-  
-  if nowSatiation - value > 0 then 
-     nowSatiation = nowSatiation - value
-  else 
-       nowSatiation = 0
-       --饱食度为0 怪兽死亡
-       --在checkMonsterData统一去判断
-  end
-  --刷新怪兽的饱食度
-  self.monsterData:setMonsterNowSatiation(nowSatiation)
+    local nowSatiation = self.monsterData:getMonsterNowSatiation()
+    --如果传入的value为空值 则属于自然扣除饱食度
+    if value == nil then 
+       value = self.monsterData:getMonsterHungry()
+    end
+    
+    if nowSatiation - value > 0 then 
+       nowSatiation = nowSatiation - value
+    else 
+         nowSatiation = 0
+         --饱食度为0 怪兽死亡
+         --在checkMonsterData统一去判断
+    end
+    --刷新怪兽的饱食度
+    self.monsterData:setMonsterNowSatiation(nowSatiation)
+
+    --即时刷新 怪物的饱食度 显示
+    self.monster:showSatiation(nowSatiation)
 end
 
 --增加进化值
@@ -709,7 +721,164 @@ end
 
 
 ]]
+
+
+function CommonMonsterLogic:initStateData( )
+
+    self.actionIDList = {}
+
+    self.actionEvents = {}
+
+    local tempCallBacks = {}
+
+    self.actionCallBacks = {}
+
+    for i = MonsterBehaviorType.idle,MonsterBehaviorType.stop do 
+        table.insert(self.actionIDList,i)
+    end
+
+    -- {name = "toIdle", from = {"search","autoMove","chase","escape","devour","useExclusive","selectTarget"}, to = "idle"},
+
+    for k,v in ipairs(self.actionIDList) do
+
+        local actionInfo = g_Config:getData("Action","ID",v)[1]
+
+        --事件数组
+        local events = {}
+        events.name = actionInfo.name
+        events.from = {}
+        local actionFrom = string.split(actionInfo.ActionFrom,"|")
+        for index,action in ipairs(actionFrom) do
+            table.insert(events.from,action)
+        end
+        events.to = actionInfo.ActionTo
+        table.insert(self.actionEvents,events)
+
+
+        local befor = "onbefore"..actionInfo.ActionTo
+        local stateType = StateType.befor
+        table.insert(tempCallBacks,befor,{ func = nil , stateType = stateType , id = v , eRes = actionInfo.ERes})
+        local enter = "onenter"..actionInfo.ActionTo
+        stateType = StateType.enter
+        table.insert(tempCallBacks,enter,{ func = nil , stateType = stateType , id = v , eRes = actionInfo.ERes})
+        local after = "onafter"..actionInfo.ActionTo
+        stateType = StateType.after
+        table.insert(tempCallBacks,after,{ func = nil , stateType = stateType , id = v , eRes = actionInfo.ERes})
+        local leave = "onleave"..actionInfo.ActionTo
+        stateType = StateType.leave
+        table.insert(tempCallBacks,leave,{ func = nil , stateType = stateType , id = v , eRes = actionInfo.ERes})
+
+    end
+    --对每个方法单独赋值 目前只针对类型StateType.enter 进行实际操作
+    for k,v in pairs(tempCallBacks) do
+        if MonsterBehaviorType.idle == v.id then
+           if v.stateType == StateType.enter then 
+              v.func = function(event)
+                          mtBattleMgr():addBehaviorLog(self.monsterLogID,MonsterBehaviorType.idle,self.playerType)
+                          self:calm()
+                          self:showExpression(v.eRes)
+                       end
+              table.insert(self.actionCallBacks,k,v.func)
+           else 
+              --其他的目前不添加，后续添加只需要在这里加入就可以了
+           end
+        elseif MonsterBehaviorType.search == v.id then
+            if v.stateType == StateType.enter then 
+                v.func = function(event)
+                            mtBattleMgr():addBehaviorLog(self.monsterLogID,MonsterBehaviorType.search,self.playerType)
+                            self:autoSearchTarget()
+                            self:showExpression(v.eRes) 
+                         end
+                table.insert(self.actionCallBacks,k,v.func)
+             else 
+                --其他的目前不添加，后续添加只需要在这里加入就可以了
+             end
+        elseif MonsterBehaviorType.selectTarget == v.id then
+             if v.stateType == StateType.enter then 
+                v.func = function(event)
+                            mtBattleMgr():addBehaviorLog(self.monsterLogID,MonsterBehaviorType.selectTarget,self.playerType)
+                            self:autoSelectTarget() 
+                            self:showExpression(v.eRes) 
+                         end
+                table.insert(self.actionCallBacks,k,v.func)
+             else 
+                --其他的目前不添加，后续添加只需要在这里加入就可以了
+             end
+        elseif MonsterBehaviorType.autoMove == v.id then
+             if v.stateType == StateType.enter then 
+                v.func = function(event)
+                            mtBattleMgr():addBehaviorLog(self.monsterLogID,MonsterBehaviorType.autoMove,self.playerType) 
+                            self:autoRandomMovement() 
+                            self:showExpression(v.eRes) 
+                         end
+                table.insert(self.actionCallBacks,k,v.func)
+             else 
+                --其他的目前不添加，后续添加只需要在这里加入就可以了
+             end
+        elseif MonsterBehaviorType.chase == v.id then
+             if v.stateType == StateType.enter then 
+                v.func = function(event)
+                            mtBattleMgr():addBehaviorLog(self.monsterLogID,MonsterBehaviorType.chase,self.playerType)
+                            self:chaseToTarget()
+                            self:showExpression(v.eRes) 
+                         end
+                table.insert(self.actionCallBacks,k,v.func)
+             else 
+                --其他的目前不添加，后续添加只需要在这里加入就可以了
+             end
+        elseif MonsterBehaviorType.escape == v.id then
+             if v.stateType == StateType.enter then 
+                v.func = function(event)
+                            mtBattleMgr():addBehaviorLog(self.monsterLogID,MonsterBehaviorType.escape,self.playerType)
+                            self:escapeFromTarget() 
+                            self:showExpression(v.eRes) 
+                         end
+                table.insert(self.actionCallBacks,k,v.func)
+             else 
+                --其他的目前不添加，后续添加只需要在这里加入就可以了
+             end
+        elseif MonsterBehaviorType.devour == v.id then
+             if v.stateType == StateType.enter then 
+                v.func = function(event)
+                            mtBattleMgr():addBehaviorLog(self.monsterLogID,MonsterBehaviorType.devour,self.playerType)
+                            self:devourMonster() 
+                            self:showExpression(v.eRes) 
+                         end
+                table.insert(self.actionCallBacks,k,v.func)
+             else 
+                --其他的目前不添加，后续添加只需要在这里加入就可以了
+             end
+        elseif MonsterBehaviorType.useExclusive == v.id then
+             if v.stateType == StateType.enter then 
+                v.func = function(event)
+                            mtBattleMgr():addBehaviorLog(self.monsterLogID,MonsterBehaviorType.useExclusive,self.playerType)
+                            self:useExclusiveSkill()
+                            self:showExpression(v.eRes)   
+                         end
+                table.insert(self.actionCallBacks,k,v.func)
+             else 
+                --其他的目前不添加，后续添加只需要在这里加入就可以了
+             end
+        elseif MonsterBehaviorType.stop == v.id then
+           if v.stateType == StateType.enter then 
+              v.func = function(event)
+                          mtBattleMgr():addBehaviorLog(self.monsterLogID,MonsterBehaviorType.stop,self.playerType)
+                          self:stopAllBehavior()
+                          self:showExpression(v.eRes) 
+                       end
+              table.insert(self.actionCallBacks,k,v.func)
+           else 
+              --其他的目前不添加，后续添加只需要在这里加入就可以了
+           end
+        end 
+    end
+
+end
+
 function CommonMonsterLogic:initStateMachine( )
+  
+  --初始化  状态机属性
+  self:initStateData()
 
   print(" initStateMachine ")
   self.fsm = mtStateMachine().new()
@@ -719,103 +888,19 @@ function CommonMonsterLogic:initStateMachine( )
     --希望这里能够读表
     --正在配置表，等待test
     initial = "idle",
-    events = {
-              {name = "toIdle", from = {"search","autoMove","chase","escape","devour","useExclusive","selectTarget"}, to = "idle"},    --执行搜寻
-              {name = "toSearch", from = {"idle","autoMove","chase","escape","devour","useExclusive","selectTarget"}, to = "search"},    --执行搜寻
-              {name = "toSelect", from = {"idle","autoMove","chase","escape","devour","useExclusive","search"}, to = "selectTarget"},    --去选择目标
-              {name = "toAutoMove", from = {"idle","search","chase","escape","devour","useExclusive","selectTarget"}, to = "autoMove"},  --随机移动
-              {name = "toChase", from = {"idle","search","autoMove","escape","devour","useExclusive","selectTarget"}, to = "chase"},     --追捕
-              {name = "toEscape", from = {"idle","search","chase","devour","useExclusive","selectTarget","autoMove"}, to = "escape"},           --逃跑
-              {name = "toDevour", from = {"idle","search","chase","escape","useExclusive","selectTarget","autoMove"}, to = "devour"},    --吞噬
-              {name = "toUseExclusive", from = {"idle","search","chase","escape","devour","selectTarget","autoMove"}, to = "useExclusive"},  --使用专属技能
-              {name = "toStop", from = {"idle","search","chase","escape","devour","useExclusive","selectTarget","autoMove"}, to = "stop"},  --终止一切行为（怪兽销毁 和 游戏结束时才能使用）
-  
-          },
-        callbacks = {
-           
-           -- toIdle
-           onbeforidle = function(event) end, 
-           onenteridle = function(event)
-              mtBattleMgr():addBehaviorLog(self.monsterLogID,MonsterBehaviorType.idle,self.playerType)
-              self:calm() 
-           end,
-           onafteridle  = function(event)  end,
-           onleaveidle = function(event)  end,
-          
-           -- toSearch
-           onbeforesearch = function(event) end, 
-           onentersearch = function(event) 
-              mtBattleMgr():addBehaviorLog(self.monsterLogID,MonsterBehaviorType.search,self.playerType)
-              self:autoSearchTarget() 
-           end,
-           onaftersearch  = function(event)  end,
-           onleavesearch = function(event)  end,
-
-           -- toSelect
-           onbeforeselectTarget = function(event) end, 
-           onenterselectTarget = function(event) 
-              mtBattleMgr():addBehaviorLog(self.monsterLogID,MonsterBehaviorType.selectTarget,self.playerType)
-              self:autoSelectTarget() 
-           end,
-           onafterselectTarget  = function(event)  end,
-           onleaveselectTarget = function(event)  end,
-                     
-           -- toAutoMove
-           onbeforeautoMove = function(event) end, 
-           onenterautoMove = function(event) 
-              mtBattleMgr():addBehaviorLog(self.monsterLogID,MonsterBehaviorType.autoMove,self.playerType) 
-              self:autoRandomMovement() 
-           end,
-           onafterautoMove = function(event)  end,
-           onleaveautoMove = function(event)  end,
-
-           -- toChase
-           onbeforechase = function(event) end, 
-           onenterchase = function(event) 
-              mtBattleMgr():addBehaviorLog(self.monsterLogID,MonsterBehaviorType.chase,self.playerType)
-              self:chaseToTarget() 
-           end,
-           onafterchase  = function(event)  end,
-           onleavechase = function(event)  end,
-
-           -- toEscape
-           onbeforeescape = function(event) end, 
-           onenterescape = function(event) 
-              mtBattleMgr():addBehaviorLog(self.monsterLogID,MonsterBehaviorType.escape,self.playerType)
-              self:escapeFromTarget() 
-           end,
-           onafterescape  = function(event)  end,
-           onleaveescape = function(event)  end,
-
-           -- toDevour
-           onbeforedevour = function(event) end, 
-           onenterdevour = function(event) 
-              mtBattleMgr():addBehaviorLog(self.monsterLogID,MonsterBehaviorType.devour,self.playerType)
-              self:devourMonster() 
-           end,
-           onafterdevour  = function(event)  end,
-           onleavedevour = function(event)  end,
-
-           -- toUseExclusive
-           onbeforeuseExclusive = function(event) end, 
-           onenteruseExclusive = function(event) 
-              mtBattleMgr():addBehaviorLog(self.monsterLogID,MonsterBehaviorType.useExclusive,self.playerType)
-              self:useExclusiveSkill() 
-           end,
-           onafteruseExclusive  = function(event)  end,
-           onleaveuseExclusive = function(event)  end,
-
-           -- toStop
-           onbeforestop = function(event) end, 
-           onenterstop = function(event) 
-              mtBattleMgr():addBehaviorLog(self.monsterLogID,MonsterBehaviorType.stop,self.playerType)
-              self:stopAllBehavior() 
-           end,
-           onafterstop  = function(event)  end,
-           onleavestop = function(event)  end,
-
-
-          },
+    events = self.actionEvents,
+    -- events = {
+    --           {name = "toIdle", from = {"search","autoMove","chase","escape","devour","useExclusive","selectTarget"}, to = "idle"},    --执行搜寻
+    --           {name = "toSearch", from = {"idle","autoMove","chase","escape","devour","useExclusive","selectTarget"}, to = "search"},    --执行搜寻
+    --           {name = "toSelect", from = {"idle","autoMove","chase","escape","devour","useExclusive","search"}, to = "selectTarget"},    --去选择目标
+    --           {name = "toAutoMove", from = {"idle","search","chase","escape","devour","useExclusive","selectTarget"}, to = "autoMove"},  --随机移动
+    --           {name = "toChase", from = {"idle","search","autoMove","escape","devour","useExclusive","selectTarget"}, to = "chase"},     --追捕
+    --           {name = "toEscape", from = {"idle","search","chase","devour","useExclusive","selectTarget","autoMove"}, to = "escape"},           --逃跑
+    --           {name = "toDevour", from = {"idle","search","chase","escape","useExclusive","selectTarget","autoMove"}, to = "devour"},    --吞噬
+    --           {name = "toUseExclusive", from = {"idle","search","chase","escape","devour","selectTarget","autoMove"}, to = "useExclusive"},  --使用专属技能
+    --           {name = "toStop", from = {"idle","search","chase","escape","devour","useExclusive","selectTarget","autoMove"}, to = "stop"},  --终止一切行为（怪兽销毁 和 游戏结束时才能使用）
+    --       },
+    callbacks = self.actionCallBacks, 
   })
 end
 
@@ -844,6 +929,10 @@ end
 
 function CommonMonsterLogic:getState()
   return self.fsm:getState()
+end
+
+function CommonMonsterLogic:showExpression( eRes )
+    self.monster:showExpression(eRes)
 end
 ----------------------------------------------怪兽FSM状态机 模块 END---------------------------------------
 

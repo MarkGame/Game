@@ -13,16 +13,6 @@ local MonsterView = class("MonsterView",mtMonsterNode())
 function MonsterView:ctor(monsterLogic)
 	MonsterView.super.ctor(self)
     
-    --初始化一张随机图片 用作一个节点
-	self.sprite = cc.Sprite:create("publish/resource/1.png")
-	self:addChild(self.sprite)
-    
-    --为什么怪兽这里会偏移位置显示？？？
-    --2016年4月29日16:33:27的我：然而目前还没找到原因
-    --2016年5月3日00:26:14的我：在场景直接加是好的，在中间出现了问题
-	-- self.sprite:setAnchorPoint(cc.p(0.6,1))
-	-- self.sprite:setPositionY(-32)
-    
     --怪兽逻辑
     self.monsterLogic = monsterLogic
 
@@ -32,8 +22,6 @@ function MonsterView:ctor(monsterLogic)
 
 	self.monsterID = monsterLogic:getMonsterID()
 
-    
-    
 	--现在十秒就杀死怪兽（暂时的）
 	--self:killMonster()
 
@@ -41,6 +29,12 @@ end
 
 
 function MonsterView:initMonster()
+    
+    --初始化一张随机图片 用作一个节点
+    self.sprite = cc.Sprite:create("publish/resource/transparent.png")
+    self:addChild(self.sprite)
+
+    self.satiationLabel = cc.Label:createWithSystemFont("100", 20,cc.size(50,20))
 
     self.monsterInfo = self.monsterLogic:getMonsterInfo()
 	--初始化怪兽信息 以后可能是在加载中进行数据加载
@@ -79,6 +73,30 @@ end
 
 function MonsterView:initEvent()
 
+end
+
+--怪物不同行为 使用不同的表情
+function MonsterView:showExpression( res )
+    --删除上一个表情
+    if self.expression then
+       self.expression:removeFromParent()
+       self.expression = nil
+    end
+    --
+    self.expression = ccui.imageView:create(res)
+    self.expression:setPositionY(40)
+    self:addChild(self.expression)
+end
+
+--展示怪物头上的饱食度（生命值）
+function MonsterView:showSatiation( satiation )
+    if self.satiationLabel then 
+       self.satiationLabel:setString(satiation)
+       self.satiationLabel:setScale(1.5)
+       self.satiationLabel:stopAllActions()
+       local action1 = cc.ScaleTo:create(0.6, 1)
+       self.satiationLabel:runAction(action1)
+    end 
 end
 
 function MonsterView:onEnter()

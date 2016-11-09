@@ -48,16 +48,24 @@ SkillType = {
 }
 
 MonsterBehaviorType = {
-	idle         = 1 ,
-	search       = 2 ,
-	selectTarget = 3 ,
-	autoMove     = 4 ,
-	chase        = 5 ,
-	escape       = 6 ,
-	devour       = 7 ,
-    useExclusive = 8 ,
-    die          = 9 ,
-    stop         = 10,
+	idle         = 1001 ,
+	search       = 1002 ,
+	selectTarget = 1003 ,
+	autoMove     = 1004 ,
+	chase        = 1005 ,
+	escape       = 1006 ,
+	devour       = 1007 ,
+    useExclusive = 1008 ,
+    stop         = 1009 ,
+    die          = 1000 ,
+    
+}
+
+StateType = {
+	befor = 1,
+    enter = 2,
+    after = 3,
+    leave = 4,
 }
 
 ---------------------------------------------layer TAG --------------------------------------------

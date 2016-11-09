@@ -70,8 +70,10 @@ function CommonBuffLogic:isDurationTime( )
        --BUFF时间到了 在调用该方法地方去removeBuff 并移除BUFF队列
        return false
     end
+end
 
-
+function CommonBuffLogic:createBuffAnim( )
+    
 end
 
 
