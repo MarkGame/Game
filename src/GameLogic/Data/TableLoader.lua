@@ -1,71 +1,45 @@
-
--- if BaseRequires.VersionType == 0 then
---     require "lua/common/data/clientDBTextImage_Abroad"
---     require "lua/common/data/clientDBTextLanguage_Abroad"
---     require "lua/common/data/clientDBTextEn_Abroad"
-
---     Table.clientDBTextLanguage = Table.clientDBTextLanguage_Abroad
---     Table.clientDBTextImage = Table.clientDBTextImage_Abroad
--- else
---     require "lua/common/data/clientDBTextImage"
---     -- require "lua/common/data/clientDBVoice"
---     require "lua/common/data/clientDBTextLanguage"
---     require "lua/common/data/clientDBTextEn"
--- end
-
-
--- if BaseRequires == nil or BaseRequires.ENABLE_CLIENT_VIEW == false then
---     --require "lua/common/data/clientDBTextEn"
--- else   
---     local language = Table.clientDBTextLanguage[BaseRequires.LANGUAGE_SETTING]
---     if language then
---         local sTextPath = language[Table.clientDBTextLanguage.switch.sTextPath]
---         if(sTextPath and cc.FileUtils:getInstance():isFileExist(getLuaPath(sTextPath)..cc.CCCrypto:getLuaExtension())) then
---             require(sTextPath)
---         else
---             --require("lua/common/data/clientDBTextEn")
---         end
---     else
---         --require("lua/common/data/clientDBTextEn")
---     end
--- end
-setmetatable(Table, {
-    __index = function(self, field)
-        if string.sub(field, 1, 6) == 'STRID_' then
-            return field;
-        end
-        return nil;
-    end
-});
-
--- if BaseRequires.VersionType == 0 then
--- --if true then
---     require "lua/common/data/clientDBGame_Abroad"
--- else
-    require "GameLogic.Data.clientDBGame"
--- end
-
-require "GameLogic.Data.TableParser"
+require "clientDBBase"
+local setmetatable = setmetatable
+local getmetatable = getmetatable
+local type = type
+local tostring = tostring
+local pairs = pairs
+local ipairs = ipairs
+local rawget = rawget
 
 function TableLoader()
     for k, v in pairs(Table) do
-        if type(v) == "table" and v.switch ~= nil then
+        if type(v) == "table" and v.__meta ~= nil then
+			local __m = {}
+			__m.__index = function (self, field)
+				local __meta
+				if rawget(self,__meta)== nil then
+					__meta = v.__meta
+				else
+					__meta =self.__meta
+				end
+				local index = __meta[field]
+				if index == nil then
+					return nil
+				end
+				
+				if self[index] == nil then
+					return nil;
+				end
 
-            v.mt = {}
-            v.mt.__index = function (self, field)
-                local index = v.switch[field]
-                if index == nil then
-                    return nil
-                end
+				self[field] = self[index]
+				local fieldData = self[field]
+				
+				local __dict = __meta.__dict
+				if __dict then
+					if __dict[index] then
+						fieldData.__meta = __dict[index]
+						setmetatable(fieldData,__m)
+					end
+				end
 
-                self[field] = self[index]
-
-                if self[index] == nil then --[CY ADD: 防止进入无限循环查找]
-                    return nil;
-                end
-
-                return self[field]
-            end
+				return fieldData
+			end
 
             v.get = function(...)
                 local arg = {...}
@@ -78,13 +52,7 @@ function TableLoader()
                 if #arg == 1 then
                     key = arg[1] 
                     if type(key) == "string" then
-                        --优先处理number 类型
-                        local tmpKey = tonumber(key);
-                        if tmpKey ~= nil then
-                            key = tmpKey;
-                        else
-                            key = tostring(key)
-                        end
+                        key = tostring(key)
                     end
                 else
                     for i,v in ipairs(arg) do
@@ -95,21 +63,15 @@ function TableLoader()
                         end
                     end
                 end
-                if key == nil or key == "switch" or key == "mt" or key == "get" or key == "parser" then
+                if key == nil or key == "__meta" or key == "get"  then
                     return nil
                 end
 
                 local row = v[key]
                 if row ~= nil then
                     if getmetatable(row) == nil then
-                        --Mlog:debug(" key:" .. key );
-                        setmetatable(row, v.mt)
-                        if v.parser ~= nil then
-                            v.parser(row)
-                        end
+                        setmetatable(row, __m)
                     end
-                --else
-                    --Mlog:debug("table:" .. k .. " key:" .. key .. " load err! ");
                 end
 
                 return row

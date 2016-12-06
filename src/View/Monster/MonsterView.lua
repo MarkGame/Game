@@ -104,7 +104,7 @@ function MonsterView:showSatiation( satiation )
            self.satiationLabel:stopAllActions()
            self.satiationLabel:setPositionY(60)
            self:addChild(self.satiationLabel)
-           local action1 = cc.ScaleTo:create(0.6, 1)
+           local action1 = cc.ScaleTo:create(0.3, 1)
            local callfunc = cc.CallFunc:create(function() 
                 if self.satiationLabel then 
                    self.satiationLabel:removeFromParent()
