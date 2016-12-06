@@ -97,7 +97,7 @@ function BattleSceneView:initTileMap()
     self:initEvent()
     
 
-    self:hideView()
+    -- self:hideView()
     
 end
 
@@ -281,7 +281,7 @@ function BattleSceneView:initHatchery( )
     local initHatchPosList = mtBattleMgr():getBattleData():getInitHatchPosList()
     
     --test 只放出一个孵化场
-    for i =1 ,1 do 
+    for i =1 ,4 do 
         local data = {}
         data.initPos = hatcheryPosList[i]
 

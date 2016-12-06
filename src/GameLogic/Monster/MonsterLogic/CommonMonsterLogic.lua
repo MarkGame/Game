@@ -54,8 +54,7 @@ function CommonMonsterLogic:initMonsterInfo( )
     
     self.monsterData = mtMonsterBaseInfo().new(self.monsterInfo)
     
-    --初始化状态机
-    self:initStateMachine()
+
 
 end
 
@@ -325,6 +324,9 @@ function CommonMonsterLogic:initMonsterBrain( monster )
    --初始技能
    self:initMonsterSkill()
    
+   --初始化状态机
+   self:initStateMachine()
+
    --启动大脑
    self:runningBrain()
    
@@ -365,7 +367,7 @@ function CommonMonsterLogic:calm(  )
 
    self.updateDelayHandler = mtSchedulerMgr():removeScheduler(self.updateDelayHandler)
 
-   self.updateDelayHandler = mtSchedulerMgr():addScheduler(1,-1,func)
+   self.updateDelayHandler = mtSchedulerMgr():addScheduler(1.5,-1,func)
 
 end
 
@@ -745,7 +747,7 @@ function CommonMonsterLogic:initStateData( )
 
         --事件数组
         local events = {}
-        events.name = actionInfo.name
+        events.name = actionInfo.ActionName
         events.from = {}
         local actionFrom = string.split(actionInfo.ActionFrom,"|")
         for index,action in ipairs(actionFrom) do
@@ -757,16 +759,19 @@ function CommonMonsterLogic:initStateData( )
 
         local befor = "onbefore"..actionInfo.ActionTo
         local stateType = StateType.befor
-        table.insert(tempCallBacks,befor,{ func = nil , stateType = stateType , id = v , eRes = actionInfo.ERes})
+        tempCallBacks[befor] = { func = nil , stateType = stateType , id = v , eRes = actionInfo.ERes}
         local enter = "onenter"..actionInfo.ActionTo
         stateType = StateType.enter
-        table.insert(tempCallBacks,enter,{ func = nil , stateType = stateType , id = v , eRes = actionInfo.ERes})
+        tempCallBacks[enter] = { func = nil , stateType = stateType , id = v , eRes = actionInfo.ERes}
+        -- table.insert(tempCallBacks,enter,{ func = nil , stateType = stateType , id = v , eRes = actionInfo.ERes})
         local after = "onafter"..actionInfo.ActionTo
         stateType = StateType.after
-        table.insert(tempCallBacks,after,{ func = nil , stateType = stateType , id = v , eRes = actionInfo.ERes})
+        tempCallBacks[after] = { func = nil , stateType = stateType , id = v , eRes = actionInfo.ERes}
+        -- table.insert(tempCallBacks,after,{ func = nil , stateType = stateType , id = v , eRes = actionInfo.ERes})
         local leave = "onleave"..actionInfo.ActionTo
         stateType = StateType.leave
-        table.insert(tempCallBacks,leave,{ func = nil , stateType = stateType , id = v , eRes = actionInfo.ERes})
+        tempCallBacks[leave] = { func = nil , stateType = stateType , id = v , eRes = actionInfo.ERes}
+        -- table.insert(tempCallBacks,leave,{ func = nil , stateType = stateType , id = v , eRes = actionInfo.ERes})
 
     end
     --对每个方法单独赋值 目前只针对类型StateType.enter 进行实际操作
@@ -778,7 +783,8 @@ function CommonMonsterLogic:initStateData( )
                           self:calm()
                           self:showExpression(v.eRes)
                        end
-              table.insert(self.actionCallBacks,k,v.func)
+              --table.insert(self.actionCallBacks,k,v.func)
+              self.actionCallBacks[k] = v.func
            else 
               --其他的目前不添加，后续添加只需要在这里加入就可以了
            end
@@ -789,7 +795,8 @@ function CommonMonsterLogic:initStateData( )
                             self:autoSearchTarget()
                             self:showExpression(v.eRes) 
                          end
-                table.insert(self.actionCallBacks,k,v.func)
+                --table.insert(self.actionCallBacks,k,v.func)
+                self.actionCallBacks[k] = v.func
              else 
                 --其他的目前不添加，后续添加只需要在这里加入就可以了
              end
@@ -800,7 +807,8 @@ function CommonMonsterLogic:initStateData( )
                             self:autoSelectTarget() 
                             self:showExpression(v.eRes) 
                          end
-                table.insert(self.actionCallBacks,k,v.func)
+                --table.insert(self.actionCallBacks,k,v.func)
+                self.actionCallBacks[k] = v.func
              else 
                 --其他的目前不添加，后续添加只需要在这里加入就可以了
              end
@@ -811,7 +819,8 @@ function CommonMonsterLogic:initStateData( )
                             self:autoRandomMovement() 
                             self:showExpression(v.eRes) 
                          end
-                table.insert(self.actionCallBacks,k,v.func)
+                --table.insert(self.actionCallBacks,k,v.func)
+                self.actionCallBacks[k] = v.func
              else 
                 --其他的目前不添加，后续添加只需要在这里加入就可以了
              end
@@ -822,7 +831,8 @@ function CommonMonsterLogic:initStateData( )
                             self:chaseToTarget()
                             self:showExpression(v.eRes) 
                          end
-                table.insert(self.actionCallBacks,k,v.func)
+                --table.insert(self.actionCallBacks,k,v.func)
+                self.actionCallBacks[k] = v.func
              else 
                 --其他的目前不添加，后续添加只需要在这里加入就可以了
              end
@@ -833,7 +843,8 @@ function CommonMonsterLogic:initStateData( )
                             self:escapeFromTarget() 
                             self:showExpression(v.eRes) 
                          end
-                table.insert(self.actionCallBacks,k,v.func)
+                --table.insert(self.actionCallBacks,k,v.func)
+                self.actionCallBacks[k] = v.func
              else 
                 --其他的目前不添加，后续添加只需要在这里加入就可以了
              end
@@ -844,7 +855,8 @@ function CommonMonsterLogic:initStateData( )
                             self:devourMonster() 
                             self:showExpression(v.eRes) 
                          end
-                table.insert(self.actionCallBacks,k,v.func)
+                --table.insert(self.actionCallBacks,k,v.func)
+                self.actionCallBacks[k] = v.func
              else 
                 --其他的目前不添加，后续添加只需要在这里加入就可以了
              end
@@ -855,7 +867,8 @@ function CommonMonsterLogic:initStateData( )
                             self:useExclusiveSkill()
                             self:showExpression(v.eRes)   
                          end
-                table.insert(self.actionCallBacks,k,v.func)
+                --table.insert(self.actionCallBacks,k,v.func)
+                self.actionCallBacks[k] = v.func
              else 
                 --其他的目前不添加，后续添加只需要在这里加入就可以了
              end
@@ -866,7 +879,8 @@ function CommonMonsterLogic:initStateData( )
                           self:stopAllBehavior()
                           self:showExpression(v.eRes) 
                        end
-              table.insert(self.actionCallBacks,k,v.func)
+              --table.insert(self.actionCallBacks,k,v.func)
+                self.actionCallBacks[k] = v.func
            else 
               --其他的目前不添加，后续添加只需要在这里加入就可以了
            end
@@ -882,6 +896,12 @@ function CommonMonsterLogic:initStateMachine( )
 
   print(" initStateMachine ")
   self.fsm = mtStateMachine().new()
+  
+  -- print(" self.actionEvents :  ")
+  -- dump(self.actionEvents)
+
+  -- print(" callbacks :  ")
+  -- dump(self.actionCallBacks)
 
   self.fsm:setupState({
     --初始状态
@@ -932,7 +952,9 @@ function CommonMonsterLogic:getState()
 end
 
 function CommonMonsterLogic:showExpression( eRes )
-    self.monster:showExpression(eRes)
+    if self.monster ~= nil then 
+       self.monster:showExpression(eRes)
+    end
 end
 ----------------------------------------------怪兽FSM状态机 模块 END---------------------------------------
 

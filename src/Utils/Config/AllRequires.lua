@@ -446,6 +446,16 @@ function mtFntNormal()
 end
 
 
+local TextManager = nil
+--- 字体
+-- @function mtTextManager
+-- @return Utils.TextManager
+function mtTextManager()
+    if TextManager == nil then
+        TextManager = require("common.TextManager")
+    end
+    return TextManager
+end
 
 local FloatMsgMgr = nil
 ---字体消息管理

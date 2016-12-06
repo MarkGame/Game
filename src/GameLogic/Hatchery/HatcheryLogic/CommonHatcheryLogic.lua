@@ -65,7 +65,7 @@ function CommonHatcheryLogic:updateHatcheryHeart()
     --此时可以孵化
 
     if self:isCanHatchery() == true and self.isHatching == false then 
-        print(" self.residualTime : "..self.residualTime)
+        -- print(" self.residualTime : "..self.residualTime)
         self.isHatching = true
         self.monsterID = self:getSelectedMonsterID()
         self.residualTime = self:hatchingMonster()

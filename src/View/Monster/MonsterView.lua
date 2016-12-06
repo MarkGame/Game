@@ -15,6 +15,10 @@ function MonsterView:ctor(monsterLogic)
     
     --怪兽逻辑
     self.monsterLogic = monsterLogic
+    --初始化 头顶饱食度
+    self.satiationLabel = nil
+
+    self.nowSatiation = 0
 
     self:initMonster()
     
@@ -33,8 +37,6 @@ function MonsterView:initMonster()
     --初始化一张随机图片 用作一个节点
     self.sprite = cc.Sprite:create("publish/resource/transparent.png")
     self:addChild(self.sprite)
-
-    self.satiationLabel = cc.Label:createWithSystemFont("100", 20,cc.size(50,20))
 
     self.monsterInfo = self.monsterLogic:getMonsterInfo()
 	--初始化怪兽信息 以后可能是在加载中进行数据加载
@@ -83,20 +85,36 @@ function MonsterView:showExpression( res )
        self.expression = nil
     end
     --
-    self.expression = ccui.imageView:create(res)
+    self.expression = ccui.ImageView:create(res)
     self.expression:setPositionY(40)
     self:addChild(self.expression)
 end
 
 --展示怪物头上的饱食度（生命值）
 function MonsterView:showSatiation( satiation )
-    if self.satiationLabel then 
-       self.satiationLabel:setString(satiation)
-       self.satiationLabel:setScale(1.5)
-       self.satiationLabel:stopAllActions()
-       local action1 = cc.ScaleTo:create(0.6, 1)
-       self.satiationLabel:runAction(action1)
-    end 
+    if self.nowSatiation ~= satiation then  
+        if self.satiationLabel then 
+           self.satiationLabel:removeFromParent()
+           self.satiationLabel = nil 
+        end
+
+        if self.satiationLabel == nil then 
+           self.satiationLabel = ccui.TextAtlas:create( tostring(satiation), "fonts/WZ_huifu.png", 24, 38, "+" );
+           self.satiationLabel:setScale(1.5)
+           self.satiationLabel:stopAllActions()
+           self.satiationLabel:setPositionY(60)
+           self:addChild(self.satiationLabel)
+           local action1 = cc.ScaleTo:create(0.6, 1)
+           local callfunc = cc.CallFunc:create(function() 
+                if self.satiationLabel then 
+                   self.satiationLabel:removeFromParent()
+                   self.satiationLabel = nil 
+                end
+           end)
+           self.satiationLabel:runAction(cc.Sequence:create(action1, callfunc))
+        end 
+        self.nowSatiation = satiation
+    end
 end
 
 function MonsterView:onEnter()

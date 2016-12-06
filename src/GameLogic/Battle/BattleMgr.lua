@@ -488,7 +488,7 @@ function BattleMgr:checkBattleStage(  )
     --进化完成 游戏结束
     elseif maxEvo == 100 then 
        if self.battleStage == BattleStage.level3 then
-          print("maxEvo 这里开始游戏结束")
+          print("maxEvo 进化完成 这里开始游戏结束")
           self:setBattleStage(BattleStage.ended)
           -- mtEventDispatch():dispatchEvent(BATTLE_STATE_END) 
           mtEventDispatch():dispatchEvent(BATTLE_STATE_END,{winer = maxEvoPlayerType})
@@ -513,9 +513,10 @@ function BattleMgr:updateMonsterSatiation( )
     end
 
     --刷新玩家自身的
-    if self.player then 
-       self.player:getLogic():decSatiation()
-    end
+    --test 主角暂时不处理
+    -- if self.player then 
+    --    self.player:getLogic():decSatiation()
+    -- end
 
     --敌对玩家都扣除一下
     if self.enemyPlayerList and #self.enemyPlayerList > 0 then 
