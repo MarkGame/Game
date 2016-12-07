@@ -12,6 +12,14 @@ function BehaviorLogInfo:ctor( data )
     self.behaviorType = data.behaviorType 
     self.monsterLogID = data.monsterLogID
     self.monsterType  = data.monsterType
+    self.nowSatiation = data.nowSatiation
+    self.nowEvolution = data.nowEvolution
+    if self.nowSatiation == nil then 
+       self.nowSatiation = "error"
+    end
+    if self.nowEvolution == nil then 
+       self.nowEvolution = "error"
+    end
     self.behaviorTime = mtTimeMgr():getStrByTimestamp(mtTimeMgr():getCurTime())
     
 end
@@ -60,7 +68,7 @@ end
 function BehaviorLogInfo:getLogStr( )
 	local behaviorStr = self:getBehaviorStr()
   local monsterName = self:getMonsterName()
-	return self.index.." : ".. monsterName .."，在"..self.behaviorTime.." 执行了——"..behaviorStr
+	return self.index.." : ".. monsterName .."，在"..self.behaviorTime.." 执行了——"..behaviorStr.." 此时饱食度—: "..self.nowSatiation.." 此时进化值—: "..self.nowEvolution
 end
 
 return BehaviorLogInfo

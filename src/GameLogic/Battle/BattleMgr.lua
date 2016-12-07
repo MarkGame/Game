@@ -514,9 +514,9 @@ function BattleMgr:updateMonsterSatiation( )
 
     --刷新玩家自身的
     --test 主角暂时不处理
-    -- if self.player then 
-    --    self.player:getLogic():decSatiation()
-    -- end
+    if self.player then 
+       self.player:getLogic():decSatiation()
+    end
 
     --敌对玩家都扣除一下
     if self.enemyPlayerList and #self.enemyPlayerList > 0 then 
@@ -638,7 +638,7 @@ function BattleMgr:getMonsterIDByMonsterLogID(monsterLogID)
 end
 
 --添加怪物行为日志
-function BattleMgr:addBehaviorLog(monsterLogID,behaviorType,monsterType)
+function BattleMgr:addBehaviorLog(monsterLogID,behaviorType,monsterType,nowSatiation,nowEvolution)
 
     if self.monsterLogList[monsterLogID] == nil then 
        self.monsterLogList[monsterLogID] = {}
@@ -651,6 +651,8 @@ function BattleMgr:addBehaviorLog(monsterLogID,behaviorType,monsterType)
     data.monsterLogID = monsterLogID
     data.behaviorType = behaviorType
     data.monsterType = monsterType
+    data.nowSatiation = nowSatiation
+    data.nowEvolution = nowEvolution
     local behaviorLog = mtBehaviorLogInfo().new(data)
 
     table.insert(self.monsterLogList[monsterLogID] ,index , behaviorLog)

@@ -357,6 +357,8 @@ end
 
 -----------------------------------------------休息/终止 模块 START----------------------------------------------
 --冷静一下
+--这里出的问题吧
+-- 在这里 进去之后，并没有做下一步操作  为什么呢？2016年12月7日19:51:11
 function CommonMonsterLogic:calm(  )
    print("enter calm ")
    local func = function ( )
@@ -367,8 +369,7 @@ function CommonMonsterLogic:calm(  )
 
    self.updateDelayHandler = mtSchedulerMgr():removeScheduler(self.updateDelayHandler)
 
-   self.updateDelayHandler = mtSchedulerMgr():addScheduler(1.5,-1,func)
-
+   self.updateDelayHandler = mtSchedulerMgr():addScheduler(1,1,func)
 end
 
 
@@ -385,15 +386,17 @@ end
     先使用 探测技能 把所有在视野内的目标 找到，逐一分析
 ]]
 function CommonMonsterLogic:autoSearchTarget( )
-    
+    print("enter autoSearchTarget ")
     --self.detectSkill:showSkillRangeDiagram(self.monster)
     local targets = self.detectSkill:getDetectMonsterBySkill(self.monster)
     -- dump(targets)
     if targets and #targets > 0 then --找到目标后，告诉大脑 下一步要做什么
        self:setTargetMonster(targets)
        -- dump(self.targetMonster)
+       print("toSelect autoSearchTarget ")
        self:doEvent("toSelect")
     else           --没有找到目标，也要回调给大脑信息
+       print("toAutoMove autoSearchTarget ")
        self:doEvent("toAutoMove")
     end
 
@@ -420,12 +423,16 @@ function CommonMonsterLogic:autoSelectTarget()
        end
        
        if target ~= nil then 
+
           self:setTargetMonster(target)
+          print("toChase autoSelectTarget ")
           self:doEvent("toChase")
        else
+          print("toAutoMove 1  autoSelectTarget ")
           self:doEvent("toAutoMove")
        end
     else
+       print("toAutoMove 2 autoSelectTarget ")
        self:doEvent("toAutoMove")
     end
 
@@ -438,7 +445,7 @@ end
 ]]
 --自动随机移动 
 function CommonMonsterLogic:autoRandomMovement( )
- 
+    print("start autoRandomMovement ")
     local initX,initY = self:getMonsterTileCoordPos()
   
     --最多执行五次，否则保持执行搜寻目标
@@ -459,12 +466,14 @@ function CommonMonsterLogic:autoRandomMovement( )
         --判断新的坐标是否是可行点，不行则继续searchPos
         if self.parentScene:targetPosIsBarrier(target) == true then 
            local func = function ( )
+              print("toSearch autoRandomMovement ")
               self:doEvent("toSearch")
            end
            self.monster:moveToward(target,func)
            break
         else
            if i == 5 then 
+              print("toIdle autoRandomMovement ")
               self:doEvent("toIdle")
            end
         end
@@ -778,20 +787,22 @@ function CommonMonsterLogic:initStateData( )
     for k,v in pairs(tempCallBacks) do
         if MonsterBehaviorType.idle == v.id then
            if v.stateType == StateType.enter then 
-              v.func = function(event)
-                          mtBattleMgr():addBehaviorLog(self.monsterLogID,MonsterBehaviorType.idle,self.playerType)
-                          self:calm()
-                          self:showExpression(v.eRes)
-                       end
-              --table.insert(self.actionCallBacks,k,v.func)
-              self.actionCallBacks[k] = v.func
+                v.func = function(event)
+                            mtBattleMgr():addBehaviorLog(self.monsterLogID,MonsterBehaviorType.idle,self.playerType,
+                            self.monsterData:getMonsterNowSatiation(),self.monsterData:getMonsterNowEvolution())
+                            self:calm()
+                            self:showExpression(v.eRes)
+                         end
+                --table.insert(self.actionCallBacks,k,v.func)
+                self.actionCallBacks[k] = v.func
            else 
               --其他的目前不添加，后续添加只需要在这里加入就可以了
            end
         elseif MonsterBehaviorType.search == v.id then
             if v.stateType == StateType.enter then 
                 v.func = function(event)
-                            mtBattleMgr():addBehaviorLog(self.monsterLogID,MonsterBehaviorType.search,self.playerType)
+                            mtBattleMgr():addBehaviorLog(self.monsterLogID,MonsterBehaviorType.search,self.playerType,
+                            self.monsterData:getMonsterNowSatiation(),self.monsterData:getMonsterNowEvolution())
                             self:autoSearchTarget()
                             self:showExpression(v.eRes) 
                          end
@@ -803,7 +814,8 @@ function CommonMonsterLogic:initStateData( )
         elseif MonsterBehaviorType.selectTarget == v.id then
              if v.stateType == StateType.enter then 
                 v.func = function(event)
-                            mtBattleMgr():addBehaviorLog(self.monsterLogID,MonsterBehaviorType.selectTarget,self.playerType)
+                            mtBattleMgr():addBehaviorLog(self.monsterLogID,MonsterBehaviorType.selectTarget,self.playerType,
+                            self.monsterData:getMonsterNowSatiation(),self.monsterData:getMonsterNowEvolution())
                             self:autoSelectTarget() 
                             self:showExpression(v.eRes) 
                          end
@@ -815,7 +827,9 @@ function CommonMonsterLogic:initStateData( )
         elseif MonsterBehaviorType.autoMove == v.id then
              if v.stateType == StateType.enter then 
                 v.func = function(event)
-                            mtBattleMgr():addBehaviorLog(self.monsterLogID,MonsterBehaviorType.autoMove,self.playerType) 
+                            print("StateType.enter autoMove ")
+                            mtBattleMgr():addBehaviorLog(self.monsterLogID,MonsterBehaviorType.autoMove,self.playerType,
+                            self.monsterData:getMonsterNowSatiation(),self.monsterData:getMonsterNowEvolution()) 
                             self:autoRandomMovement() 
                             self:showExpression(v.eRes) 
                          end
@@ -827,7 +841,8 @@ function CommonMonsterLogic:initStateData( )
         elseif MonsterBehaviorType.chase == v.id then
              if v.stateType == StateType.enter then 
                 v.func = function(event)
-                            mtBattleMgr():addBehaviorLog(self.monsterLogID,MonsterBehaviorType.chase,self.playerType)
+                            mtBattleMgr():addBehaviorLog(self.monsterLogID,MonsterBehaviorType.chase,self.playerType,
+                            self.monsterData:getMonsterNowSatiation(),self.monsterData:getMonsterNowEvolution())
                             self:chaseToTarget()
                             self:showExpression(v.eRes) 
                          end
@@ -839,7 +854,8 @@ function CommonMonsterLogic:initStateData( )
         elseif MonsterBehaviorType.escape == v.id then
              if v.stateType == StateType.enter then 
                 v.func = function(event)
-                            mtBattleMgr():addBehaviorLog(self.monsterLogID,MonsterBehaviorType.escape,self.playerType)
+                            mtBattleMgr():addBehaviorLog(self.monsterLogID,MonsterBehaviorType.escape,self.playerType,
+                            self.monsterData:getMonsterNowSatiation(),self.monsterData:getMonsterNowEvolution())
                             self:escapeFromTarget() 
                             self:showExpression(v.eRes) 
                          end
@@ -851,7 +867,8 @@ function CommonMonsterLogic:initStateData( )
         elseif MonsterBehaviorType.devour == v.id then
              if v.stateType == StateType.enter then 
                 v.func = function(event)
-                            mtBattleMgr():addBehaviorLog(self.monsterLogID,MonsterBehaviorType.devour,self.playerType)
+                            mtBattleMgr():addBehaviorLog(self.monsterLogID,MonsterBehaviorType.devour,self.playerType,
+                            self.monsterData:getMonsterNowSatiation(),self.monsterData:getMonsterNowEvolution())
                             self:devourMonster() 
                             self:showExpression(v.eRes) 
                          end
@@ -863,7 +880,8 @@ function CommonMonsterLogic:initStateData( )
         elseif MonsterBehaviorType.useExclusive == v.id then
              if v.stateType == StateType.enter then 
                 v.func = function(event)
-                            mtBattleMgr():addBehaviorLog(self.monsterLogID,MonsterBehaviorType.useExclusive,self.playerType)
+                            mtBattleMgr():addBehaviorLog(self.monsterLogID,MonsterBehaviorType.useExclusive,self.playerType,
+                            self.monsterData:getMonsterNowSatiation(),self.monsterData:getMonsterNowEvolution())
                             self:useExclusiveSkill()
                             self:showExpression(v.eRes)   
                          end
@@ -875,7 +893,8 @@ function CommonMonsterLogic:initStateData( )
         elseif MonsterBehaviorType.stop == v.id then
            if v.stateType == StateType.enter then 
               v.func = function(event)
-                          mtBattleMgr():addBehaviorLog(self.monsterLogID,MonsterBehaviorType.stop,self.playerType)
+                          mtBattleMgr():addBehaviorLog(self.monsterLogID,MonsterBehaviorType.stop,self.playerType,
+                          self.monsterData:getMonsterNowSatiation(),self.monsterData:getMonsterNowEvolution())
                           self:stopAllBehavior()
                           self:showExpression(v.eRes) 
                        end

@@ -281,19 +281,19 @@ function BattleSceneView:initHatchery( )
     local initHatchPosList = mtBattleMgr():getBattleData():getInitHatchPosList()
     
     --test 只放出一个孵化场
-    for i =1 ,4 do 
-        local data = {}
-        data.initPos = hatcheryPosList[i]
+    -- for i =1 ,1 do 
+    --     local data = {}
+    --     data.initPos = hatcheryPosList[i]
 
-        local hatchery = mtHatcheryMgr():createHatchery(data)
-        self.map:addChild(hatchery,ZVALUE_BATTLEMAP_HATCHERY) 
+    --     local hatchery = mtHatcheryMgr():createHatchery(data)
+    --     self.map:addChild(hatchery,ZVALUE_BATTLEMAP_HATCHERY) 
 
-        mtBattleMgr():addHatcheryToList(hatchery)
+    --     mtBattleMgr():addHatcheryToList(hatchery)
      
-        local hatcheryPos = self:positionForTileCoord(initHatchPosList[i])
-        --self.player:moveToward(cc.p(18,7))
-        hatchery:setPosition(hatcheryPos)
-    end
+    --     local hatcheryPos = self:positionForTileCoord(initHatchPosList[i])
+    --     --self.player:moveToward(cc.p(18,7))
+    --     hatchery:setPosition(hatcheryPos)
+    -- end
     
 end
 
