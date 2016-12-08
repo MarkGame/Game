@@ -560,8 +560,16 @@ function MonsterNode:popStepAndAnimate(callBack,callBackStep)
     cc.CallFunc:create(function()
       --加入每一步执行完后的回调 
       if callBackStep ~= nil then 
+         print(" callBackStep ")
          if callBackStep() == false then 
+            print(" callBackStep  false")
             self:popStepAndAnimate(callBack,callBackStep)
+         else
+            print("callBackStep ~= false  to do what? ")
+            if callBack ~= nil then 
+               print("callBackStep ~= false  to do callBack ")
+               callBack()
+            end
          end
       else
          self:popStepAndAnimate(callBack,callBackStep)

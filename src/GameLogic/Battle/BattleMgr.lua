@@ -393,7 +393,7 @@ function BattleMgr:startUpdateBattle( )
     --更新战斗信息 每帧调度一次
     self.updateBattleHandler = mtSchedulerMgr():addScheduler(0,-1,handler(self,self.updateBattle))
     --扣除  耐饿值 每秒调度一次
-    self.updateMonsterSatiationHandler = mtSchedulerMgr():addScheduler(1,-1,handler(self,self.updateMonsterSatiation))
+    self.updateMonsterBySecHandler = mtSchedulerMgr():addScheduler(1,-1,handler(self,self.updateMonsterBySec))
 
 end
 
@@ -401,7 +401,7 @@ function BattleMgr:stopUpdateBattle( )
     
     self.updateBattleHandler = mtSchedulerMgr():removeScheduler(self.updateBattleHandler)
  
-    self.updateMonsterSatiationHandler = mtSchedulerMgr():removeScheduler(self.updateMonsterSatiationHandler)
+    self.updateMonsterBySecHandler = mtSchedulerMgr():removeScheduler(self.updateMonsterBySecHandler)
 
 end
 
@@ -497,6 +497,31 @@ function BattleMgr:checkBattleStage(  )
 end
 
 
+function BattleMgr:updateMonsterBySec( )
+
+   self:updateMonsterSatiation()
+
+   --每只怪兽都扣除一下
+    if self.monsterList and #self.monsterList > 0 then 
+        for k,v in ipairs(self.monsterList) do
+           if v then 
+              v:getLogic():updateBySec()    
+           end
+        end
+    end
+
+    --敌对玩家都扣除一下
+    if self.enemyPlayerList and #self.enemyPlayerList > 0 then 
+        for k,v in ipairs(self.enemyPlayerList) do
+           if v then 
+              v:getLogic():updateBySec()    
+           end
+        end
+    end
+
+    
+end
+
 --每秒扣除  耐饿值
 function BattleMgr:updateMonsterSatiation( )
     
@@ -514,9 +539,9 @@ function BattleMgr:updateMonsterSatiation( )
 
     --刷新玩家自身的
     --test 主角暂时不处理
-    if self.player then 
-       self.player:getLogic():decSatiation()
-    end
+    -- if self.player then 
+    --    self.player:getLogic():decSatiation()
+    -- end
 
     --敌对玩家都扣除一下
     if self.enemyPlayerList and #self.enemyPlayerList > 0 then 

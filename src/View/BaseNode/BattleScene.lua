@@ -223,8 +223,7 @@ function BattleScene:targetPosIsBarrier(targetPos)
 	       return false
 	    end
     end
-
-
+    return false
 end
 
 

@@ -30,6 +30,10 @@ function CommonMonsterLogic:ctor(data)
 
 
    self.isStop = false
+
+   self.countDown = -1
+
+   self.isCoundDownModel = false
    
    --行为ID列表
    self.actionIDList = {}
@@ -103,7 +107,6 @@ function CommonMonsterLogic:removeMonster(  )
    --现在这里暂时不做操作
    mtBattleMgr():addBehaviorLog(self.monsterLogID,MonsterBehaviorType.die,self.playerType)
    self:doEventForce("toStop")
-   self.updateDelayHandler = mtSchedulerMgr():removeScheduler(self.updateDelayHandler)
    if self.monster then 
       self.monster:removeFromParent()
    end
@@ -360,16 +363,24 @@ end
 --这里出的问题吧
 -- 在这里 进去之后，并没有做下一步操作  为什么呢？2016年12月7日19:51:11
 function CommonMonsterLogic:calm(  )
+   print("self:getMonsterType() : "..self:getMonsterType())
    print("enter calm ")
-   local func = function ( )
-       print("enter toSearch ")
-       self:doEvent("toSearch")
-       self.updateDelayHandler = mtSchedulerMgr():removeScheduler(self.updateDelayHandler)
+   self.countDown = 2
+   self.isCoundDownModel = true
+end
+
+function CommonMonsterLogic:updateBySec( )
+   if self.isCoundDownModel == true and self.countDown ~= -1 then 
+      if self.countDown <= 0 then 
+         print("self:getMonsterType() : "..self:getMonsterType())
+         print("enter toSearch ")
+         self:doEvent("toSearch")
+         self.countDown = -1
+         self.isCoundDownModel = false
+      else
+         self.countDown = self.countDown - 1
+      end
    end
-
-   self.updateDelayHandler = mtSchedulerMgr():removeScheduler(self.updateDelayHandler)
-
-   self.updateDelayHandler = mtSchedulerMgr():addScheduler(1,1,func)
 end
 
 
@@ -386,6 +397,7 @@ end
     先使用 探测技能 把所有在视野内的目标 找到，逐一分析
 ]]
 function CommonMonsterLogic:autoSearchTarget( )
+    print("self:getMonsterType() : "..self:getMonsterType())
     print("enter autoSearchTarget ")
     --self.detectSkill:showSkillRangeDiagram(self.monster)
     local targets = self.detectSkill:getDetectMonsterBySkill(self.monster)
@@ -393,9 +405,11 @@ function CommonMonsterLogic:autoSearchTarget( )
     if targets and #targets > 0 then --找到目标后，告诉大脑 下一步要做什么
        self:setTargetMonster(targets)
        -- dump(self.targetMonster)
+       print("self:getMonsterType() : "..self:getMonsterType())
        print("toSelect autoSearchTarget ")
        self:doEvent("toSelect")
     else           --没有找到目标，也要回调给大脑信息
+       print("self:getMonsterType() : "..self:getMonsterType())
        print("toAutoMove autoSearchTarget ")
        self:doEvent("toAutoMove")
     end
@@ -461,21 +475,36 @@ function CommonMonsterLogic:autoRandomMovement( )
         randomY = math.random(-3,3)
         randomY = math.random(-3,3)
         randomY = math.random(-3,3)
-
-        local target = cc.p(randomX+initX,randomY+initY)
+        local targetPosX = randomX+initX
+        local targetPosY = randomY+initY
+        print("targetPosX :  "..targetPosX)
+        print("targetPosY :  "..targetPosY)
+        local target = cc.p(targetPosX,targetPosY)
         --判断新的坐标是否是可行点，不行则继续searchPos
         if self.parentScene:targetPosIsBarrier(target) == true then 
            local func = function ( )
               print("toSearch autoRandomMovement ")
+              local state = self:getState()
+              print("now state : "..state)
+              if self:canDoEvent("toSearch") == true then 
+                 print("can do toSearch")
+              end
               self:doEvent("toSearch")
            end
+           print("target autoRandomMovement ")
            self.monster:moveToward(target,func)
            break
         else
            if i == 5 then 
               print("toIdle autoRandomMovement ")
-              self:doEvent("toIdle")
+              local state = self:getState()
+              print("now state : "..state)
+              if self:canDoEvent("toIdle") == true then 
+                 print("can do toIdle")
+              end
+              self:doEvent("toIdle") --idle
            end
+           print("i ~= 5 autoRandomMovement ")
         end
     end
 
@@ -492,7 +521,7 @@ end
 --失败 则执行 禁锢BUFF 并给目标怪兽 增加不可吞噬的BUFF
 function CommonMonsterLogic:devourMonster( )
      local callBack = function (  )
-         self:doEvent("toIdle")
+         self:doEvent("toIdle") --idle
      end
      self.devourSkill:devourMonster(self.monster,callBack)
 end
@@ -606,7 +635,7 @@ function CommonMonsterLogic:chaseToTarget(_target)
     local function funcFinish( )
         print("funcFinish ")
         self.monster:stopMoveToward()
-        self:doEvent("toIdle")
+        self:doEvent("toIdle") --idle
         return
     end
 
@@ -622,7 +651,7 @@ function CommonMonsterLogic:chaseToTarget(_target)
     self.detectSkill:showSkillRangeDiagram(self.monster)
 
     local function funcStep( )
-       if target ~= nil then --目标没有被销毁
+      if target ~= nil then --目标没有被销毁
           print("target ~= nil")
           local isFindBySkill = self.exclusiveSkill:isTargetInDetectList(self.monster,target)
           local isFindByDevourSkill = self.devourSkill:isTargetInDetectList(self.monster,target)
@@ -656,12 +685,12 @@ function CommonMonsterLogic:chaseToTarget(_target)
                  self.monster:moveToward(targetPos,funcFinish,funcStep)
               end
           end
-      else
-          print("target ~= nil toIdle") 
-          self.detectSkill:hideSkillRangeDiagram()
-          self.monster:stopMoveToward()
-          self:doEvent("toIdle")     
-      end
+        else
+            print("target ~= nil toIdle") 
+            self.detectSkill:hideSkillRangeDiagram()
+            self.monster:stopMoveToward()
+            self:doEvent("toIdle")    --idle  
+        end
     end
     --向目标距离 移动，移动结束回调，分步回调
     self.monster:moveToward(targetPos,funcFinish,funcStep)
