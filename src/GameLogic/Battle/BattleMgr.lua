@@ -539,9 +539,9 @@ function BattleMgr:updateMonsterSatiation( )
 
     --刷新玩家自身的
     --test 主角暂时不处理
-    -- if self.player then 
-    --    self.player:getLogic():decSatiation()
-    -- end
+    if self.player then 
+       self.player:getLogic():decSatiation()
+    end
 
     --敌对玩家都扣除一下
     if self.enemyPlayerList and #self.enemyPlayerList > 0 then 

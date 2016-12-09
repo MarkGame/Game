@@ -84,7 +84,7 @@ function BattleSceneView:initTileMap()
     end
 
     --摇杆添加
-    self.rocker = mtHRocker():createHRocker("publish/resource/close.png", "publish/resource/bg13.png", cc.p(100, 100) ,0.5)
+    self.rocker = mtHRocker():createHRocker("publish/resource/Button/Joystick.png", "publish/resource/Button/Back.png", cc.p(150, 150) ,0.5 ,0.4 ,0.8)
     self.uiLayer:addChild(self.rocker,ZVALUE_ROCKER)
     self.rocker:startRocker(true)
 
@@ -281,7 +281,7 @@ function BattleSceneView:initHatchery( )
     local initHatchPosList = mtBattleMgr():getBattleData():getInitHatchPosList()
     
     --test 只放出一个孵化场
-    for i =1 ,4 do 
+    for i =1 ,2 do 
         local data = {}
         data.initPos = hatcheryPosList[i]
 

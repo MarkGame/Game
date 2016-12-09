@@ -365,7 +365,7 @@ end
 function CommonMonsterLogic:calm(  )
    print("self:getMonsterType() : "..self:getMonsterType())
    print("enter calm ")
-   self.countDown = 2
+   self.countDown = 1
    self.isCoundDownModel = true
 end
 

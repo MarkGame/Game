@@ -41,12 +41,12 @@ function HRocker:ctor()
 end
 
 -- 创建摇杆(摇杆的操作题图片资源名，摇杆背景图片资源名，起始坐标)
-function HRocker:createHRocker( rockerImageName, rockerBGImageName, position ,range)
+function HRocker:createHRocker( rockerImageName, rockerBGImageName, position ,range ,scale ,opacity)
 
 	local layer = HRocker.new()
 	if layer then
 		-- 1 按钮， 2 背景
-		layer:rockerInit(rockerImageName, rockerBGImageName, position ,range)
+		layer:rockerInit(rockerImageName, rockerBGImageName, position ,range ,scale ,opacity)
 		return layer
 	end
     return nil
@@ -55,16 +55,29 @@ end
 
 -- privete 
 -- 自定义初始化函数 ， 1 按钮，  2 背景图
-function HRocker:rockerInit( rockerImageName, rockerBGImageName, position ,range )
+function HRocker:rockerInit( rockerImageName, rockerBGImageName, position ,range ,scale ,opacity)
+    if scale == nil then 
+       scale = 1 
+    end
+
+    if opacity == nil then 
+       opacity = 255
+    else
+       opacity = 255*opacity
+    end
 
 	local spRockerBG = ccui.ImageView:create(rockerBGImageName)
 	spRockerBG:setPosition( position )
 	self:addChild(spRockerBG, 0, self.tagForHRocker.tag_rockerBG)
 	spRockerBG:setVisible(false)
+	spRockerBG:setScale(scale)
+	spRockerBG:setOpacity(opacity)
 	local spRocker = ccui.ImageView:create(rockerImageName)
 	spRocker:setPosition( position )
 	self:addChild(spRocker, 1, self.tagForHRocker.tag_rocker)
 	spRocker:setVisible(false)
+	spRocker:setScale(scale)
+	spRocker:setOpacity(opacity)
 
 	self.rockerBGPosition = position
 	--控制 最远滚轴范围
