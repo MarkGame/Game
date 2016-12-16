@@ -34,6 +34,11 @@ function CommonSkillLogic:init(data)
     --技能CD冷却剩余时间
     self.residualTime = 0
 
+    --缩算系数 
+    self.shrinkageValue = {"Sa" = 10 ,"Ev" = 10 ,"Le" = 1 , "LuV" = 10 }
+    --权值系数
+    self.weightValue    = {"Sa" = 25 ,"Ev" = 25 ,"Le" = 45 ,"LuV" = 5 }
+
     self:initSkillData()
 end
 
@@ -230,7 +235,7 @@ function CommonSkillLogic:devourMonster(monster,callBack)
    --应该判断一下 当前技能是否属于吞噬技能，不属于则无效并提示
    local targetMonster = self:getTargetMonster(monster)
    --先判断 目标怪兽 是否有 不可吞噬的BUFF
-   if targetMonster then 
+   if targetMonster and monster then 
        if self:canIEat(monster,targetMonster) == true then 
           self:devourMonsterSuccess(monster,targetMonster,callBack)
        else
@@ -243,8 +248,76 @@ function CommonSkillLogic:devourMonster(monster,callBack)
 end
 
 --返回吞噬结果 
+--[[
+    吞噬参考参数：
+    甲方怪兽 ： 吞噬者  
+    乙方怪兽 ： 被吞噬者
+    1、怪兽的饱食度 Sa monster:getLogic():getMonsterData():getMonsterSatiation()
+       甲方Sa越高越容易吞噬/乙方Sa越低越容易被吞噬 
+    2、怪兽的进化值 Ev monster:getLogic():getMonsterData():getMonsterEvolution()
+       甲方Ev越低越容易吞噬/乙方Ev越低越容易被吞噬
+    3、怪兽的阶级 Le monster:getLogic():getMonsterData():getInitMonsterLevel() 
+       甲方Le越高越容易吞噬/乙方Le越低越容易被吞噬 
+    4、运气值 LuV 1-100 
+       甲方LuV越高越容易吞噬/乙方LuV越低越容易被吞噬 
+    5、缩算系数 每种数值的大小范围不同，需要相对应同步
+       shrinkageValue = {"Sa" = 10 ,"Ev" = 10 ,"Le" = 1 , "LuV" = 10 }
+    6、权值系数 每种数值对吞噬成功的权值系数不同 需要获得比较平衡的参考值
+       weightValue    = {"Sa" = 25 ,"Ev" = 25 ,"Le" = 45 ,"LuV" = 5 }
+    
+    吞噬计算公式：
+       (Sa1 - Sa2)/shrinkageValue["Sa"]*weightValue["Sa"] + 
+       (Ev1 - Ev2)/shrinkageValue["Ev"]*weightValue["Ev"] + 
+       (Le1 - Le2)/shrinkageValue["Le"]*weightValue["Le"] + 
+       (LuV1 - LuV2)/shrinkageValue["LuV"]*weightValue["LuV"] = ?
+    模拟数据：
+       甲方           Sa1 100  Ev1 50  Le1 2   LuV1 30   
+       乙方           Sa2 80   Ev2 20  Le2 1   LuV2 60 
+                      Sa1-Sa2  Ev2-Ev1 Le1-le2 LuV1 - LuV2 
+                      ————————————————————————————————————
+       缩算系数       10       10      1       10
+       差值           2        -3      1       -3 
+   权值系数（1——100） 25       25      45      5
+       最终值         50       -75     45      -15
+       结果（和正负） 50-75+45-15 = 5  【>0 成功 | <=0 失败】       
+
+]]
 function CommonSkillLogic:canIEat( monster,targetMonster )
-   return true
+   local Sa1 = monster:getLogic():getMonsterData():getMonsterSatiation()
+   local Ev1 = monster:getLogic():getMonsterData():getMonsterEvolution()
+   local Le1 = monster:getLogic():getMonsterData():getInitMonsterLevel()
+   local LuV1 = math.random(1,100)
+   LuV1 = math.random(1,100)
+   LuV1 = math.random(1,100)
+   LuV1 = math.random(1,100)
+
+   local Sa2 = targetMonster:getLogic():getMonsterData():getMonsterSatiation()
+   local Ev2 = targetMonster:getLogic():getMonsterData():getMonsterEvolution()
+   local Le2 = targetMonster:getLogic():getMonsterData():getInitMonsterLevel()
+   local LuV2 = math.random(1,100)
+   LuV2 = math.random(1,100)
+   LuV2 = math.random(1,100)
+   LuV2 = math.random(1,100)
+
+   local finalValues = (Sa1 - Sa2)/self.shrinkageValue["Sa"]*self.weightValue["Sa"] + 
+                       (Ev1 - Ev2)/self.shrinkageValue["Ev"]*self.weightValue["Ev"] + 
+                       (Le1 - Le2)/self.shrinkageValue["Le"]*self.weightValue["Le"] + 
+                       (LuV1 - LuV2)/self.shrinkageValue["LuV"]*self.weightValue["LuV"]
+   if finalValues > 0 then 
+      return true
+   elseif finalValues == 0 then 
+      local random = math.random(1,100)
+      random = math.random(1,100)
+      random = math.random(1,100)
+      random = math.random(1,100)
+      if random >=50 then 
+         return true
+      else
+         return false 
+      end
+   else
+      return false 
+   end
 end
 
 --吞噬怪兽成功
