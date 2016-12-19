@@ -151,6 +151,11 @@ function MonsterBaseInfo:setMonsterVelocity(velocity)
     self.nowVelocity = velocity
 end
 
+--怪兽的移动速率
+function MonsterBaseInfo:getMonsterRate( ... )
+    -- body
+end
+
 function MonsterBaseInfo:getMonsterVelocity( )
     return self.nowVelocity
 end

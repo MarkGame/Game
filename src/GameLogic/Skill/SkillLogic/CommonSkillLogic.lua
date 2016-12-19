@@ -306,11 +306,11 @@ function CommonSkillLogic:canIEat( monster,targetMonster )
    if finalValues > 0 then 
       return true
    elseif finalValues == 0 then 
-      local random = math.random(1,100)
+      local random = math.random(1,99)
       random = math.random(1,100)
       random = math.random(1,100)
       random = math.random(1,100)
-      if random >=50 then 
+      if random >50 then 
          return true
       else
          return false 
